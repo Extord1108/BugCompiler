@@ -1,5 +1,5 @@
 // Generated from D:/codefile/CODE_Java/Complier/BugCompiler/src/antlr\SysY.g4 by ANTLR 4.12.0
-package frontend;
+package frontend.parser;
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 
 /**
