@@ -1,24 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="ca9099c3-f98a-4da0-9acb-90b35fa54149" name="变更" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/antlr4_runtime_4_11_1.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Compiler.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/util/Arg.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/testCases/basic/testfile1.c" afterDir="false" />
+    <list default="true" id="ca9099c3-f98a-4da0-9acb-90b35fa54149" name="变更" comment="feat:初始参数配置">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/frontend/SysY.interp" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/parser/SysY.interp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/frontend/SysY.tokens" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/parser/SysY.tokens" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/frontend/SysYBaseListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/parser/SysYBaseListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/frontend/SysYBaseVisitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/parser/SysYBaseVisitor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/frontend/SysYLexer.interp" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/parser/SysYLexer.interp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/frontend/SysYLexer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/parser/SysYLexer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/frontend/SysYLexer.tokens" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/parser/SysYLexer.tokens" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/frontend/SysYListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/parser/SysYListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/frontend/SysYParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/parser/SysYParser.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/frontend/SysYVisitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/parser/SysYVisitor.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,6 +40,7 @@
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="nodejs_package_manager_path" value="npm" />
     <property name="project.structure.last.edited" value="库" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
@@ -91,8 +76,16 @@
       <option name="presentableId" value="Default" />
       <updated>1689822878107</updated>
       <workItem from="1689822879539" duration="560000" />
-      <workItem from="1689826758437" duration="2474000" />
+      <workItem from="1689826758437" duration="3473000" />
     </task>
+    <task id="LOCAL-00001" summary="feat:初始参数配置">
+      <created>1689829397776</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1689829397776</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -108,5 +101,9 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="feat:初始参数配置" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat:初始参数配置" />
   </component>
 </project>
