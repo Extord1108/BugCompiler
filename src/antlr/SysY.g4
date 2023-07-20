@@ -50,6 +50,7 @@ lOrExp: lAndExp (OR lAndExp)*;
 constExp: addExp;
 
 // 词法规则
+WS : [ \t\n\r]+ -> skip;
 CONST: 'const';
 INT: 'int';
 FLOAT: 'float';

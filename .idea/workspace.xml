@@ -1,25 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="ca9099c3-f98a-4da0-9acb-90b35fa54149" name="变更" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/antlr4_runtime_4_11_1.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Compiler.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/util/Arg.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/testCases/basic/testfile1.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/frontend/SysY.interp" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/parser/SysY.interp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/frontend/SysY.tokens" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/parser/SysY.tokens" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/frontend/SysYBaseListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/parser/SysYBaseListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/frontend/SysYBaseVisitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/parser/SysYBaseVisitor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/frontend/SysYLexer.interp" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/parser/SysYLexer.interp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/frontend/SysYLexer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/parser/SysYLexer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/frontend/SysYLexer.tokens" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/parser/SysYLexer.tokens" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/frontend/SysYListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/parser/SysYListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/frontend/SysYParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/parser/SysYParser.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/frontend/SysYVisitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/frontend/parser/SysYVisitor.java" afterDir="false" />
-    </list>
+    <list default="true" id="ca9099c3-f98a-4da0-9acb-90b35fa54149" name="变更" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -92,6 +74,7 @@
       <updated>1689822878107</updated>
       <workItem from="1689822879539" duration="560000" />
       <workItem from="1689826758437" duration="2474000" />
+      <workItem from="1689829896498" duration="449000" />
     </task>
     <servers />
   </component>
