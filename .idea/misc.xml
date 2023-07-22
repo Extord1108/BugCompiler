@@ -16,10 +16,10 @@
         <PerGrammarGenerationSettings>
           <option name="fileName" value="$PROJECT_DIR$/src/antlr/SysY.g4" />
           <option name="autoGen" value="true" />
-          <option name="outputDir" value="D:\codefile\CODE_Java\Complier\BugCompiler\src" />
-          <option name="libDir" value="D:\codefile\CODE_Java\Complier\BugCompiler\src" />
+          <option name="outputDir" value="$PROJECT_DIR$/src" />
+          <option name="libDir" value="$PROJECT_DIR$/src" />
           <option name="encoding" value="" />
-          <option name="pkg" value="frontend" />
+          <option name="pkg" value="frontend.parser" />
           <option name="language" value="" />
           <option name="generateVisitor" value="true" />
         </PerGrammarGenerationSettings>

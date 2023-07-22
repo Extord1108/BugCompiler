@@ -1,3 +1,5 @@
+const int a  = 4 ;
+
 int main(){
-    return 0;
+    return 1 + 1;
 }
