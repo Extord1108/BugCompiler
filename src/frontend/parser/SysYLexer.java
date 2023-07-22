@@ -1,4 +1,4 @@
-// Generated from D:/codefile/CODE_Java/Complier/javaCompiler/src/antlr\SysY.g4 by ANTLR 4.12.0
+// Generated from /Users/mingming/Documents/编译大赛/javaCompiler/src/antlr/SysY.g4 by ANTLR 4.12.0
 package frontend.parser;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
@@ -11,7 +11,7 @@ import org.antlr.v4.runtime.misc.*;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast", "CheckReturnValue"})
 public class SysYLexer extends Lexer {
-	static { RuntimeMetaData.checkVersion("4.12.0", RuntimeMetaData.VERSION); }
+	static { RuntimeMetaData.checkVersion("4.11.1", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
 	protected static final PredictionContextCache _sharedContextCache =

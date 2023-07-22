@@ -1,4 +1,4 @@
-// Generated from D:/codefile/CODE_Java/Complier/javaCompiler/src/antlr\SysY.g4 by ANTLR 4.12.0
+// Generated from /Users/mingming/Documents/编译大赛/javaCompiler/src/antlr/SysY.g4 by ANTLR 4.12.0
 package frontend.parser;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
@@ -161,11 +161,23 @@ public interface SysYVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitMulExp(SysYParser.MulExpContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link SysYParser#mulOp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMulOp(SysYParser.MulOpContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link SysYParser#addExp}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitAddExp(SysYParser.AddExpContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link SysYParser#addOp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAddOp(SysYParser.AddOpContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link SysYParser#relExp}.
 	 * @param ctx the parse tree
@@ -173,11 +185,23 @@ public interface SysYVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitRelExp(SysYParser.RelExpContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link SysYParser#relOp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitRelOp(SysYParser.RelOpContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link SysYParser#eqExp}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitEqExp(SysYParser.EqExpContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link SysYParser#eqOp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitEqOp(SysYParser.EqOpContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link SysYParser#lAndExp}.
 	 * @param ctx the parse tree

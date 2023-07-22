@@ -1,5 +1,6 @@
 import frontend.parser.SysYLexer;
 import frontend.parser.SysYParser;
+import frontend.parser.Visitor;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -18,6 +19,8 @@ public class Compiler {
             CommonTokenStream tokens = new CommonTokenStream(lexer);
             SysYParser parser = new SysYParser(tokens);
             ParseTree tree = parser.compUnit();
+            var visitor = Visitor.Instance;
+            visitor.visit(tree);
 
 
         } catch (IOException e) {
