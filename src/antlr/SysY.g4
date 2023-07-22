@@ -31,7 +31,7 @@ exp: addExp;
 cond: lOrExp;
 lVal: IDENT (LBRACK exp RBRACK)*;
 primaryExp: lVal | number | LPAREN exp RPAREN;
-number: INT_CONST | FLOAT_CONST;
+number: DECIMAL_CONST | OCTAL_CONST | HEX_CONST | FLOAT_CONST;
 unaryExp: primaryExp | IDENT LPAREN (funcRParams)? RPAREN | unaryOp unaryExp;
 unaryOp: PLUS | MINUS | NOT;
 funcRParams: exp (COMMA exp)*;
@@ -96,7 +96,7 @@ IDENT_NONDIGIT: [a-zA-Z_];
 
 
 //IntConst 的语法规则
-INT_CONST: DECIMAL_CONST | OCTAL_CONST | HEX_CONST;
+//INT_CONST: DECIMAL_CONST | OCTAL_CONST | HEX_CONST;
 //消除左递归：DECIMAL_CONST: NONZERO_DIGIT | DECIMAL_CONST DIGIT;
 DECIMAL_CONST: NONZERO_DIGIT (DIGIT)*;
 //消除左递归：OCTAL_CONST: '0' | OCTAL_CONST OCTAL_DIGIT;

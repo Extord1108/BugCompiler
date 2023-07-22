@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast", "CheckReturnValue"})
 public class SysYParser extends Parser {
-	static { RuntimeMetaData.checkVersion("4.11.1", RuntimeMetaData.VERSION); }
+	static { RuntimeMetaData.checkVersion("4.12.0", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
 	protected static final PredictionContextCache _sharedContextCache =
@@ -21,11 +21,11 @@ public class SysYParser extends Parser {
 		CONTINUE=10, RETURN=11, PLUS=12, MINUS=13, NOT=14, MUL=15, DIV=16, MOD=17, 
 		ASSIGN=18, LT=19, GT=20, LE=21, GE=22, EQ=23, NE=24, AND=25, OR=26, LPAREN=27, 
 		RPAREN=28, LBRACE=29, RBRACE=30, LBRACK=31, RBRACK=32, COMMA=33, SEMI=34, 
-		IDENT=35, IDENT_NONDIGIT=36, INT_CONST=37, DECIMAL_CONST=38, OCTAL_CONST=39, 
-		HEX_CONST=40, HEX_PREFIX=41, NONZERO_DIGIT=42, DIGIT=43, OCTAL_DIGIT=44, 
-		HEX_DIGIT=45, FLOAT_CONST=46, DECIMAL_FLOAT_CONST=47, HEX_FLOAT_CONST=48, 
-		FRACTIONAL_CONST=49, EXPONENT_PART=50, SIGN=51, DIGIT_SEQUENCE=52, HEX_FRACTIONAL_CONST=53, 
-		BINARY_EXPONENT_PART=54, HEX_DIGIT_SEQUENCE=55, FLOAT_SUFFIX=56;
+		IDENT=35, IDENT_NONDIGIT=36, DECIMAL_CONST=37, OCTAL_CONST=38, HEX_CONST=39, 
+		HEX_PREFIX=40, NONZERO_DIGIT=41, DIGIT=42, OCTAL_DIGIT=43, HEX_DIGIT=44, 
+		FLOAT_CONST=45, DECIMAL_FLOAT_CONST=46, HEX_FLOAT_CONST=47, FRACTIONAL_CONST=48, 
+		EXPONENT_PART=49, SIGN=50, DIGIT_SEQUENCE=51, HEX_FRACTIONAL_CONST=52, 
+		BINARY_EXPONENT_PART=53, HEX_DIGIT_SEQUENCE=54, FLOAT_SUFFIX=55;
 	public static final int
 		RULE_compUnit = 0, RULE_decl = 1, RULE_constDecl = 2, RULE_bType = 3, 
 		RULE_constDef = 4, RULE_constInitVal = 5, RULE_varDecl = 6, RULE_varDef = 7, 
@@ -62,11 +62,11 @@ public class SysYParser extends Parser {
 			"CONTINUE", "RETURN", "PLUS", "MINUS", "NOT", "MUL", "DIV", "MOD", "ASSIGN", 
 			"LT", "GT", "LE", "GE", "EQ", "NE", "AND", "OR", "LPAREN", "RPAREN", 
 			"LBRACE", "RBRACE", "LBRACK", "RBRACK", "COMMA", "SEMI", "IDENT", "IDENT_NONDIGIT", 
-			"INT_CONST", "DECIMAL_CONST", "OCTAL_CONST", "HEX_CONST", "HEX_PREFIX", 
-			"NONZERO_DIGIT", "DIGIT", "OCTAL_DIGIT", "HEX_DIGIT", "FLOAT_CONST", 
-			"DECIMAL_FLOAT_CONST", "HEX_FLOAT_CONST", "FRACTIONAL_CONST", "EXPONENT_PART", 
-			"SIGN", "DIGIT_SEQUENCE", "HEX_FRACTIONAL_CONST", "BINARY_EXPONENT_PART", 
-			"HEX_DIGIT_SEQUENCE", "FLOAT_SUFFIX"
+			"DECIMAL_CONST", "OCTAL_CONST", "HEX_CONST", "HEX_PREFIX", "NONZERO_DIGIT", 
+			"DIGIT", "OCTAL_DIGIT", "HEX_DIGIT", "FLOAT_CONST", "DECIMAL_FLOAT_CONST", 
+			"HEX_FLOAT_CONST", "FRACTIONAL_CONST", "EXPONENT_PART", "SIGN", "DIGIT_SEQUENCE", 
+			"HEX_FRACTIONAL_CONST", "BINARY_EXPONENT_PART", "HEX_DIGIT_SEQUENCE", 
+			"FLOAT_SUFFIX"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -529,7 +529,9 @@ public class SysYParser extends Parser {
 			case NOT:
 			case LPAREN:
 			case IDENT:
-			case INT_CONST:
+			case DECIMAL_CONST:
+			case OCTAL_CONST:
+			case HEX_CONST:
 			case FLOAT_CONST:
 				enterOuterAlt(_localctx, 1);
 				{
@@ -545,7 +547,7 @@ public class SysYParser extends Parser {
 				setState(117);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 70541213986816L) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 36181475618816L) != 0)) {
 					{
 					setState(109);
 					constInitVal();
@@ -828,7 +830,9 @@ public class SysYParser extends Parser {
 			case NOT:
 			case LPAREN:
 			case IDENT:
-			case INT_CONST:
+			case DECIMAL_CONST:
+			case OCTAL_CONST:
+			case HEX_CONST:
 			case FLOAT_CONST:
 				enterOuterAlt(_localctx, 1);
 				{
@@ -844,7 +848,7 @@ public class SysYParser extends Parser {
 				setState(167);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 70541213986816L) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 36181475618816L) != 0)) {
 					{
 					setState(159);
 					initVal();
@@ -1216,7 +1220,7 @@ public class SysYParser extends Parser {
 			setState(210);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 70558393859932L) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 36198655491932L) != 0)) {
 				{
 				{
 				setState(207);
@@ -1297,7 +1301,9 @@ public class SysYParser extends Parser {
 			case LBRACE:
 			case SEMI:
 			case IDENT:
-			case INT_CONST:
+			case DECIMAL_CONST:
+			case OCTAL_CONST:
+			case HEX_CONST:
 			case FLOAT_CONST:
 				enterOuterAlt(_localctx, 2);
 				{
@@ -1396,7 +1402,7 @@ public class SysYParser extends Parser {
 				setState(225);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 70540677115904L) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 36180938747904L) != 0)) {
 					{
 					setState(224);
 					exp();
@@ -1482,7 +1488,7 @@ public class SysYParser extends Parser {
 				setState(250);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 70540677115904L) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 36180938747904L) != 0)) {
 					{
 					setState(249);
 					exp();
@@ -1718,7 +1724,9 @@ public class SysYParser extends Parser {
 				lVal();
 				}
 				break;
-			case INT_CONST:
+			case DECIMAL_CONST:
+			case OCTAL_CONST:
+			case HEX_CONST:
 			case FLOAT_CONST:
 				enterOuterAlt(_localctx, 2);
 				{
@@ -1754,7 +1762,9 @@ public class SysYParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class NumberContext extends ParserRuleContext {
-		public TerminalNode INT_CONST() { return getToken(SysYParser.INT_CONST, 0); }
+		public TerminalNode DECIMAL_CONST() { return getToken(SysYParser.DECIMAL_CONST, 0); }
+		public TerminalNode OCTAL_CONST() { return getToken(SysYParser.OCTAL_CONST, 0); }
+		public TerminalNode HEX_CONST() { return getToken(SysYParser.HEX_CONST, 0); }
 		public TerminalNode FLOAT_CONST() { return getToken(SysYParser.FLOAT_CONST, 0); }
 		public NumberContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -1784,7 +1794,7 @@ public class SysYParser extends Parser {
 			{
 			setState(277);
 			_la = _input.LA(1);
-			if ( !(_la==INT_CONST || _la==FLOAT_CONST) ) {
+			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 36146444763136L) != 0)) ) {
 			_errHandler.recoverInline(this);
 			}
 			else {
@@ -1866,7 +1876,7 @@ public class SysYParser extends Parser {
 				setState(283);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 70540677115904L) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 36180938747904L) != 0)) {
 					{
 					setState(282);
 					funcRParams();
@@ -2705,7 +2715,7 @@ public class SysYParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\u0004\u00018\u016c\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001\u0002"+
+		"\u0004\u00017\u016c\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001\u0002"+
 		"\u0002\u0007\u0002\u0002\u0003\u0007\u0003\u0002\u0004\u0007\u0004\u0002"+
 		"\u0005\u0007\u0005\u0002\u0006\u0007\u0006\u0002\u0007\u0007\u0007\u0002"+
 		"\b\u0007\b\u0002\t\u0007\t\u0002\n\u0007\n\u0002\u000b\u0007\u000b\u0002"+
@@ -2762,7 +2772,7 @@ public class SysYParser extends Parser {
 		"\n!\f!\u0168\t!\u0001\"\u0001\"\u0001\"\u0000\u0000#\u0000\u0002\u0004"+
 		"\u0006\b\n\f\u000e\u0010\u0012\u0014\u0016\u0018\u001a\u001c\u001e \""+
 		"$&(*,.02468:<>@BD\u0000\b\u0001\u0000\u0003\u0004\u0001\u0000\u0003\u0005"+
-		"\u0002\u0000%%..\u0001\u0000\f\u000e\u0001\u0000\u000f\u0011\u0001\u0000"+
+		"\u0002\u0000%\'--\u0001\u0000\f\u000e\u0001\u0000\u000f\u0011\u0001\u0000"+
 		"\f\r\u0001\u0000\u0013\u0016\u0001\u0000\u0017\u0018\u0174\u0000H\u0001"+
 		"\u0000\u0000\u0000\u0002N\u0001\u0000\u0000\u0000\u0004P\u0001\u0000\u0000"+
 		"\u0000\u0006\\\u0001\u0000\u0000\u0000\b^\u0001\u0000\u0000\u0000\nx\u0001"+
