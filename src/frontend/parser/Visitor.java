@@ -1,5 +1,6 @@
 package frontend.parser;
 
+import frontend.semantic.ConstNumber;
 import frontend.semantic.Evaluate;
 import frontend.semantic.OpTree;
 import ir.Value;
@@ -134,11 +135,32 @@ public class Visitor extends AbstractParseTreeVisitor<Void> implements SysYVisit
 
     @Override
     public Void visitPrimaryExp(SysYParser.PrimaryExpContext ctx) {
+        if(ctx.exp() != null){
+            visit(ctx.exp());
+        }else if(ctx.lVal() != null){
+            visit(ctx.lVal());
+        }else if(ctx.number() != null){
+            visit(ctx.number());
+        }
         return null;
     }
 
     @Override
     public Void visitNumber(SysYParser.NumberContext ctx) {
+        OpTree opTree = new OpTree(current, OpTree.OpType.number);
+        if(ctx.FLOAT_CONST() != null){
+            opTree.setNumber(Float.parseFloat(ctx.FLOAT_CONST().getText()));
+        }else if(ctx.DECIMAL_CONST() != null){
+            opTree.setNumber(Integer.parseInt(ctx.DECIMAL_CONST().getText()));
+        }else if(ctx.OCTAL_CONST() != null){
+            if(ctx.OCTAL_CONST().getText().length() >1)
+                opTree.setNumber(Integer.parseInt(ctx.OCTAL_CONST().getText().substring(1), 8));
+            else
+                opTree.setNumber(Integer.parseInt("0"));
+        }else if(ctx.HEX_CONST() != null){
+            opTree.setNumber(Integer.parseInt(ctx.HEX_CONST().getText().substring(2), 16));
+        }
+        current.addChild(opTree);
         return null;
     }
 
@@ -149,28 +171,33 @@ public class Visitor extends AbstractParseTreeVisitor<Void> implements SysYVisit
         }else if(ctx.IDENT() != null){
             System.err.println("visitUnaryExp:尚未实现函数调用功能");
         }else{
-            OpTree opTree = new OpTree(new ArrayList<>(),new ArrayList<>(),current, OpTree.OpType.unaryType);
             switch (ctx.unaryOp().getText()){
                 case "+" -> {
                     visit(ctx.unaryExp());
                 }
                 case "-" -> {
-                    opTree.appendOp(OpTree.Operator.Neg);
-                    current.addChild(opTree);
-                    current = opTree;
-                    visit(ctx.unaryExp());
-                    if(current.getOperators().size() != 0 && current.getOperators().get(0) == OpTree.Operator.Neg){
-
-                    }
-                    current = current.getParent();
+                    visitNegOrNotUnaryExp(ctx, OpTree.Operator.Neg);
                 }
                 case "!" -> {
-
+                    visitNegOrNotUnaryExp(ctx, OpTree.Operator.Not);
                 }
-
             }
         }
         return null;
+    }
+
+    public void visitNegOrNotUnaryExp(SysYParser.UnaryExpContext ctx, OpTree.Operator op){
+        OpTree opTree = new OpTree(new ArrayList<>(),new ArrayList<>(), current, OpTree.OpType.unaryType);
+        opTree.appendOp(op);
+        current.addChild(opTree);
+        current = opTree;
+        visit(ctx.unaryExp());
+        if(current.getOperators().size() != 0 && current.getOperators().get(0) == op){
+            current.getParent().removeLast();
+            current.getChildren().get(0).setParent(current.getParent());
+            current.getParent().addChild(current.getChildren().get(0));
+        }
+        current = current.getParent();
     }
 
     @Override

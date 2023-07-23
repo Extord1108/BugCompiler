@@ -5,8 +5,9 @@ import java.util.ArrayList;
 public class OpTree {
     private final ArrayList<OpTree> children;
     private final ArrayList<Operator> operators;
-    private final OpTree parent;
+    private OpTree parent;
     private final OpType type;
+    private ConstNumber number;
 
     public OpTree(ArrayList<OpTree> children,ArrayList<Operator> operators,OpTree parent,OpType type){
         this.children = children;
@@ -14,6 +15,14 @@ public class OpTree {
         this.parent = parent;
         this.type = type;
     }
+
+    public OpTree(OpTree parent, OpType type){
+        children = null;
+        operators = null;
+        this.parent = parent;
+        this.type = type;
+    }
+
     public void addChild(OpTree child){
         children.add(child);
     }
@@ -39,6 +48,27 @@ public class OpTree {
         return parent;
     }
 
+    public void setParent(OpTree parent) {
+        this.parent = parent;
+    }
+
+    public Object getNumber(){
+        if(number == null)
+            System.err.println("Current OpTree Type is " + type.toString());
+        return number.getNumber();
+    }
+
+    public void setNumber(Object number){
+        if(this.number == null)
+            this.number = new ConstNumber(number);
+        else
+            this.number.setNumber(number);
+    }
+
+    public ConstNumber.NumberType getNumberType(){
+        return number.getType();
+    }
+
     public enum Operator{
         Neg,
         Not,
@@ -61,6 +91,7 @@ public class OpTree {
 
     public enum OpType{
         unaryType,
-        binaryType
+        binaryType,
+        number
     }
 }
