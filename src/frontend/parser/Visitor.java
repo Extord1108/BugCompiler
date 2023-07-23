@@ -1,8 +1,9 @@
 package frontend.parser;
 
-import frontend.semantic.ConstNumber;
 import frontend.semantic.Evaluate;
 import frontend.semantic.OpTree;
+import frontend.semantic.symbol.SymTable;
+import frontend.semantic.symbol.Symbol;
 import ir.Value;
 import ir.type.FloatType;
 import ir.type.Int32Type;
@@ -11,28 +12,29 @@ import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 
 import java.util.ArrayList;
 
-public class Visitor extends AbstractParseTreeVisitor<Void> implements SysYVisitor<Void>{
+public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisitor<Value>{
     public static final Visitor Instance = new Visitor();
     private Visitor(){}
 
     private Type defContextType = null;
     private OpTree current = new OpTree(new ArrayList<>(),new ArrayList<>(),null, null);
+    private SymTable curSymTable = new SymTable(null);
 
     @Override
-    public Void visitCompUnit(SysYParser.CompUnitContext ctx) {
+    public Value visitCompUnit(SysYParser.CompUnitContext ctx) {
         System.out.println("visitCompUnit");
         visitChildren(ctx);
         return null;
     }
 
     @Override
-    public Void visitDecl(SysYParser.DeclContext ctx) {
+    public Value visitDecl(SysYParser.DeclContext ctx) {
         visitChildren(ctx);
         return null;
     }
 
     @Override
-    public Void visitConstDecl(SysYParser.ConstDeclContext ctx) {
+    public Value visitConstDecl(SysYParser.ConstDeclContext ctx) {
         if (ctx.bType().INT() != null) {
             defContextType = Int32Type.getInstance();
         } else if (ctx.bType().FLOAT() != null) {
@@ -45,12 +47,12 @@ public class Visitor extends AbstractParseTreeVisitor<Void> implements SysYVisit
     }
 
     @Override
-    public Void visitBType(SysYParser.BTypeContext ctx) {
+    public Value visitBType(SysYParser.BTypeContext ctx) {
         return null;
     }
 
     @Override
-    public Void visitConstDef(SysYParser.ConstDefContext ctx) {
+    public Value visitConstDef(SysYParser.ConstDefContext ctx) {
         String ident = ctx.IDENT().getText();
         Type currentType = defContextType;
         //每一维数组的长度
@@ -63,78 +65,82 @@ public class Visitor extends AbstractParseTreeVisitor<Void> implements SysYVisit
     }
 
     @Override
-    public Void visitConstInitVal(SysYParser.ConstInitValContext ctx) {
+    public Value visitConstInitVal(SysYParser.ConstInitValContext ctx) {
         return null;
     }
 
     @Override
-    public Void visitVarDecl(SysYParser.VarDeclContext ctx) {
+    public Value visitVarDecl(SysYParser.VarDeclContext ctx) {
         return null;
     }
 
     @Override
-    public Void visitVarDef(SysYParser.VarDefContext ctx) {
+    public Value visitVarDef(SysYParser.VarDefContext ctx) {
         return null;
     }
 
     @Override
-    public Void visitInitVal(SysYParser.InitValContext ctx) {
+    public Value visitInitVal(SysYParser.InitValContext ctx) {
         return null;
     }
 
     @Override
-    public Void visitFuncDef(SysYParser.FuncDefContext ctx) {
+    public Value visitFuncDef(SysYParser.FuncDefContext ctx) {
 
         return null;
     }
 
     @Override
-    public Void visitFuncType(SysYParser.FuncTypeContext ctx) {
+    public Value visitFuncType(SysYParser.FuncTypeContext ctx) {
         return null;
     }
 
     @Override
-    public Void visitFuncFParams(SysYParser.FuncFParamsContext ctx) {
+    public Value visitFuncFParams(SysYParser.FuncFParamsContext ctx) {
         return null;
     }
 
     @Override
-    public Void visitFuncFParam(SysYParser.FuncFParamContext ctx) {
+    public Value visitFuncFParam(SysYParser.FuncFParamContext ctx) {
         return null;
     }
 
     @Override
-    public Void visitBlock(SysYParser.BlockContext ctx) {
+    public Value visitBlock(SysYParser.BlockContext ctx) {
         return null;
     }
 
     @Override
-    public Void visitBlockItem(SysYParser.BlockItemContext ctx) {
+    public Value visitBlockItem(SysYParser.BlockItemContext ctx) {
         return null;
     }
 
     @Override
-    public Void visitStmt(SysYParser.StmtContext ctx) {
+    public Value visitStmt(SysYParser.StmtContext ctx) {
         return null;
     }
 
     @Override
-    public Void visitExp(SysYParser.ExpContext ctx) {
+    public Value visitExp(SysYParser.ExpContext ctx) {
         return null;
     }
 
     @Override
-    public Void visitCond(SysYParser.CondContext ctx) {
+    public Value visitCond(SysYParser.CondContext ctx) {
         return null;
     }
 
     @Override
-    public Void visitLVal(SysYParser.LValContext ctx) {
+    public Value visitLVal(SysYParser.LValContext ctx) {
+        String ident = ctx.IDENT().getText();
+        Symbol symbol = curSymTable.get(ident, true);
+//        if(symbol.isConst())
+
         return null;
     }
 
     @Override
-    public Void visitPrimaryExp(SysYParser.PrimaryExpContext ctx) {
+    public Value visitPrimaryExp(SysYParser.PrimaryExpContext ctx) {
         if(ctx.exp() != null){
             visit(ctx.exp());
         }else if(ctx.lVal() != null){
@@ -146,7 +152,7 @@ public class Visitor extends AbstractParseTreeVisitor<Void> implements SysYVisit
     }
 
     @Override
-    public Void visitNumber(SysYParser.NumberContext ctx) {
+    public Value visitNumber(SysYParser.NumberContext ctx) {
         OpTree opTree = new OpTree(current, OpTree.OpType.number);
         if(ctx.FLOAT_CONST() != null){
             opTree.setNumber(Float.parseFloat(ctx.FLOAT_CONST().getText()));
@@ -165,7 +171,7 @@ public class Visitor extends AbstractParseTreeVisitor<Void> implements SysYVisit
     }
 
     @Override
-    public Void visitUnaryExp(SysYParser.UnaryExpContext ctx) {
+    public Value visitUnaryExp(SysYParser.UnaryExpContext ctx) {
         if(ctx.primaryExp() != null){
             visit(ctx.primaryExp());
         }else if(ctx.IDENT() != null){
@@ -201,17 +207,17 @@ public class Visitor extends AbstractParseTreeVisitor<Void> implements SysYVisit
     }
 
     @Override
-    public Void visitUnaryOp(SysYParser.UnaryOpContext ctx) {
+    public Value visitUnaryOp(SysYParser.UnaryOpContext ctx) {
         return null;
     }
 
     @Override
-    public Void visitFuncRParams(SysYParser.FuncRParamsContext ctx) {
+    public Value visitFuncRParams(SysYParser.FuncRParamsContext ctx) {
         return null;
     }
 
     @Override
-    public Void visitMulExp(SysYParser.MulExpContext ctx) {
+    public Value visitMulExp(SysYParser.MulExpContext ctx) {
         if(ctx.unaryExp().size() > 1){
             visit(ctx.unaryExp(0));
         }else{
@@ -240,12 +246,12 @@ public class Visitor extends AbstractParseTreeVisitor<Void> implements SysYVisit
     }
 
     @Override
-    public Void visitMulOp(SysYParser.MulOpContext ctx) {
+    public Value visitMulOp(SysYParser.MulOpContext ctx) {
         return null;
     }
 
     @Override
-    public Void visitAddExp(SysYParser.AddExpContext ctx) {
+    public Value visitAddExp(SysYParser.AddExpContext ctx) {
         if(ctx.mulExp().size() > 1){
             visit(ctx.mulExp(0));
         }else{
@@ -271,42 +277,42 @@ public class Visitor extends AbstractParseTreeVisitor<Void> implements SysYVisit
     }
 
     @Override
-    public Void visitAddOp(SysYParser.AddOpContext ctx) {
+    public Value visitAddOp(SysYParser.AddOpContext ctx) {
         return null;
     }
 
     @Override
-    public Void visitRelExp(SysYParser.RelExpContext ctx) {
+    public Value visitRelExp(SysYParser.RelExpContext ctx) {
         return null;
     }
 
     @Override
-    public Void visitRelOp(SysYParser.RelOpContext ctx) {
+    public Value visitRelOp(SysYParser.RelOpContext ctx) {
         return null;
     }
 
     @Override
-    public Void visitEqExp(SysYParser.EqExpContext ctx) {
+    public Value visitEqExp(SysYParser.EqExpContext ctx) {
         return null;
     }
 
     @Override
-    public Void visitEqOp(SysYParser.EqOpContext ctx) {
+    public Value visitEqOp(SysYParser.EqOpContext ctx) {
         return null;
     }
 
     @Override
-    public Void visitLAndExp(SysYParser.LAndExpContext ctx) {
+    public Value visitLAndExp(SysYParser.LAndExpContext ctx) {
         return null;
     }
 
     @Override
-    public Void visitLOrExp(SysYParser.LOrExpContext ctx) {
+    public Value visitLOrExp(SysYParser.LOrExpContext ctx) {
         return null;
     }
 
     @Override
-    public Void visitConstExp(SysYParser.ConstExpContext ctx) {
+    public Value visitConstExp(SysYParser.ConstExpContext ctx) {
         visitChildren(ctx);
         return null;
     }
