@@ -17,6 +17,10 @@ public class Symbol {
         return this.isConst;
     }
 
+    public Object getNumber(){
+        return Integer.parseInt("0");
+    }
+
     public String getName(){
         return name;
     }

@@ -134,8 +134,10 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
     public Value visitLVal(SysYParser.LValContext ctx) {
         String ident = ctx.IDENT().getText();
         Symbol symbol = curSymTable.get(ident, true);
-//        if(symbol.isConst())
-
+        if(symbol.isConst() && ctx.exp() == null){
+            OpTree opTree = new OpTree(current, OpTree.OpType.number);
+            opTree.setNumber(symbol.getNumber());
+        }
         return null;
     }
 
