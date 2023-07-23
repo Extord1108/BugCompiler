@@ -27,6 +27,10 @@ public class OpTree {
         children.add(child);
     }
 
+    public OpTree getLast(){
+        return children.get(children.size() - 1);
+    }
+
     public void removeLast() {
         var last = children.get(children.size() - 1);
         children.remove(last);

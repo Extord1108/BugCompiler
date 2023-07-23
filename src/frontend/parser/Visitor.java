@@ -59,7 +59,7 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
         ArrayList<Integer> lengths = new ArrayList<>();
         for(var exp: ctx.constExp()){
             visit(exp);
-            lengths.add((Integer) Evaluate.evalConstExp(current));
+            lengths.add((Integer) Evaluate.evalConstExp(current.getLast()));
         }
 
         return null;
@@ -221,7 +221,7 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
 
     @Override
     public Value visitMulExp(SysYParser.MulExpContext ctx) {
-        if(ctx.unaryExp().size() > 1){
+        if(ctx.unaryExp().size() == 1){
             visit(ctx.unaryExp(0));
         }else{
             OpTree opTree = new OpTree(new ArrayList<>(),new ArrayList<>(),current, OpTree.OpType.binaryType);
@@ -255,7 +255,7 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
 
     @Override
     public Value visitAddExp(SysYParser.AddExpContext ctx) {
-        if(ctx.mulExp().size() > 1){
+        if(ctx.mulExp().size() == 1){
             visit(ctx.mulExp(0));
         }else{
             OpTree opTree = new OpTree(new ArrayList<>(),new ArrayList<>(),current, OpTree.OpType.binaryType);
@@ -275,6 +275,8 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
                 }
             }
             current = current.getParent();
+//            System.out.println(current.getLast().getLast().getNumberType());
+//            System.out.println(Evaluate.evalConstExp(current.getLast()));
         }
         return null;
     }
