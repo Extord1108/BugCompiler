@@ -1,10 +1,13 @@
 package frontend.parser;
 
 import frontend.semantic.Evaluate;
+import frontend.semantic.InitVal;
 import frontend.semantic.OpTree;
 import frontend.semantic.symbol.SymTable;
 import frontend.semantic.symbol.Symbol;
+import ir.Constant;
 import ir.Value;
+import ir.type.ArrayType;
 import ir.type.FloatType;
 import ir.type.Int32Type;
 import ir.type.Type;
@@ -55,11 +58,26 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
     public Value visitConstDef(SysYParser.ConstDefContext ctx) {
         String ident = ctx.IDENT().getText();
         Type currentType = defContextType;
+        InitVal initVal;
         //每一维数组的长度
         ArrayList<Integer> lengths = new ArrayList<>();
         for(var exp: ctx.constExp()){
             visit(exp);
             lengths.add((Integer) Evaluate.evalConstExp(current.getLast()));
+        }
+        for(int i = lengths.size() - 1; i >= 0; i--){
+            currentType = new ArrayType(currentType, lengths.get(i));
+        }
+        defContextType = currentType;
+
+        if(ctx.constInitVal() != null){
+            if(currentType instanceof ArrayType){
+                Constant.ConstArray constArray = (Constant.ConstArray) visit(ctx.constInitVal());
+                constArray = constArray.changeType((ArrayType) defContextType);
+                initVal = new InitVal(defContextType, constArray);
+            }else{
+                 initVal = new InitVal(defContextType, visit(ctx.constInitVal()));
+            }
         }
 
         return null;
@@ -67,7 +85,33 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
 
     @Override
     public Value visitConstInitVal(SysYParser.ConstInitValContext ctx) {
-        return null;
+        Value ret;
+        if(ctx.constExp() != null){
+            visit(ctx.constExp());
+            var number = Evaluate.evalConstExp(current.getLast());
+            if(number instanceof Integer){
+                if(defContextType instanceof Int32Type){
+                    return new Constant.ConstInt((int)number);
+                }else{
+                    assert defContextType instanceof FloatType;
+                    return new Constant.ConstFloat((float) ((int)number));
+                }
+            }else{
+                assert number instanceof Float;
+                if(defContextType instanceof Int32Type){
+                    return new Constant.ConstInt((int) ((float)number));
+                }else{
+                    assert defContextType instanceof FloatType;
+                    return new Constant.ConstFloat((float)number);
+                }
+            }
+        }else{
+            ret = new Constant.ConstArray(null);
+            for(int i = 0; i < ctx.constInitVal().size(); i++){
+                ((Constant.ConstArray) ret).add((Constant) visit(ctx.constInitVal(i)));
+            }
+        }
+        return ret;
     }
 
     @Override
