@@ -9,21 +9,21 @@ public class OpTree {
     private final OpType type;
     private ConstNumber number;
 
-    public OpTree(ArrayList<OpTree> children,ArrayList<Operator> operators,OpTree parent,OpType type){
+    public OpTree(ArrayList<OpTree> children, ArrayList<Operator> operators, OpTree parent, OpType type) {
         this.children = children;
         this.operators = operators;
         this.parent = parent;
         this.type = type;
     }
 
-    public OpTree(OpTree parent, OpType type){
+    public OpTree(OpTree parent, OpType type) {
         children = null;
         operators = null;
         this.parent = parent;
         this.type = type;
     }
 
-    public void addChild(OpTree child){
+    public void addChild(OpTree child) {
         children.add(child);
     }
 
@@ -32,19 +32,19 @@ public class OpTree {
         children.remove(last);
     }
 
-    public void appendOp(Operator op){
+    public void appendOp(Operator op) {
         operators.add(op);
     }
 
-    public ArrayList<Operator> getOperators(){
+    public ArrayList<Operator> getOperators() {
         return operators;
     }
 
-    public ArrayList<OpTree> getChildren(){
+    public ArrayList<OpTree> getChildren() {
         return children;
     }
 
-    public OpTree getParent(){
+    public OpTree getParent() {
         return parent;
     }
 
@@ -52,24 +52,28 @@ public class OpTree {
         this.parent = parent;
     }
 
-    public Object getNumber(){
-        if(number == null)
+    public Object getNumber() {
+        if (number == null)
             System.err.println("Current OpTree Type is " + type.toString());
         return number.getNumber();
     }
 
-    public void setNumber(Object number){
-        if(this.number == null)
+    public void setNumber(Object number) {
+        if (this.number == null)
             this.number = new ConstNumber(number);
         else
             this.number.setNumber(number);
     }
 
-    public ConstNumber.NumberType getNumberType(){
+    public ConstNumber.NumberType getNumberType() {
         return number.getType();
     }
 
-    public enum Operator{
+    public OpType getType() {
+        return type;
+    }
+
+    public enum Operator {
         Neg,
         Not,
         Mul,
@@ -89,7 +93,7 @@ public class OpTree {
         CastFloat,
     }
 
-    public enum OpType{
+    public enum OpType {
         unaryType,
         binaryType,
         number

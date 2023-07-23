@@ -1,8 +1,7 @@
 package frontend.semantic;
 
+import java.util.ArrayList;
 import java.util.Iterator;
-
-import org.antlr.v4.runtime.misc.ObjectEqualityComparator;
 
 /**
  * 用于在编译期进行求值操作
@@ -17,35 +16,39 @@ public class Evaluate {
         if (opTree.getType() == OpTree.OpType.unaryType) {
             evalConstUnaryExp(opTree);
         }
-        return opTree.getValue();
+        return opTree.getNumber();
     }
 
     public static Object evalConstBinaryExp(OpTree opTree) {
         Iterator<OpTree> it = opTree.getChildren().listIterator();
         Iterator<OpTree.Operator> itOp = opTree.getOperators().listIterator();
-        evalConstExp(it.next());
-        String value = it.next().getValue();
+        OpTree child = it.next();
+        evalConstExp(child);
+        Object value = child.getNumber();
+        value = value instanceof Integer ? (int) value : (float) value;
         while (it.hasNext()) {
-            OpTree child = it.next();
+            child = it.next();
             evalConstExp(child);
-            value = binaryExpCalculator(value, child.getValue(), itOp.next()).toString();
+            value = binaryExpCalculator(value, child.getNumber(), itOp.next());
         }
-        opTree.setValue(value);
+        opTree.setNumber(value);
+
         return 0;
     }
 
     public static Object evalConstUnaryExp(OpTree opTree) {
         Iterator<OpTree> it = opTree.getChildren().listIterator();
         Iterator<OpTree.Operator> itOp = opTree.getOperators().listIterator();
-        evalConstExp(it.next());
-        String value = it.next().getValue();
-        value = unaryExpCalculator(value, itOp.next()).toString();
-        opTree.setValue(value);
+        OpTree child = it.next();
+        evalConstExp(child);
+        Object value = child.getNumber();
+        value = unaryExpCalculator(value, itOp.next());
+        opTree.setNumber(value);
         return 0;
     }
 
     private static Object binaryExpCalculator(Object left, Object right, OpTree.Operator op) {
-        if (left.toString().contains(".") || left.toString().contains(".")) {
+        if ((left instanceof Float) || (right instanceof Float)) {
             float lnum = left instanceof Integer ? (float) ((int) left) : (float) left;
             float rnum = right instanceof Integer ? (float) ((int) right) : (float) right;
             return switch (op) {
@@ -72,7 +75,7 @@ public class Evaluate {
     }
 
     private static Object unaryExpCalculator(Object num, OpTree.Operator op) {
-        if (num.toString().contains(".")) {
+        if (num instanceof Float) {
             float fnum = num instanceof Integer ? (float) ((int) num) : (float) num;
             return switch (op) {
                 case Add -> fnum;
@@ -90,5 +93,33 @@ public class Evaluate {
                 default -> throw new AssertionError("Bad Unary Operator");
             };
         }
+    }
+
+    public static void main(String[] args) {
+        OpTree opTree = new OpTree(new ArrayList<OpTree>(), new ArrayList<OpTree.Operator>(), null,
+                OpTree.OpType.binaryType);
+
+        OpTree child1 = new OpTree(new ArrayList<OpTree>(), new ArrayList<OpTree.Operator>(), opTree,
+                OpTree.OpType.unaryType);
+        OpTree child1_1 = new OpTree(child1, OpTree.OpType.number);
+        child1_1.setNumber((float) -1.5);
+        child1.appendOp(OpTree.Operator.Neg);
+        child1.addChild(child1_1);
+
+        OpTree child2 = new OpTree(new ArrayList<OpTree>(), new ArrayList<OpTree.Operator>(), opTree,
+                OpTree.OpType.binaryType);
+        OpTree child2_1 = new OpTree(child2, OpTree.OpType.number);
+        child2_1.setNumber(2);
+        OpTree child2_2 = new OpTree(child2, OpTree.OpType.number);
+        child2_2.setNumber(3);
+        child2.appendOp(OpTree.Operator.Add);
+        child2.addChild(child2_1);
+        child2.addChild(child2_2);
+
+        opTree.appendOp(OpTree.Operator.Mul);
+        opTree.addChild(child1);
+        opTree.addChild(child2);
+
+        System.out.println(evalConstExp(opTree));
     }
 }
