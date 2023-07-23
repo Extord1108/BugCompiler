@@ -61,6 +61,7 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
             visit(exp);
             lengths.add((Integer) Evaluate.evalConstExp(current));
         }
+
         return null;
     }
 
