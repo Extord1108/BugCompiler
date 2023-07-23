@@ -25,7 +25,6 @@ public class Evaluate {
         OpTree child = it.next();
         evalConstExp(child);
         Object value = child.getNumber();
-        value = value instanceof Integer ? (int) value : (float) value;
         while (it.hasNext()) {
             child = it.next();
             evalConstExp(child);
@@ -102,16 +101,16 @@ public class Evaluate {
         OpTree child1 = new OpTree(new ArrayList<OpTree>(), new ArrayList<OpTree.Operator>(), opTree,
                 OpTree.OpType.unaryType);
         OpTree child1_1 = new OpTree(child1, OpTree.OpType.number);
-        child1_1.setNumber((float) -1.5);
+        child1_1.setNumber((int) 1);
         child1.appendOp(OpTree.Operator.Neg);
         child1.addChild(child1_1);
 
         OpTree child2 = new OpTree(new ArrayList<OpTree>(), new ArrayList<OpTree.Operator>(), opTree,
                 OpTree.OpType.binaryType);
         OpTree child2_1 = new OpTree(child2, OpTree.OpType.number);
-        child2_1.setNumber(2);
+        child2_1.setNumber((int) 2);
         OpTree child2_2 = new OpTree(child2, OpTree.OpType.number);
-        child2_2.setNumber(3);
+        child2_2.setNumber((int) 3);
         child2.appendOp(OpTree.Operator.Add);
         child2.addChild(child2_1);
         child2.addChild(child2_2);
@@ -120,6 +119,7 @@ public class Evaluate {
         opTree.addChild(child1);
         opTree.addChild(child2);
 
-        System.out.println(evalConstExp(opTree));
+        Object value = evalConstExp(opTree);
+        System.out.println(value instanceof Integer);
     }
 }
