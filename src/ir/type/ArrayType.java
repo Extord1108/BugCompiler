@@ -29,4 +29,12 @@ public class ArrayType extends Type{
             return size;
         }
     }
+
+    public Type getContextType(){
+        if(basicType instanceof ArrayType){
+            return ((ArrayType)basicType).getContextType();
+        }else{
+            return basicType;
+        }
+    }
 }
