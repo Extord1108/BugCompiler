@@ -16,7 +16,7 @@ initVal: exp | LBRACE (initVal (COMMA initVal)*)? RBRACE;
 funcDef: funcType IDENT LPAREN (funcFParams)? RPAREN block;
 funcType: VOID | INT | FLOAT;
 funcFParams: funcFParam (COMMA funcFParam)*;
-funcFParam: bType IDENT ( LBRACK RBRACK (LBRACK exp RBRACK)*)?;
+funcFParam: bType IDENT ( LBRACK RBRACK (LBRACK constExp RBRACK)*)?;
 block: LBRACE (blockItem)* RBRACE;
 blockItem: decl | stmt;
 stmt: lVal ASSIGN exp SEMI

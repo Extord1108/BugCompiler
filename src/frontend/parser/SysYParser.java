@@ -1100,11 +1100,11 @@ public class SysYParser extends Parser {
 		public TerminalNode RBRACK(int i) {
 			return getToken(SysYParser.RBRACK, i);
 		}
-		public List<ExpContext> exp() {
-			return getRuleContexts(ExpContext.class);
+		public List<ConstExpContext> constExp() {
+			return getRuleContexts(ConstExpContext.class);
 		}
-		public ExpContext exp(int i) {
-			return getRuleContext(ExpContext.class,i);
+		public ConstExpContext constExp(int i) {
+			return getRuleContext(ConstExpContext.class,i);
 		}
 		public FuncFParamContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -1154,7 +1154,7 @@ public class SysYParser extends Parser {
 					setState(195);
 					match(LBRACK);
 					setState(196);
-					exp();
+					constExp();
 					setState(197);
 					match(RBRACK);
 					}
@@ -2850,7 +2850,7 @@ public class SysYParser extends Parser {
 		"\u0000\u0000\u00be\u00bc\u0001\u0000\u0000\u0000\u00bf\u00c0\u0003\u0006"+
 		"\u0003\u0000\u00c0\u00cc\u0005#\u0000\u0000\u00c1\u00c2\u0005\u001f\u0000"+
 		"\u0000\u00c2\u00c9\u0005 \u0000\u0000\u00c3\u00c4\u0005\u001f\u0000\u0000"+
-		"\u00c4\u00c5\u0003 \u0010\u0000\u00c5\u00c6\u0005 \u0000\u0000\u00c6\u00c8"+
+		"\u00c4\u00c5\u0003D\"\u0000\u00c5\u00c6\u0005 \u0000\u0000\u00c6\u00c8"+
 		"\u0001\u0000\u0000\u0000\u00c7\u00c3\u0001\u0000\u0000\u0000\u00c8\u00cb"+
 		"\u0001\u0000\u0000\u0000\u00c9\u00c7\u0001\u0000\u0000\u0000\u00c9\u00ca"+
 		"\u0001\u0000\u0000\u0000\u00ca\u00cd\u0001\u0000\u0000\u0000\u00cb\u00c9"+

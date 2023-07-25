@@ -143,7 +143,6 @@ public class SysYBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements S
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
-	 * @return
 	 */
 	@Override public T visitLVal(SysYParser.LValContext ctx) { return visitChildren(ctx); }
 	/**

@@ -13,6 +13,14 @@ public class InitVal {
         this.value = value;
     }
 
+    public Type getType() {
+        return type;
+    }
+
+    public Value getValue() {
+        return value;
+    }
+
     @Override
     public String toString() {
         return type + " " + value;
