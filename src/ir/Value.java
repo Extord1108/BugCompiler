@@ -11,6 +11,10 @@ public class Value extends MyNode {
     public static final String GLOBAL_PRE = "@";
     public static final String LOCAL_PRE = "%";
 
+    public Type getType() {
+        return type;
+    }
+
     public String getName() {
         return name;
     }

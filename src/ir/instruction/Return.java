@@ -1,10 +1,19 @@
 package ir.instruction;
 
 import ir.BasicBlock;
+import ir.Value;
 import ir.type.Type;
+import ir.type.VoidType;
 
 public class Return extends Instr{
-    public Return(Type type, BasicBlock basicBlock) {
-        super(type, basicBlock);
+    private Value returnValue;
+
+    public Return(BasicBlock basicBlock) {
+        super(VoidType.getInstance(), basicBlock);
+    }
+
+    public Return(Value returnValue, BasicBlock basicBlock){
+        super(returnValue.getType(),basicBlock);
+        this.returnValue = returnValue;
     }
 }
