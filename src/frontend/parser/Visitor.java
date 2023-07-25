@@ -3,6 +3,7 @@ package frontend.parser;
 import frontend.semantic.Evaluate;
 import frontend.semantic.InitVal;
 import frontend.semantic.OpTree;
+import frontend.semantic.OpTreeHandler;
 import frontend.semantic.symbol.SymTable;
 import frontend.semantic.symbol.Symbol;
 import ir.*;
@@ -85,7 +86,7 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
 
         if(ctx.constInitVal() != null){
             if(currentType instanceof ArrayType){
-                Constant.ConstArray constArray = (Constant.ConstArray) visit(ctx.constInitVal());
+                Variable.VarArray constArray = (Variable.VarArray) visit(ctx.constInitVal());
                 constArray = constArray.changeType((ArrayType) currentType);
                 initVal = new InitVal( currentType, constArray);
             }else{
@@ -124,24 +125,24 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
             var number = Evaluate.evalConstExp(current.getLast());
             if(number instanceof Integer){
                 if(defContextType instanceof Int32Type){
-                    return new Constant.ConstInt((int)number);
+                    return new Variable.ConstInt((int)number);
                 }else{
                     assert defContextType instanceof FloatType;
-                    return new Constant.ConstFloat((float) ((int)number));
+                    return new Variable.ConstFloat((float) ((int)number));
                 }
             }else{
                 assert number instanceof Float;
                 if(defContextType instanceof Int32Type){
-                    return new Constant.ConstInt((int) ((float)number));
+                    return new Variable.ConstInt((int) ((float)number));
                 }else{
                     assert defContextType instanceof FloatType;
-                    return new Constant.ConstFloat((float)number);
+                    return new Variable.ConstFloat((float)number);
                 }
             }
         }else{
-            ret = new Constant.ConstArray(null);
+            ret = new Variable.VarArray(null);
             for(int i = 0; i < ctx.constInitVal().size(); i++){
-                ((Constant.ConstArray) ret).add((Constant) visit(ctx.constInitVal(i)));
+                ((Variable.VarArray) ret).add((Variable) visit(ctx.constInitVal(i)));
             }
         }
         return ret;
@@ -177,9 +178,9 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
 
         if(ctx.initVal() != null){
             if(currentType instanceof ArrayType){
-                Constant.ConstArray constArray = (Constant.ConstArray) visit(ctx.initVal());
-                constArray = constArray.changeType((ArrayType) currentType);
-                initVal = new InitVal( currentType, constArray);
+                Variable.VarArray varArray = (Variable.VarArray) visit(ctx.initVal());
+                varArray = varArray.changeType((ArrayType) currentType);
+                initVal = new InitVal( currentType, varArray);
             }else{
                 initVal = new InitVal( currentType, visit(ctx.initVal()));
             }
@@ -209,7 +210,17 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
 
     @Override
     public Value visitInitVal(SysYParser.InitValContext ctx) {
-        return null;
+        Value ret;
+        if(ctx.exp() != null){
+            visit(ctx.exp());
+            ret = OpTreeHandler.evalExp(current.getLast(), curBasicBlock, defContextType);
+        }else{
+            ret = new Variable.VarArray(null);
+            for(int i = 0; i < ctx.initVal().size(); i++){
+                ((Variable.VarArray) ret).add((Variable) visit(ctx.initVal(i)));
+            }
+        }
+        return ret;
     }
 
     @Override
@@ -302,6 +313,7 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
 
     @Override
     public Value visitExp(SysYParser.ExpContext ctx) {
+        visitChildren(ctx);
         return null;
     }
 

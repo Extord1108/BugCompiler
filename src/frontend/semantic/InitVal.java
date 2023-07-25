@@ -1,6 +1,5 @@
 package frontend.semantic;
 
-import ir.Constant;
 import ir.Value;
 import ir.type.Type;
 
