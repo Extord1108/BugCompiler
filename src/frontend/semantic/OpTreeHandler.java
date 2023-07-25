@@ -50,4 +50,8 @@ public class OpTreeHandler {
         val = new Unary(defContentType, itOp.next(), val, basicBlock);
         return val;
     }
+
+    public static Value evalCond(OpTree opTree){
+        return null;
+    }
 }

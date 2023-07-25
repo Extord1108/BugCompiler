@@ -8,6 +8,8 @@ import frontend.semantic.symbol.SymTable;
 import frontend.semantic.symbol.Symbol;
 import ir.*;
 import ir.instruction.Alloc;
+import ir.instruction.Branch;
+import ir.instruction.Jump;
 import ir.instruction.Store;
 import ir.type.*;
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
@@ -27,6 +29,7 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
 
     private SymTable curSymTable = new SymTable(null);
     private BasicBlock curBasicBlock = null;
+    private Function curFunction = null;
 
 
 
@@ -241,9 +244,22 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
         }
         Function function = new Function(ident, curFuncParams, returnType);
         manager.addFunction(function);
+        curFunction = function;
         visit(ctx.block());
 
+        if(!curBasicBlock.isTerminated()){
+            if(returnType instanceof VoidType){
+
+            }else if(returnType instanceof Int32Type){
+
+            }else{
+                assert returnType instanceof FloatType;
+
+            }
+        }
+
         curBasicBlock = null;
+        curFunction = null;
         curSymTable = curSymTable.getParent();
         return null;
     }
@@ -308,6 +324,73 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
 
     @Override
     public Value visitStmt(SysYParser.StmtContext ctx) {
+        visitChildren(ctx);
+        return null;
+    }
+
+    @Override
+    public Value visitExpStmt(SysYParser.ExpStmtContext ctx) {
+        if(ctx.exp() != null){
+            visit(ctx.exp());
+            OpTreeHandler.evalExp(current.getLast(), curBasicBlock, defContextType);
+        }
+        return null;
+    }
+
+    @Override
+    public Value visitAssignStmt(SysYParser.AssignStmtContext ctx) {
+        Value left = visit(ctx.lVal());
+        Value right = OpTreeHandler.evalExp(current.getLast(), curBasicBlock, defContextType);
+        assert left.type instanceof PointerType;
+        right = turnTo(right, ((PointerType)left.type).getContentType());
+        new Store( right, left, curBasicBlock);
+        return null;
+    }
+
+    @Override
+    public Value visitIfStmt(SysYParser.IfStmtContext ctx) {
+        BasicBlock thenBlock = new BasicBlock();
+        BasicBlock followBlock =  new BasicBlock();
+        if(ctx.stmt().size() == 1){
+            visit(ctx.cond());
+            Value cond = OpTreeHandler.evalCond(current.getLast());
+            new Branch(cond, thenBlock, followBlock, curBasicBlock);
+            curBasicBlock = thenBlock;
+            visit(ctx.stmt(0));
+        }else{
+            assert ctx.stmt().size() == 2;
+            BasicBlock elseBlock =  new BasicBlock();
+            visit(ctx.cond());
+            Value cond = OpTreeHandler.evalCond(current.getLast());
+            new Branch(cond, thenBlock, elseBlock, curBasicBlock);
+            curBasicBlock = thenBlock;
+            visit(ctx.stmt(0));
+            new Jump(followBlock, curBasicBlock);
+            curBasicBlock = elseBlock;
+            visit(ctx.stmt(1));
+        }
+        new Jump(followBlock, curBasicBlock);
+        curBasicBlock = followBlock;
+        return null;
+    }
+
+    @Override
+    public Value visitWhileStmt(SysYParser.WhileStmtContext ctx) {
+        return null;
+    }
+
+    @Override
+    public Value visitBreakStmt(SysYParser.BreakStmtContext ctx) {
+        return null;
+    }
+
+    @Override
+    public Value visitContinueStmt(SysYParser.ContinueStmtContext ctx) {
+        return null;
+    }
+
+    @Override
+    public Value visitReturnStmt(SysYParser.ReturnStmtContext ctx) {
         return null;
     }
 

@@ -11,4 +11,12 @@ public class PointerType extends Type{
     public String toString() {
         return basicType + "*";
     }
+
+    public Type getContentType(){
+        if(basicType instanceof ArrayType){
+            return ((ArrayType)basicType).getContextType();
+        }else{
+            return basicType;
+        }
+    }
 }

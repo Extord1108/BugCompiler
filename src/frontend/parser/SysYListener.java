@@ -168,6 +168,76 @@ public interface SysYListener extends ParseTreeListener {
 	 */
 	void exitStmt(SysYParser.StmtContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link SysYParser#expStmt}.
+	 * @param ctx the parse tree
+	 */
+	void enterExpStmt(SysYParser.ExpStmtContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SysYParser#expStmt}.
+	 * @param ctx the parse tree
+	 */
+	void exitExpStmt(SysYParser.ExpStmtContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link SysYParser#assignStmt}.
+	 * @param ctx the parse tree
+	 */
+	void enterAssignStmt(SysYParser.AssignStmtContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SysYParser#assignStmt}.
+	 * @param ctx the parse tree
+	 */
+	void exitAssignStmt(SysYParser.AssignStmtContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link SysYParser#ifStmt}.
+	 * @param ctx the parse tree
+	 */
+	void enterIfStmt(SysYParser.IfStmtContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SysYParser#ifStmt}.
+	 * @param ctx the parse tree
+	 */
+	void exitIfStmt(SysYParser.IfStmtContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link SysYParser#whileStmt}.
+	 * @param ctx the parse tree
+	 */
+	void enterWhileStmt(SysYParser.WhileStmtContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SysYParser#whileStmt}.
+	 * @param ctx the parse tree
+	 */
+	void exitWhileStmt(SysYParser.WhileStmtContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link SysYParser#breakStmt}.
+	 * @param ctx the parse tree
+	 */
+	void enterBreakStmt(SysYParser.BreakStmtContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SysYParser#breakStmt}.
+	 * @param ctx the parse tree
+	 */
+	void exitBreakStmt(SysYParser.BreakStmtContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link SysYParser#continueStmt}.
+	 * @param ctx the parse tree
+	 */
+	void enterContinueStmt(SysYParser.ContinueStmtContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SysYParser#continueStmt}.
+	 * @param ctx the parse tree
+	 */
+	void exitContinueStmt(SysYParser.ContinueStmtContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link SysYParser#returnStmt}.
+	 * @param ctx the parse tree
+	 */
+	void enterReturnStmt(SysYParser.ReturnStmtContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SysYParser#returnStmt}.
+	 * @param ctx the parse tree
+	 */
+	void exitReturnStmt(SysYParser.ReturnStmtContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link SysYParser#exp}.
 	 * @param ctx the parse tree
 	 */

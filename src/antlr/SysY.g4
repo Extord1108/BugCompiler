@@ -19,14 +19,21 @@ funcFParams: funcFParam (COMMA funcFParam)*;
 funcFParam: bType IDENT ( LBRACK RBRACK (LBRACK constExp RBRACK)*)?;
 block: LBRACE (blockItem)* RBRACE;
 blockItem: decl | stmt;
-stmt: lVal ASSIGN exp SEMI
-    | (exp)? SEMI
+stmt: assignStmt
+    | expStmt
     | block
-    | IF LPAREN cond RPAREN stmt (ELSE stmt)?
-    | WHILE LPAREN cond RPAREN stmt
-    | BREAK SEMI
-    | CONTINUE SEMI
-    | RETURN (exp)? SEMI;
+    | ifStmt
+    | whileStmt
+    | breakStmt
+    | continueStmt
+    | returnStmt;
+expStmt: (exp)? SEMI;
+assignStmt: lVal ASSIGN exp SEMI;
+ifStmt: IF LPAREN cond RPAREN stmt (ELSE stmt)?;
+whileStmt: WHILE LPAREN cond RPAREN stmt;
+breakStmt: BREAK SEMI;
+continueStmt: CONTINUE SEMI;
+returnStmt: RETURN (exp)? SEMI;
 exp: addExp;
 cond: lOrExp;
 lVal: IDENT (LBRACK exp RBRACK)*;
