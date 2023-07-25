@@ -11,11 +11,11 @@ public class Value extends MyNode {
     public static final String GLOBAL_PRE = "@";
     public static final String LOCAL_PRE = "%";
 
-    public String getName() {
-        return name;
+    public Type getType() {
+        return type;
     }
 
-    public String getType() {
-        return type.toString();
+    public String getName() {
+        return name;
     }
 }

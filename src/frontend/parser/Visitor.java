@@ -7,15 +7,13 @@ import frontend.semantic.OpTreeHandler;
 import frontend.semantic.symbol.SymTable;
 import frontend.semantic.symbol.Symbol;
 import ir.*;
-import ir.instruction.Alloc;
-import ir.instruction.Branch;
-import ir.instruction.Jump;
-import ir.instruction.Store;
+import ir.instruction.*;
 import ir.type.*;
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Stack;
 
 public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisitor<Value>{
     public static final Visitor Instance = new Visitor();
@@ -31,7 +29,11 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
     private BasicBlock curBasicBlock = null;
     private Function curFunction = null;
 
+    private Variable.ConstFloat CONST_0f = new Variable.ConstFloat(0.0f);
+    private Variable.ConstInt CONST_0 = new Variable.ConstInt(0);
 
+    private final Stack<BasicBlock> blockFollows = new Stack<>();
+    private final Stack<BasicBlock> blockHeads = new Stack<>();
 
     private boolean isGlobal(){
         return curBasicBlock == null;
@@ -244,17 +246,18 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
         }
         Function function = new Function(ident, curFuncParams, returnType);
         manager.addFunction(function);
+        entry.addFunction(function);
         curFunction = function;
         visit(ctx.block());
 
         if(!curBasicBlock.isTerminated()){
             if(returnType instanceof VoidType){
-
+                new Return(curBasicBlock);
             }else if(returnType instanceof Int32Type){
-
+                new Return(CONST_0, curBasicBlock);
             }else{
                 assert returnType instanceof FloatType;
-
+                new Return(CONST_0f, curBasicBlock);
             }
         }
 
@@ -349,8 +352,8 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
 
     @Override
     public Value visitIfStmt(SysYParser.IfStmtContext ctx) {
-        BasicBlock thenBlock = new BasicBlock();
-        BasicBlock followBlock =  new BasicBlock();
+        BasicBlock thenBlock = new BasicBlock(curFunction);
+        BasicBlock followBlock =  new BasicBlock(curFunction);
         if(ctx.stmt().size() == 1){
             visit(ctx.cond());
             Value cond = OpTreeHandler.evalCond(current.getLast());
@@ -359,7 +362,7 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
             visit(ctx.stmt(0));
         }else{
             assert ctx.stmt().size() == 2;
-            BasicBlock elseBlock =  new BasicBlock();
+            BasicBlock elseBlock =  new BasicBlock(curFunction);
             visit(ctx.cond());
             Value cond = OpTreeHandler.evalCond(current.getLast());
             new Branch(cond, thenBlock, elseBlock, curBasicBlock);
@@ -376,21 +379,47 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
 
     @Override
     public Value visitWhileStmt(SysYParser.WhileStmtContext ctx) {
+        BasicBlock condBlock = new BasicBlock(curFunction);
+        BasicBlock bodyBlock = new BasicBlock(curFunction);
+        BasicBlock followBlock = new BasicBlock(curFunction);
+        new Jump(condBlock, curBasicBlock);
+        curBasicBlock = condBlock;
+        visit(ctx.cond());
+        Value cond = OpTreeHandler.evalCond(current.getLast());
+        new Branch(cond, bodyBlock, followBlock, curBasicBlock);
+        curBasicBlock = bodyBlock;
+        blockHeads.push(condBlock);
+        blockFollows.push(followBlock);
+        visit(ctx.stmt());
+        blockHeads.pop();
+        blockFollows.pop();
+        new Jump(condBlock, curBasicBlock);
+        curBasicBlock = followBlock;
         return null;
     }
 
     @Override
     public Value visitBreakStmt(SysYParser.BreakStmtContext ctx) {
+        assert !blockFollows.empty();
+        new Jump(blockFollows.peek(), curBasicBlock);
         return null;
     }
 
     @Override
     public Value visitContinueStmt(SysYParser.ContinueStmtContext ctx) {
+        assert !blockHeads.empty();
+        new Jump(blockHeads.peek(), curBasicBlock);
         return null;
     }
 
     @Override
     public Value visitReturnStmt(SysYParser.ReturnStmtContext ctx) {
+        if(ctx.exp() == null){
+            new Return(curBasicBlock);
+        }else{
+            visit(ctx.exp());
+            OpTreeHandler.evalExp(current.getLast(), curBasicBlock, curFunction.getType());
+        }
         return null;
     }
 
