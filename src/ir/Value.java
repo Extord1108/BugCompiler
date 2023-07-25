@@ -14,4 +14,8 @@ public class Value extends MyNode {
     public String getName() {
         return name;
     }
+
+    public String getType() {
+        return type.toString();
+    }
 }

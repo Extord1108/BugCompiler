@@ -7,7 +7,7 @@ import ir.type.Type;
 public class Instr extends Value {
     private BasicBlock basicBlock;
 
-    public Instr(Type type, BasicBlock basicBlock){
+    public Instr(Type type, BasicBlock basicBlock) {
         this.type = type;
         this.basicBlock = basicBlock;
         basicBlock.addInstr(this);
@@ -19,5 +19,10 @@ public class Instr extends Value {
 
     public void setBasicBlock(BasicBlock basicBlock) {
         this.basicBlock = basicBlock;
+    }
+
+    @Override
+    public String toString() {
+        return super.toString();
     }
 }

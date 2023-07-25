@@ -1,6 +1,7 @@
 package util;
 
 import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
@@ -34,17 +35,17 @@ public class OutputHandler {
         }
     }
 
-    public static void output2Stream(StringBuilder str, FileOutputStream fileOutputStream) {
+    public static void output2Stream(StringBuilder str, OutputStream outputStream) {
         try {
-            fileOutputStream.write(str.toString().getBytes(StandardCharsets.UTF_8));
+            outputStream.write(str.toString().getBytes(StandardCharsets.UTF_8));
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public static void output2Stream(String str, FileOutputStream fileOutputStream) {
+    public static void output2Stream(String str, OutputStream outputStream) {
         try {
-            fileOutputStream.write(str.getBytes(StandardCharsets.UTF_8));
+            outputStream.write(str.getBytes(StandardCharsets.UTF_8));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -60,15 +61,15 @@ public class OutputHandler {
         llvmStringList.add("\n");
     }
 
-    public static void outputRiscvString(FileOutputStream fileOutputStream) {
+    public static void outputRiscvString(OutputStream outputStream) {
         for (String str : riscvStringList) {
-            output2Stream(str, fileOutputStream);
+            output2Stream(str, outputStream);
         }
     }
 
-    public static void outputLlvmString(FileOutputStream fileOutputStream) {
+    public static void outputLlvmString(OutputStream outputStream) {
         for (String str : llvmStringList) {
-            output2Stream(str, fileOutputStream);
+            output2Stream(str, outputStream);
         }
     }
 
