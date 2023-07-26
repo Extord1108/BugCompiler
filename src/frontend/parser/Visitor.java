@@ -449,7 +449,9 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
             new Return(curBasicBlock);
         }else{
             visit(ctx.exp());
-            OpTreeHandler.evalExp(current.getLast(), curBasicBlock);
+            Value value = OpTreeHandler.evalExp(current.getLast(), curBasicBlock);
+            value = turnTo(value, curFunction.getType());
+            new Return(value, curBasicBlock);
         }
         return null;
     }
@@ -528,6 +530,7 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
             }
             OpTree opTree = new OpTree(current, OpTree.OpType.valueType);
             opTree.setValue(new Call(function, params, curBasicBlock));
+            current.addChild(opTree);
         }else{
             switch (ctx.unaryOp().getText()){
                 case "+" -> {

@@ -1,5 +1,6 @@
 package ir;
 
+import ir.instruction.Call;
 import ir.instruction.Instr;
 import ir.instruction.Jump;
 import ir.instruction.Return;
@@ -49,7 +50,7 @@ public class BasicBlock extends Value {
         StringBuilder sb = new StringBuilder();
         sb.append(name).append(":\n");
         for (Instr instr : instrs) {
-            sb.append(instr.toString() + "\n");
+            sb.append("\t" + instr.toString() + "\n");
         }
         return sb.toString();
     }

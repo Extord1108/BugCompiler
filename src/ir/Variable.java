@@ -20,6 +20,7 @@ public class Variable extends Value {
         public ConstInt(int intVal) {
             super(Int32Type.getInstance());
             this.intVal = intVal;
+            this.name = ((Integer)intVal).toString();
         }
 
         public int getIntVal() {
@@ -38,6 +39,7 @@ public class Variable extends Value {
         public ConstFloat(float floatVal) {
             super(FloatType.getInstance());
             this.floatVal = floatVal;
+            this.name = ((Float)floatVal).toString();
         }
 
         public float getFloatVal() {
