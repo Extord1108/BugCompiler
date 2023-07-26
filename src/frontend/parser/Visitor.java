@@ -44,7 +44,17 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
     }
 
     private Value turnTo(Value value,Type targetType){
-        return null;
+        if(value.getType().equals(targetType)){
+            return value;
+        }else{
+            if(targetType instanceof Int32Type){
+                return new Fptosi(value, curBasicBlock);
+            }else{
+                assert targetType instanceof FloatType;
+                return new Sitofp(value, curBasicBlock);
+            }
+        }
+
     }
 
     @Override
@@ -512,7 +522,6 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
                 Value value = curFuncRParams.get(i);
                 Function.Param param = function.getParams().get(i);
                 if(param.getType() instanceof Int32Type || param.getType() instanceof FloatType){
-
                     value = turnTo(value, param.getType());
                 }
                 params.add(value);
