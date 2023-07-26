@@ -26,15 +26,19 @@ public class OpTree {
         this.type = type;
     }
 
-    public void setValue(Value value){
+    public void setValue(Value value) {
         this.value = value;
+    }
+
+    public Value getValue() {
+        return value;
     }
 
     public void addChild(OpTree child) {
         children.add(child);
     }
 
-    public OpTree getLast(){
+    public OpTree getLast() {
         return children.get(children.size() - 1);
     }
 

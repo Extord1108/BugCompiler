@@ -2,6 +2,7 @@ package frontend.semantic;
 
 import java.util.Iterator;
 
+import frontend.semantic.OpTree.OpType;
 import ir.BasicBlock;
 import ir.Value;
 import ir.type.FloatType;
@@ -19,11 +20,13 @@ public class OpTreeHandler {
             return evalUnaryExp(opTree, basicBlock);
         } else if (opTree.getType() == OpTree.OpType.number) {
             if (opTree.getNumberType() == ConstNumber.NumberType.Float) {
-                return new Variable.ConstFloat(0);
+                return new Variable.ConstFloat((float) opTree.getNumber());
             } else {
                 assert opTree.getNumberType() == ConstNumber.NumberType.INT;
-                return new Variable.ConstInt(0);
+                return new Variable.ConstInt((int) opTree.getNumber());
             }
+        } else if (opTree.getType() == OpTree.OpType.valueType) {
+            return opTree.getValue();
         }
         return null;
     }
