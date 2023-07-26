@@ -4,6 +4,7 @@ import ir.type.ArrayType;
 import ir.type.FloatType;
 import ir.type.Int32Type;
 import ir.type.Type;
+import util.MyList;
 
 import java.util.ArrayList;
 
@@ -50,13 +51,13 @@ public class Variable extends Value {
     }
 
     public static class VarArray extends Variable {
-        private ArrayList<Variable> varArray = new ArrayList<>();
+        private ArrayList<Value> varArray = new ArrayList<>();
 
         public VarArray(Type type) {
             super(type);
         }
 
-        public void add(Variable variable) {
+        public void add(Value variable) {
             varArray.add(variable);
         }
 
@@ -64,7 +65,19 @@ public class Variable extends Value {
             return varArray.size();
         }
 
-        public ArrayList<Variable> getvarArray() {
+        public ArrayList<Value> flatten(){
+            ArrayList<Value> flatten = new ArrayList<>();
+            for(Value variable: varArray){
+                if(variable instanceof VarArray){
+                    flatten.addAll(((VarArray) variable).flatten());
+                }else{
+                    flatten.add(variable);
+                }
+            }
+            return flatten;
+        }
+
+        public ArrayList<Value> getvarArray() {
             return varArray;
         }
 
@@ -73,7 +86,7 @@ public class Variable extends Value {
             int count = 0;
             int needSize = type.getSize();
             for (int i = 0; count < needSize && i < this.getSize(); i++) {
-                Variable variable = varArray.get(i);
+                Value variable = varArray.get(i);
                 // System.out.println("need " + type.getBasicType());
                 if (varArray.get(i) instanceof Variable.VarArray) {// 数组则放到下一层考虑
                     // System.out.println("get " + constant);

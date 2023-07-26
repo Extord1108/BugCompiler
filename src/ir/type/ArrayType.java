@@ -22,6 +22,13 @@ public class ArrayType extends Type{
         return basicType;
     }
 
+    public int getDims(){
+        if(basicType instanceof ArrayType){
+            return 1 + ((ArrayType)basicType).getDims();
+        }
+        return 1;
+    }
+
     public int getFattenSize(){
         if(basicType instanceof ArrayType){
             return size * ((ArrayType)basicType).getFattenSize();

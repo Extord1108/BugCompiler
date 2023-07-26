@@ -1,5 +1,6 @@
 package util;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Spliterator;
 import java.util.function.Consumer;
@@ -37,6 +38,16 @@ public class MyList<E extends MyNode> implements Iterable<E> {
         return (E) tail.getPrev();
     }
 
+    public E get(int idx){
+        E cur = (E) head.getNext();
+        for(int i = 0; i < size; i++){
+            if(i == idx)
+                return cur;
+            cur = (E) cur.getNext();
+        }
+        return cur;
+    }
+
     public void insertHead(E node){
         node.setNext(head.getNext());
         node.setPrev(head);
@@ -67,6 +78,10 @@ public class MyList<E extends MyNode> implements Iterable<E> {
         p.getPrev().setNext(node);
         p.setPrev(node);
         size ++;
+    }
+
+    public int size() {
+        return size;
     }
 
     @Override

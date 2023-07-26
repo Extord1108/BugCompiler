@@ -100,6 +100,7 @@ public class OpTree {
     public enum OpType {
         unaryType,
         binaryType,
+        condType,
         number
     }
 }

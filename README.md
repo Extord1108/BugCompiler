@@ -4,6 +4,7 @@
 
 - [ ] visitLVal完善
 - [ ] 关于evalExp类型传递的修正
+- [ ] VarArray的changeType对于Exp返回的Instr的兼容
 
 - [ ] Binary中的类型检查
 - [ ] Branch往后的tostring的实现
