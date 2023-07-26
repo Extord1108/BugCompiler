@@ -25,7 +25,7 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
 
     private Type defContextType = null;
     private OpTree current = new OpTree(new ArrayList<>(),new ArrayList<>(),null, null);
-    private HashMap<String, Type> curFuncParams = null;
+    private ArrayList<Function.Param> curFuncParams = null;
 
     private SymTable curSymTable = new SymTable(null);
     private BasicBlock curBasicBlock = null;
@@ -257,8 +257,13 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
 
         int idx = 0;
         if(ctx.funcFParams() != null){
-            curFuncParams = new HashMap<>();
+            curFuncParams = new ArrayList<>();
             visit(ctx.funcFParams());
+            for(Function.Param param: curFuncParams){
+                Value paramPointer = new Alloc( param.getType(), curBasicBlock);
+                new Store(param, paramPointer, curBasicBlock);
+                curSymTable.add(new Symbol(param.getName(), param.getType(), false, null, paramPointer));
+            }
         }
         Function function = new Function(ident, curFuncParams, returnType);
         manager.addFunction(function);
@@ -323,7 +328,7 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
             }
             curType = new PointerType(curType);
         }
-        curFuncParams.put( ident, curType);
+        curFuncParams.add( new Function.Param(ident, curType));
         return null;
     }
 
@@ -503,7 +508,16 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
             assert function != null;
             ArrayList<Value> params = new ArrayList<>();
             visit(ctx.funcRParams());
-
+            for(int i = 0; i < curFuncRParams.size(); i++){
+                Value value = curFuncRParams.get(i);
+                Function.Param param = function.getParams().get(i);
+                if(param.getType() instanceof Int32Type || param.getType() instanceof FloatType){
+                    value = turnTo(value, param.getType());
+                }
+                params.add(value);
+            }
+            OpTree opTree = new OpTree(current, OpTree.OpType.valueType);
+            opTree.setValue(new Call(function, params, curBasicBlock));
         }else{
             switch (ctx.unaryOp().getText()){
                 case "+" -> {

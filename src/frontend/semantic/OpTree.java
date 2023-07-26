@@ -1,5 +1,7 @@
 package frontend.semantic;
 
+import ir.Value;
+
 import java.util.ArrayList;
 
 public class OpTree {
@@ -7,6 +9,7 @@ public class OpTree {
     private final ArrayList<Operator> operators;
     private OpTree parent;
     private final OpType type;
+    private Value value;
     private ConstNumber number;
 
     public OpTree(ArrayList<OpTree> children, ArrayList<Operator> operators, OpTree parent, OpType type) {
@@ -21,6 +24,10 @@ public class OpTree {
         operators = null;
         this.parent = parent;
         this.type = type;
+    }
+
+    public void setValue(Value value){
+        this.value = value;
     }
 
     public void addChild(OpTree child) {
@@ -101,6 +108,7 @@ public class OpTree {
         unaryType,
         binaryType,
         condType,
-        number
+        number,
+        valueType
     }
 }

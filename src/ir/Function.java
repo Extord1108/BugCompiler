@@ -7,13 +7,29 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Function extends Value {
-    private HashMap<String, Type> params;
+    private ArrayList<Param> params;
     private MyList<BasicBlock> basicBlocks = new MyList<>();
 
-    public Function(String name, HashMap<String, Type> params, Type type) {
+    public Function(String name, ArrayList<Param> params, Type type) {
         this.name = name;
         this.params = params;
         this.type = type;
+    }
+
+    public static class Param extends Value{
+        public Param(String name, Type type){
+            this.name = name;
+            this.type = type;
+        }
+
+        @Override
+        public String toString() {
+            return type + " " + name;
+        }
+    }
+
+    public ArrayList<Param> getParams() {
+        return params;
     }
 
     public void addAtBegin(BasicBlock basicBlock) {
@@ -32,14 +48,12 @@ public class Function extends Value {
         if (params == null) {
             sb.append(") \n{\n");
         } else {
-            for (String paramName : params.keySet()) {
-                paramList.add(params.get(paramName).toString() + " %" + paramName);
+            for (Param param : params) {
+                String paramName = param.getName();
+                paramList.add(param.getType().toString() + " %" + paramName);
             }
             sb.append(String.join(", ", paramList)).append(") \n{");
 
-        }
-        for (String paramName : params.keySet()) {
-            paramList.add(params.get(paramName).toString() + " %" + paramName);
         }
         for (BasicBlock basicBlock : basicBlocks) {
             sb.append(basicBlock.toString());
@@ -56,8 +70,9 @@ public class Function extends Value {
             sb.append(")\n");
             return sb.toString();
         }
-        for (String paramName : params.keySet()) {
-            paramList.add(params.get(paramName).toString() + " %" + paramName);
+        for (Param param : params) {
+            String paramName = param.getName();
+            paramList.add(param.getType().toString() + " %" + paramName);
         }
         sb.append(String.join(", ", paramList)).append(")\n");
         return sb.toString();

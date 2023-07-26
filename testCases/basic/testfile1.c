@@ -1,5 +1,7 @@
 const int a[5][8]  = {};
-
+int b(int a){
+    return a;
+}
 int main(){
-    return 1 + 1;
+    return b(1);
 }
