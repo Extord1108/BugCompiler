@@ -5,7 +5,7 @@ import ir.Value;
 import ir.type.Type;
 import ir.type.VoidType;
 
-public class Store extends Instr{
+public class Store extends Instr {
 
     Value value;
     Value address;
@@ -14,5 +14,11 @@ public class Store extends Instr{
         super(VoidType.getInstance(), basicBlock);
         this.value = value;
         this.address = address;
+    }
+
+    @Override
+    public String toString() {
+        return "store " + value.getType().toString() + " " + value.toString() + ", " + address.getType().toString()
+                + " " + address.toString() + "\n";
     }
 }

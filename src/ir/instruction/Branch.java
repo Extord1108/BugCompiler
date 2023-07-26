@@ -5,7 +5,7 @@ import ir.Value;
 import ir.type.Type;
 import ir.type.VoidType;
 
-public class Branch extends Instr{
+public class Branch extends Instr {
 
     private Value cond;
     private BasicBlock thenBlock;
@@ -16,5 +16,11 @@ public class Branch extends Instr{
         this.cond = cond;
         this.thenBlock = thenBlock;
         this.elseBlock = elseBlock;
+    }
+
+    @Override
+    public String toString() {
+        return "br i1 " + cond.toString() + ", label %" + thenBlock.getName() + ", label %" + elseBlock.getName()
+                + "\n";
     }
 }

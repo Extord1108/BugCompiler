@@ -29,14 +29,22 @@ public class Function extends Value {
         StringBuilder sb = new StringBuilder();
         sb.append("define ").append(type.toString()).append(" @").append(name).append("(");
         ArrayList<String> paramList = new ArrayList<>();
+        if (params == null) {
+            sb.append(") \n{\n");
+        } else {
+            for (String paramName : params.keySet()) {
+                paramList.add(params.get(paramName).toString() + " %" + paramName);
+            }
+            sb.append(String.join(", ", paramList)).append(") \n{");
+
+        }
         for (String paramName : params.keySet()) {
             paramList.add(params.get(paramName).toString() + " %" + paramName);
         }
-        sb.append(String.join(", ", paramList)).append(") {");
         for (BasicBlock basicBlock : basicBlocks) {
             sb.append(basicBlock.toString());
         }
-        sb.append("}");
+        sb.append("}\n");
         return sb.toString();
     }
 
@@ -44,10 +52,14 @@ public class Function extends Value {
         StringBuilder sb = new StringBuilder();
         sb.append("declare ").append(type.toString()).append(" @").append(name).append("(");
         ArrayList<String> paramList = new ArrayList<>();
+        if (params == null) {
+            sb.append(")\n");
+            return sb.toString();
+        }
         for (String paramName : params.keySet()) {
             paramList.add(params.get(paramName).toString() + " %" + paramName);
         }
-        sb.append(String.join(", ", paramList)).append(")");
+        sb.append(String.join(", ", paramList)).append(")\n");
         return sb.toString();
     }
 }

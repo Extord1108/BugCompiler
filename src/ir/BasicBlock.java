@@ -17,10 +17,12 @@ public class BasicBlock extends Value {
 
     public BasicBlock() {
         this.label = ++block_count;
+        this.name = "label" + this.label;
     }
 
     public BasicBlock(Function function) {
         this.label = ++block_count;
+        this.name = "label" + this.label;
         this.function = function;
         function.addAtEnd(this);
     }
@@ -45,7 +47,7 @@ public class BasicBlock extends Value {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(name).append(":");
+        sb.append(name).append(":\n");
         for (Instr instr : instrs) {
             sb.append(instr.toString());
         }

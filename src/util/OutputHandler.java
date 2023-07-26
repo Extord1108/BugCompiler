@@ -53,12 +53,10 @@ public class OutputHandler {
 
     public static void addRiscvString(String str) {
         riscvStringList.add(str);
-        riscvStringList.add("\n");
     }
 
     public static void addLlvmString(String str) {
         llvmStringList.add(str);
-        llvmStringList.add("\n");
     }
 
     public static void outputRiscvString(OutputStream outputStream) {

@@ -19,7 +19,8 @@ public class Binary extends Instr {
 
     @Override
     public String toString() {
-        return this.getName() + " = " + op + " " + this.getType() + " " + this.getLeft() + ", " + this.getRight();
+        return this.getName() + " = " + op + " " + this.getType() + " " + this.getLeft() + ", " + this.getRight()
+                + "\n";
     }
 
     public OpTree.Operator getOp() {

@@ -13,7 +13,7 @@ public class GlobalValue extends Value {
 
     @Override
     public String toString() {
-        return "@" + name + " = dso_local global " + type.toString() + " " + initVal.toString();
+        return "@" + name + " = dso_local global " + type.toString() + " " + initVal.toString() + "\n";
     }
 
 }
