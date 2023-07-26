@@ -8,11 +8,11 @@ import ir.type.Type;
 public class Alloc extends Instr {
 
     public Alloc(Type type, BasicBlock basicBlock) {
-        super(new PointerType(type),basicBlock);
+        super(new PointerType(type), basicBlock);
     }
 
     @Override
     public String toString() {
-        return this.getName() + " = alloca " + this.getType().toString() + "\n";
+        return this.getName() + " = alloca " + this.getType().toString();
     }
 }

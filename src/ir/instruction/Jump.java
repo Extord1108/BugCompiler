@@ -15,6 +15,6 @@ public class Jump extends Instr {
 
     @Override
     public String toString() {
-        return "br label %" + targetBlock.getName() + "\n";
+        return "br label %" + targetBlock.getName();
     }
 }

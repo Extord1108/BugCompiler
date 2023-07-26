@@ -49,7 +49,7 @@ public class BasicBlock extends Value {
         StringBuilder sb = new StringBuilder();
         sb.append(name).append(":\n");
         for (Instr instr : instrs) {
-            sb.append(instr.toString());
+            sb.append(instr.toString() + "\n");
         }
         return sb.toString();
     }

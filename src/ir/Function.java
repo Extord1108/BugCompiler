@@ -16,8 +16,8 @@ public class Function extends Value {
         this.type = type;
     }
 
-    public static class Param extends Value{
-        public Param(String name, Type type){
+    public static class Param extends Value {
+        public Param(String name, Type type) {
             this.name = name;
             this.type = type;
         }
@@ -52,7 +52,7 @@ public class Function extends Value {
                 String paramName = param.getName();
                 paramList.add(param.getType().toString() + " %" + paramName);
             }
-            sb.append(String.join(", ", paramList)).append(") \n{");
+            sb.append(String.join(", ", paramList)).append(") \n{\n");
 
         }
         for (BasicBlock basicBlock : basicBlocks) {

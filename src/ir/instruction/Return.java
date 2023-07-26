@@ -22,7 +22,7 @@ public class Return extends Instr {
         if (returnValue == null) {
             return "ret void";
         } else {
-            return "ret " + returnValue.getType().toString() + " " + returnValue.toString() + "\n";
+            return "ret " + returnValue.getType().toString() + " " + returnValue.toString();
         }
     }
 }

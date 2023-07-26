@@ -20,7 +20,6 @@ public class Branch extends Instr {
 
     @Override
     public String toString() {
-        return "br i1 " + cond.toString() + ", label %" + thenBlock.getName() + ", label %" + elseBlock.getName()
-                + "\n";
+        return "br i1 " + cond.toString() + ", label %" + thenBlock.getName() + ", label %" + elseBlock.getName();
     }
 }

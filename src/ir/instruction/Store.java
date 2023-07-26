@@ -18,7 +18,7 @@ public class Store extends Instr {
 
     @Override
     public String toString() {
-        return "store " + value.getType().toString() + " " + value.toString() + ", " + address.getType().toString()
-                + " " + address.toString() + "\n";
+        return "store " + value.getType().toString() + " " + value.getName() + ", " + address.getType().toString()
+                + " " + address.getName();
     }
 }
