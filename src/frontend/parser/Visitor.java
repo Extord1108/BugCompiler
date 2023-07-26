@@ -317,7 +317,7 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
             assert ctx.bType().FLOAT() != null;
             curType = FloatType.getInstance();
         }
-        if(ctx.LBRACK() != null){
+        if(ctx.LBRACK().size() != 0){
             ArrayList<Integer> lengths = new ArrayList<>();
             for(var exp: ctx.constExp()){
                 visit(exp);
@@ -512,6 +512,7 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
                 Value value = curFuncRParams.get(i);
                 Function.Param param = function.getParams().get(i);
                 if(param.getType() instanceof Int32Type || param.getType() instanceof FloatType){
+
                     value = turnTo(value, param.getType());
                 }
                 params.add(value);
