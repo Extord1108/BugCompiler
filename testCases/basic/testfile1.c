@@ -8,6 +8,7 @@ int b(int a)
 }
 
 int main(){
+<<<<<<< HEAD
     int a = 1;
     while(a>2)
     {

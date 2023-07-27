@@ -1,13 +1,14 @@
 package ir;
 
 import frontend.semantic.InitVal;
+import ir.type.PointerType;
 import ir.type.Type;
 
 public class GlobalValue extends Value {
     public InitVal initVal;
 
     public GlobalValue(String name, Type type, InitVal initVal) {
-        this.type = type;
+        this.type = new PointerType(type);
         this.name = "@" + name;
         this.initVal = initVal;
     }
