@@ -1,10 +1,10 @@
-const int a[5][8] = {};
-int e = 5;
-int d = e + 1;
+int a[5][8];
+int e;
 int b(int a)
 {
-    const int a[5][5] = {1};
+
     int c = 1 + 19 + 0;
+    int d[2][2] = {c};
     return c;
 }
 

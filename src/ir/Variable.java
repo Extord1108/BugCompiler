@@ -95,7 +95,7 @@ public class Variable extends Value {
                     assert type.getBasicType() instanceof ArrayType;
                     ret.add(((Variable.VarArray) variable).changeType((ArrayType) type.getBasicType()));
                 } else {
-                    if (type.getBasicType() instanceof Int32Type || type.getBasicType() instanceof FloatType) {// 基本类型直接加入
+                    if(!(type.getBasicType() instanceof ArrayType)){//非数组元素直接加入
                         // System.out.println("get " + constant);
                         ret.add(variable);
                         // System.out.println("add " + constant);
@@ -105,8 +105,8 @@ public class Variable extends Value {
                         Variable.VarArray childArray = new Variable.VarArray(type.getBasicType());
                         for (int j = 0; j < size // 要加入子数组的元素个数
                                 && i < this.getSize() // 要加入的元素个数不能超过原数组的大小
-                                && (varArray.get(i) instanceof Variable.ConstInt
-                                        || varArray.get(i) instanceof Variable.ConstFloat) // 要加入的元素必须是基本类型
+//                                && (varArray.get(i) instanceof Variable.ConstInt
+//                                        || varArray.get(i) instanceof Variable.ConstFloat) // 要加入的元素必须是基本类型
                         ; j++, i++) {
                             // System.out.println("add " + varArray.get(i));
                             childArray.add(varArray.get(i));
