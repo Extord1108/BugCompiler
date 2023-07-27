@@ -436,9 +436,10 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
     @Override
     public Value visitIfStmt(SysYParser.IfStmtContext ctx) {
         BasicBlock thenBlock = new BasicBlock(curFunction);
-        BasicBlock followBlock = new BasicBlock(curFunction);
+        BasicBlock followBlock;
         if (ctx.stmt().size() == 1) {
             visit(ctx.cond());
+            followBlock = new BasicBlock(curFunction);
             Value cond = OpTreeHandler.evalCond(current.getLast(), thenBlock, followBlock, curBasicBlock);
             new Branch(cond, thenBlock, followBlock, curBasicBlock);
             curBasicBlock = thenBlock;
@@ -446,6 +447,7 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
         } else {
             assert ctx.stmt().size() == 2;
             BasicBlock elseBlock = new BasicBlock(curFunction);
+            followBlock = new BasicBlock(curFunction);
             visit(ctx.cond());
             Value cond = OpTreeHandler.evalCond(current.getLast(), thenBlock, elseBlock, curBasicBlock);
             new Branch(cond, thenBlock, elseBlock, curBasicBlock);
