@@ -89,23 +89,51 @@ public class OpTree {
     }
 
     public enum Operator {
-        Neg,
-        Not,
-        Mul,
-        Div,
-        Mod,
-        Add,
-        Sub,
-        Lt,
-        Gt,
-        Le,
-        Ge,
-        Eq,
-        Ne,
-        And,
-        Or,
-        CastInt, // 隐式转换
-        CastFloat,
+        Neg("neg"),
+        Not("not"),
+        Mul("mul"),
+        Div("div"),
+        Mod("mod"),
+        Add("add"),
+        Sub("sub"),
+        Lt("slt","olt"),
+        Gt("sgt","ogt"),
+        Le("sle","ole"),
+        Ge("sge","oge"),
+        Eq("eq","oeq"),
+        Ne("ne","one"),
+        And("and"),
+        Or("or"),
+        CastInt("castint"), // 隐式转换
+        CastFloat("casefloat"),
+        ;
+
+        private final String name;
+        private final String fname;
+
+        private Operator(String name){
+            this.name = name;
+            this.fname = "";
+        }
+
+        private Operator(String name, String fname){
+            this.name = name;
+            this.fname = fname;
+        }
+
+
+        public String getName(){
+            return name;
+        }
+
+        public String getfName() {
+            return fname;
+        }
+
+        @Override
+        public String toString(){
+            return name;
+        }
     }
 
     public enum OpType {
