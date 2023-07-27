@@ -44,7 +44,7 @@ public class Function extends Value {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("define ").append(type.toString()).append(" @").append(name).append("(");
+        sb.append("define dso_local ").append(type.toString()).append(" @").append(name).append("(");
         ArrayList<String> paramList = new ArrayList<>();
         if (params == null) {
             sb.append(") \n{\n");

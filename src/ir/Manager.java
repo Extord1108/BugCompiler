@@ -45,9 +45,9 @@ public class Manager {
             OutputHandler.addLlvmString(globalValue.toString());
         }
         // 函数声明
-        for (Function function : functions.values()) {
-            OutputHandler.addLlvmString(function.declare());
-        }
+        // for (Function function : functions.values()) {
+        // OutputHandler.addLlvmString(function.declare());
+        // }
         // 函数定义
         for (Function function : functions.values()) {
             OutputHandler.addLlvmString(function.toString());

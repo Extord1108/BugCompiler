@@ -9,12 +9,9 @@ int b(int a)
 
 int main(){
     int a = 1;
-    if(1>2)
+    while(a>2)
     {
         a=2;
-    }
-    else{
-    a=3;
     }
     return b(1.0);
 }

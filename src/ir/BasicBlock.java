@@ -18,12 +18,12 @@ public class BasicBlock extends Value {
 
     public BasicBlock() {
         this.label = ++block_count;
-        this.name = "label" + this.label;
+        this.name = "b" + this.label;
     }
 
     public BasicBlock(Function function) {
         this.label = ++block_count;
-        this.name = "label" + this.label;
+        this.name = "b" + this.label;
         this.function = function;
         function.addAtEnd(this);
     }
