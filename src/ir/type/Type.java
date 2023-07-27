@@ -6,4 +6,8 @@ public class Type {
     public Type getBasicType() {
         return basicType;
     }
+
+    public Type getContentType(){
+        return this;
+    }
 }

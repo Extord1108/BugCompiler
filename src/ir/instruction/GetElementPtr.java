@@ -2,6 +2,8 @@ package ir.instruction;
 
 import ir.BasicBlock;
 import ir.Value;
+import ir.type.ArrayType;
+import ir.type.PointerType;
 import ir.type.Type;
 
 import java.util.ArrayList;
@@ -12,13 +14,20 @@ public class GetElementPtr extends Instr{
     ArrayList<Value> idxList;
 
     public GetElementPtr(Type type, Value pointer, ArrayList<Value> idxList, BasicBlock basicBlock) {
-        super(type, basicBlock);
+        super(new PointerType(type.getContentType()), basicBlock);
         this.pointer = pointer;
         this.idxList = idxList;
     }
 
     @Override
     public String toString() {
-        return "请补充GetElementPtr的toString";
+        String ret = name + " = getelementptr inbounds " + pointer.getType().getBasicType() + ", " + pointer.getType() + " "
+                + pointer.getName() + ", ";
+        for(int i = 0; i < idxList.size(); i++){
+            ret += idxList.get(i).getType() + " " + idxList.get(i).getName();
+            if(i != idxList.size() - 1)
+                ret += ", ";
+        }
+        return  ret;
     }
 }
