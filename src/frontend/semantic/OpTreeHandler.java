@@ -2,6 +2,7 @@ package frontend.semantic;
 
 import java.util.Iterator;
 
+import frontend.parser.Visitor;
 import ir.BasicBlock;
 import ir.Value;
 import ir.type.FloatType;
@@ -21,9 +22,9 @@ public class OpTreeHandler {
         if (value.getType().equals(Int1Type.getInstance())) {
             return value;
         } else if (value.getType().equals(Int32Type.getInstance())) {
-            return new Icmp(value, new Variable.ConstInt(0), Icmp.Op.NE, curBasicBlock);
+            return new Icmp(value, new Variable.ConstInt(0), OpTree.Operator.Ne, curBasicBlock);
         } else {
-            return new Fcmp(value, new Variable.ConstFloat(0), Fcmp.Op.ONE, curBasicBlock);
+            return new Fcmp(value, new Variable.ConstFloat(0), OpTree.Operator.Ne, curBasicBlock);
         }
 
     }
@@ -78,20 +79,20 @@ public class OpTreeHandler {
 
     public static Value evalCond(OpTree opTree, BasicBlock trueBlock, BasicBlock falseBlock, BasicBlock basicBlock) {
         if (opTree.getType() == OpTree.OpType.condType) {
-            return turnToInt1(evalBinaryCond(opTree, trueBlock, falseBlock, basicBlock), basicBlock);
+            return evalBinaryCond(opTree, trueBlock, falseBlock, basicBlock);
         } else if (opTree.getType() == OpTree.OpType.binaryType) {
-            return turnToInt1(evalBinaryExp(opTree, basicBlock), basicBlock);
+            return evalBinaryExp(opTree, basicBlock);
         } else if (opTree.getType() == OpTree.OpType.unaryType) {
-            return turnToInt1(evalUnaryExp(opTree, basicBlock), basicBlock);
+            return evalUnaryExp(opTree, basicBlock);
         } else if (opTree.getType() == OpTree.OpType.number) {
             if (opTree.getNumberType() == ConstNumber.NumberType.Float) {
-                return turnToInt1(new Variable.ConstFloat((float) opTree.getNumber()), basicBlock);
+                return new Variable.ConstFloat((float) opTree.getNumber());
             } else {
                 assert opTree.getNumberType() == ConstNumber.NumberType.INT;
-                return turnToInt1(new Variable.ConstInt((int) opTree.getNumber()), basicBlock);
+                return new Variable.ConstInt((int) opTree.getNumber());
             }
         } else if (opTree.getType() == OpTree.OpType.valueType) {
-            return turnToInt1(opTree.getValue(), basicBlock);
+            return opTree.getValue();
         }
         return null;
     }
@@ -107,6 +108,7 @@ public class OpTreeHandler {
             OpTree.Operator op = itOp.next();
             if (op == OpTree.Operator.And) {
                 child = it.next();
+                first = Visitor.Instance.turnTo(first, Int1Type.getInstance());
                 second = evalCond(child, trueBlock, falseBlock, basicBlock);
                 BasicBlock newTrueBlock = new BasicBlock(basicBlock.getFunction());
                 newTrueBlock.addInstr(new Branch(second, trueBlock, falseBlock, newTrueBlock));
@@ -117,33 +119,20 @@ public class OpTreeHandler {
                 BasicBlock newFalseBlock = new BasicBlock(basicBlock.getFunction());
                 newFalseBlock.addInstr(new Branch(second, trueBlock, falseBlock, newFalseBlock));
                 first = new Branch(first, trueBlock, newFalseBlock, basicBlock);
-            } else {
-                Icmp.Op cmpOp = null;
-                switch (op) {
-                    case Lt:
-                        cmpOp = Icmp.Op.SLT;
-                        break;
-                    case Le:
-                        cmpOp = Icmp.Op.SLE;
-                        break;
-                    case Gt:
-                        cmpOp = Icmp.Op.SGT;
-                        break;
-                    case Ge:
-                        cmpOp = Icmp.Op.SGE;
-                        break;
-                    case Eq:
-                        cmpOp = Icmp.Op.EQ;
-                        break;
-                    case Ne:
-                        cmpOp = Icmp.Op.NE;
-                        break;
-                    default:
-                        assert false;
-                }
+            } else if (op == OpTree.Operator.Eq || op == OpTree.Operator.Ne) {
                 child = it.next();
-                second = evalCond(child, trueBlock, falseBlock, basicBlock);
-                first = new Icmp(first, second, cmpOp, basicBlock);
+
+            } else {
+                child = it.next();
+                second = evalExp(child, basicBlock);
+                if (first.getType() instanceof FloatType || second.getType() instanceof FloatType) {
+                    Visitor.Instance.turnTo(second, FloatType.getInstance());
+                    Visitor.Instance.turnTo(second, FloatType.getInstance());
+                    first = new Fcmp(first, second, op, basicBlock);
+                } else {
+                    assert first.getType() instanceof Int32Type && second.getType() instanceof Int32Type;
+                    first = new Icmp(first, second, op, basicBlock);
+                }
             }
         }
         return first;

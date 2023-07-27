@@ -4,10 +4,17 @@ int b(int a)
 {
 
     int c = 1 + 19 + 0;
-    int d[2][2] = {c};
     return c;
 }
 
 int main(){
+    int a = 1;
+    if(1>2)
+    {
+        a=2;
+    }
+    else{
+    a=3;
+    }
     return b(1.0);
 }

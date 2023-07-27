@@ -1,11 +1,12 @@
 package ir.instruction;
 
 import ir.Value;
+import frontend.semantic.OpTree;
 import ir.BasicBlock;
 
 public class Fcmp extends Instr {
     Value lhs, rhs;
-    Op op;
+    OpTree.Operator op;
 
     public enum Op {
         OEQ("oeq"),
@@ -27,7 +28,7 @@ public class Fcmp extends Instr {
 
     }
 
-    public Fcmp(Value lhs, Value rhs, Op op, BasicBlock basicBlock) {
+    public Fcmp(Value lhs, Value rhs, OpTree.Operator op, BasicBlock basicBlock) {
         super(lhs.getType(), basicBlock);
         this.lhs = lhs;
         this.rhs = rhs;
@@ -36,7 +37,7 @@ public class Fcmp extends Instr {
 
     @Override
     public String toString() {
-        return this.getName() + " = fcmp " + op.getName() + " " + lhs.getType() + " " + lhs.getName() + ", "
+        return this.getName() + " = fcmp " + op.getfName() + " " + lhs.getType() + " " + lhs.getName() + ", "
                 + rhs.getName();
     }
 }
