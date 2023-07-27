@@ -33,7 +33,7 @@ public class BasicBlock extends Value {
         function.addAtEnd(this);
     }
 
-    public void addInstrHead(Instr instr){
+    public void addInstrHead(Instr instr) {
         instrs.insertHead(instr);
     }
 
@@ -47,6 +47,10 @@ public class BasicBlock extends Value {
 
     public Instr getLast() {
         return instrs.getLast();
+    }
+
+    public Function getFunction() {
+        return function;
     }
 
     @Override
