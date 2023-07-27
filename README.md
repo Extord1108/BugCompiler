@@ -8,9 +8,9 @@
 - [x] visitVarDef完善，补0，补未定义
 ### gyf
 - [x] 关于evalExp类型传递的修正
-- [ ] VarArray的changeType对于Exp返回的Instr的兼容
-- [ ] Binary中的类型检查
-- [ ] Branch往后的tostring的实现
+- [x] VarArray的changeType对于Exp返回的Instr的兼容
+- [x] Binary中的类型检查
+- [x] Branch往后的tostring的实现
 
 ## 实现细节
 关于未显式初始化的局部变量，对于数组元素不足的情况，任采用补0的方式进行，并不是不确定的
