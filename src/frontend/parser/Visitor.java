@@ -17,14 +17,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Stack;
 
-public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisitor<Value>{
+public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisitor<Value> {
     public static final Visitor Instance = new Visitor();
-    private Visitor(){}
+
+    private Visitor() {
+    }
 
     private final Manager manager = Manager.getManager();
 
     private Type defContextType = null;
-    private OpTree current = new OpTree(new ArrayList<>(),new ArrayList<>(),null, null);
+    private OpTree current = new OpTree(new ArrayList<>(), new ArrayList<>(), null, null);
     private ArrayList<Function.Param> curFuncParams = null;
 
     private SymTable curSymTable = new SymTable(null);
@@ -32,25 +34,24 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
     private Function curFunction = null;
     private ArrayList<Value> curFuncRParams = null;
 
-
     private Variable.ConstFloat CONST_0f = new Variable.ConstFloat(0.0f);
     private Variable.ConstInt CONST_0 = new Variable.ConstInt(0);
 
     private final Stack<BasicBlock> blockFollows = new Stack<>();
     private final Stack<BasicBlock> blockHeads = new Stack<>();
 
-    private boolean isGlobal(){
+    private boolean isGlobal() {
         return curBasicBlock == null;
     }
 
-    private Value turnTo(Value value,Type targetType){
-        if(value.getType().equals(targetType)){
+    private Value turnTo(Value value, Type targetType) {
+        if (value.getType().equals(targetType)) {
             return value;
-        }else{
-            if(targetType instanceof Int32Type){
+        } else {
+            if (targetType instanceof Int32Type) {
                 assert value.getType() instanceof FloatType;
                 return new Fptosi(value, curBasicBlock);
-            }else{
+            } else {
                 assert targetType instanceof FloatType;
                 assert value.getType() instanceof Int32Type;
                 return new Sitofp(value, curBasicBlock);
@@ -95,56 +96,56 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
         String ident = ctx.IDENT().getText();
         Type currentType = defContextType;
         InitVal initVal = null;
-        //每一维数组的长度
+        // 每一维数组的长度
         ArrayList<Integer> lengths = new ArrayList<>();
-        for(var exp: ctx.constExp()){
+        for (var exp : ctx.constExp()) {
             visit(exp);
             lengths.add((Integer) Evaluate.evalConstExp(current.getLast()));
         }
-        for(int i = lengths.size() - 1; i >= 0; i--){
+        for (int i = lengths.size() - 1; i >= 0; i--) {
             currentType = new ArrayType(currentType, lengths.get(i));
         }
 
-        if(ctx.constInitVal() != null){
-            if(currentType instanceof ArrayType){
+        if (ctx.constInitVal() != null) {
+            if (currentType instanceof ArrayType) {
                 Variable.VarArray constArray = (Variable.VarArray) visit(ctx.constInitVal());
                 constArray = constArray.changeType((ArrayType) currentType);
-                initVal = new InitVal( currentType, constArray);
-            }else{
-                 initVal = new InitVal( currentType, visit(ctx.constInitVal()));
+                initVal = new InitVal(currentType, constArray);
+            } else {
+                initVal = new InitVal(currentType, visit(ctx.constInitVal()));
             }
         }
 
         Value pointer = null;
-        if(!isGlobal()){
+        if (!isGlobal()) {
             pointer = new Alloc(currentType, curBasicBlock);
             Type initType = initVal.getType();
-            if(initType instanceof ArrayType){
+            if (initType instanceof ArrayType) {
                 ArrayList<Value> flatten = initVal.flatten();
                 ArrayList<Value> idxList = new ArrayList<>();
-                for(int i = 0; i <= ((ArrayType)initType).getDims(); i++){
+                for (int i = 0; i <= ((ArrayType) initType).getDims(); i++) {
                     idxList.add(CONST_0);
                 }
                 Type contextType = ((ArrayType) initType).getContextType();
                 Value pl = new GetElementPtr(contextType, pointer, idxList, curBasicBlock);
                 new Store(turnTo(flatten.get(0), contextType), pl, curBasicBlock);
-                for(int i = 1; i < flatten.size(); i++){
-                    idxList =  new ArrayList<>();
+                for (int i = 1; i < flatten.size(); i++) {
+                    idxList = new ArrayList<>();
                     idxList.add(new Variable.ConstInt(i));
                     Value p = new GetElementPtr(contextType, pl, idxList, curBasicBlock);
                     new Store(turnTo(flatten.get(i), contextType), p, curBasicBlock);
                 }
-            }else if((initType instanceof FloatType) || (initType instanceof Int32Type)){
+            } else if ((initType instanceof FloatType) || (initType instanceof Int32Type)) {
                 Value value = turnTo(initVal.getValue(), initType);
                 new Store(value, pointer, curBasicBlock);
             }
-        }else{
-            pointer = new GlobalValue(ident, currentType,initVal);
+        } else {
+            pointer = new GlobalValue(ident, currentType, initVal);
         }
 
-        Symbol symbol = new Symbol(ident, defContextType,true, initVal, pointer);
+        Symbol symbol = new Symbol(ident, defContextType, true, initVal, pointer);
         curSymTable.add(symbol);
-        if(isGlobal()){
+        if (isGlobal()) {
             manager.addGlobal((GlobalValue) pointer);
         }
         return null;
@@ -153,28 +154,28 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
     @Override
     public Value visitConstInitVal(SysYParser.ConstInitValContext ctx) {
         Value ret;
-        if(ctx.constExp() != null){
+        if (ctx.constExp() != null) {
             visit(ctx.constExp());
             var number = Evaluate.evalConstExp(current.getLast());
-            if(number instanceof Integer){
-                if(defContextType instanceof Int32Type){
-                    return new Variable.ConstInt((int)number);
-                }else{
+            if (number instanceof Integer) {
+                if (defContextType instanceof Int32Type) {
+                    return new Variable.ConstInt((int) number);
+                } else {
                     assert defContextType instanceof FloatType;
-                    return new Variable.ConstFloat((float) ((int)number));
+                    return new Variable.ConstFloat((float) ((int) number));
                 }
-            }else{
+            } else {
                 assert number instanceof Float;
-                if(defContextType instanceof Int32Type){
-                    return new Variable.ConstInt((int) ((float)number));
-                }else{
+                if (defContextType instanceof Int32Type) {
+                    return new Variable.ConstInt((int) ((float) number));
+                } else {
                     assert defContextType instanceof FloatType;
-                    return new Variable.ConstFloat((float)number);
+                    return new Variable.ConstFloat((float) number);
                 }
             }
-        }else{
+        } else {
             ret = new Variable.VarArray(null);
-            for(int i = 0; i < ctx.constInitVal().size(); i++){
+            for (int i = 0; i < ctx.constInitVal().size(); i++) {
                 ((Variable.VarArray) ret).add((Variable) visit(ctx.constInitVal(i)));
             }
         }
@@ -199,42 +200,42 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
         String ident = ctx.IDENT().getText();
         Type currentType = defContextType;
         InitVal initVal = null;
-        //每一维数组的长度
+        // 每一维数组的长度
         ArrayList<Integer> lengths = new ArrayList<>();
-        for(var exp: ctx.constExp()){
+        for (var exp : ctx.constExp()) {
             visit(exp);
             lengths.add((Integer) Evaluate.evalConstExp(current.getLast()));
         }
-        for(int i = lengths.size() - 1; i >= 0; i--){
+        for (int i = lengths.size() - 1; i >= 0; i--) {
             currentType = new ArrayType(currentType, lengths.get(i));
         }
 
-        if(ctx.initVal() != null){
-            if(currentType instanceof ArrayType){
+        if (ctx.initVal() != null) {
+            if (currentType instanceof ArrayType) {
                 Variable.VarArray varArray = (Variable.VarArray) visit(ctx.initVal());
                 varArray = varArray.changeType((ArrayType) currentType);
-                initVal = new InitVal( currentType, varArray);
-            }else{
-                initVal = new InitVal( currentType, visit(ctx.initVal()));
+                initVal = new InitVal(currentType, varArray);
+            } else {
+                initVal = new InitVal(currentType, visit(ctx.initVal()));
             }
         }
 
         Value pointer = null;
-        if(!isGlobal()){
+        if (!isGlobal()) {
             pointer = new Alloc(currentType, curBasicBlock);
             Type initType = initVal.getType();
-            if(initType instanceof ArrayType){
+            if (initType instanceof ArrayType) {
                 System.err.println("尚未支持常量类型数组");
-            }else if((initType instanceof FloatType) || (initType instanceof Int32Type)){
+            } else if ((initType instanceof FloatType) || (initType instanceof Int32Type)) {
                 Value value = turnTo(initVal.getValue(), initType);
                 new Store(value, pointer, curBasicBlock);
             }
-        }else{
-            pointer = new GlobalValue( ident, currentType, initVal);
+        } else {
+            pointer = new GlobalValue(ident, currentType, initVal);
         }
-        Symbol symbol = new Symbol(ident, defContextType,false, initVal, pointer);
+        Symbol symbol = new Symbol(ident, defContextType, false, initVal, pointer);
         curSymTable.add(symbol);
-        if(isGlobal()){
+        if (isGlobal()) {
             manager.addGlobal((GlobalValue) pointer);
         }
         return null;
@@ -243,32 +244,32 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
     @Override
     public Value visitInitVal(SysYParser.InitValContext ctx) {
         Value ret;
-        if(ctx.exp() != null){
+        if (ctx.exp() != null) {
             visit(ctx.exp());
-            if(isGlobal()){
+            if (isGlobal()) {
                 var number = Evaluate.evalConstExp(current.getLast());
-                if(number instanceof Integer){
-                    if(defContextType instanceof Int32Type){
-                        ret = new Variable.ConstInt((int)number);
-                    }else{
+                if (number instanceof Integer) {
+                    if (defContextType instanceof Int32Type) {
+                        ret = new Variable.ConstInt((int) number);
+                    } else {
                         assert defContextType instanceof FloatType;
-                        ret = new Variable.ConstFloat((float) ((int)number));
+                        ret = new Variable.ConstFloat((float) ((int) number));
                     }
-                }else{
+                } else {
                     assert number instanceof Float;
-                    if(defContextType instanceof Int32Type){
-                        ret = new Variable.ConstInt((int) ((float)number));
-                    }else{
+                    if (defContextType instanceof Int32Type) {
+                        ret = new Variable.ConstInt((int) ((float) number));
+                    } else {
                         assert defContextType instanceof FloatType;
-                        ret = new Variable.ConstFloat((float)number);
+                        ret = new Variable.ConstFloat((float) number);
                     }
                 }
-            }else {
+            } else {
                 ret = OpTreeHandler.evalExp(current.getLast(), curBasicBlock);
             }
-        }else{
+        } else {
             ret = new Variable.VarArray(null);
-            for(int i = 0; i < ctx.initVal().size(); i++){
+            for (int i = 0; i < ctx.initVal().size(); i++) {
                 ((Variable.VarArray) ret).add((Variable) visit(ctx.initVal(i)));
             }
         }
@@ -287,10 +288,10 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
         curSymTable = new SymTable(curSymTable);
         curFuncParams = new ArrayList<>();
         int idx = 0;
-        if(ctx.funcFParams() != null){
+        if (ctx.funcFParams() != null) {
             visit(ctx.funcFParams());
-            for(Function.Param param: curFuncParams){
-                Value paramPointer = new Alloc( param.getType(), curBasicBlock);
+            for (Function.Param param : curFuncParams) {
+                Value paramPointer = new Alloc(param.getType(), curBasicBlock);
                 new Store(param, paramPointer, curBasicBlock);
                 curSymTable.add(new Symbol(param.getName(), param.getType(), false, null, paramPointer));
             }
@@ -301,12 +302,12 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
         curFunction = function;
         visit(ctx.block());
 
-        if(!curBasicBlock.isTerminated()){
-            if(returnType instanceof VoidType){
+        if (!curBasicBlock.isTerminated()) {
+            if (returnType instanceof VoidType) {
                 new Return(curBasicBlock);
-            }else if(returnType instanceof Int32Type){
+            } else if (returnType instanceof Int32Type) {
                 new Return(CONST_0, curBasicBlock);
-            }else{
+            } else {
                 assert returnType instanceof FloatType;
                 new Return(CONST_0f, curBasicBlock);
             }
@@ -320,11 +321,11 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
 
     @Override
     public Value visitFuncType(SysYParser.FuncTypeContext ctx) {
-        if(ctx.INT() != null){
+        if (ctx.INT() != null) {
             defContextType = Int32Type.getInstance();
-        }else if(ctx.FLOAT() != null){
+        } else if (ctx.FLOAT() != null) {
             defContextType = FloatType.getInstance();
-        }else{
+        } else {
             assert ctx.VOID() != null;
             defContextType = VoidType.getInstance();
         }
@@ -347,18 +348,18 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
             assert ctx.bType().FLOAT() != null;
             curType = FloatType.getInstance();
         }
-        if(ctx.LBRACK().size() != 0){
+        if (ctx.LBRACK().size() != 0) {
             ArrayList<Integer> lengths = new ArrayList<>();
-            for(var exp: ctx.constExp()){
+            for (var exp : ctx.constExp()) {
                 visit(exp);
                 lengths.add((Integer) Evaluate.evalConstExp(current.getLast()));
             }
-            for(int i = lengths.size() - 1; i >= 0; i--){
+            for (int i = lengths.size() - 1; i >= 0; i--) {
                 curType = new ArrayType(curType, lengths.get(i));
             }
             curType = new PointerType(curType);
         }
-        curFuncParams.add( new Function.Param(ident, curType));
+        curFuncParams.add(new Function.Param(ident, curType));
         return null;
     }
 
@@ -384,7 +385,7 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
 
     @Override
     public Value visitExpStmt(SysYParser.ExpStmtContext ctx) {
-        if(ctx.exp() != null){
+        if (ctx.exp() != null) {
             visit(ctx.exp());
             OpTreeHandler.evalExp(current.getLast(), curBasicBlock);
         }
@@ -396,26 +397,26 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
         Value left = visit(ctx.lVal());
         Value right = OpTreeHandler.evalExp(current.getLast(), curBasicBlock);
         assert left.type instanceof PointerType;
-        right = turnTo(right, ((PointerType)left.type).getContentType());
-        new Store( right, left, curBasicBlock);
+        right = turnTo(right, ((PointerType) left.type).getContentType());
+        new Store(right, left, curBasicBlock);
         return null;
     }
 
     @Override
     public Value visitIfStmt(SysYParser.IfStmtContext ctx) {
         BasicBlock thenBlock = new BasicBlock(curFunction);
-        BasicBlock followBlock =  new BasicBlock(curFunction);
-        if(ctx.stmt().size() == 1){
+        BasicBlock followBlock = new BasicBlock(curFunction);
+        if (ctx.stmt().size() == 1) {
             visit(ctx.cond());
-            Value cond = OpTreeHandler.evalCond(current.getLast(), thenBlock, followBlock);
+            Value cond = OpTreeHandler.evalCond(current.getLast(), thenBlock, followBlock, curBasicBlock);
             new Branch(cond, thenBlock, followBlock, curBasicBlock);
             curBasicBlock = thenBlock;
             visit(ctx.stmt(0));
-        }else{
+        } else {
             assert ctx.stmt().size() == 2;
-            BasicBlock elseBlock =  new BasicBlock(curFunction);
+            BasicBlock elseBlock = new BasicBlock(curFunction);
             visit(ctx.cond());
-            Value cond = OpTreeHandler.evalCond(current.getLast(), thenBlock, elseBlock);
+            Value cond = OpTreeHandler.evalCond(current.getLast(), thenBlock, elseBlock, curBasicBlock);
             new Branch(cond, thenBlock, elseBlock, curBasicBlock);
             curBasicBlock = thenBlock;
             visit(ctx.stmt(0));
@@ -436,7 +437,7 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
         new Jump(condBlock, curBasicBlock);
         curBasicBlock = condBlock;
         visit(ctx.cond());
-        Value cond = OpTreeHandler.evalCond(current.getLast(), bodyBlock, followBlock);
+        Value cond = OpTreeHandler.evalCond(current.getLast(), bodyBlock, followBlock, curBasicBlock);
         new Branch(cond, bodyBlock, followBlock, curBasicBlock);
         curBasicBlock = bodyBlock;
         blockHeads.push(condBlock);
@@ -465,9 +466,9 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
 
     @Override
     public Value visitReturnStmt(SysYParser.ReturnStmtContext ctx) {
-        if(ctx.exp() == null){
+        if (ctx.exp() == null) {
             new Return(curBasicBlock);
-        }else{
+        } else {
             visit(ctx.exp());
             Value value = OpTreeHandler.evalExp(current.getLast(), curBasicBlock);
             value = turnTo(value, curFunction.getType());
@@ -492,12 +493,11 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
     public Value visitLVal(SysYParser.LValContext ctx) {
         String ident = ctx.IDENT().getText();
         Symbol symbol = curSymTable.get(ident, true);
-        if((symbol.isConst() || isGlobal()) && ctx.exp().size() == 0){
+        if ((symbol.isConst() || isGlobal()) && ctx.exp().size() == 0) {
             OpTree opTree = new OpTree(current, OpTree.OpType.number);
             opTree.setNumber(symbol.getNumber());
             current.addChild(opTree);
-        }
-        else if(ctx.exp().size() == 0){
+        } else if (ctx.exp().size() == 0) {
             Value pointer = symbol.getValue();
             Value value = new Load(pointer, curBasicBlock);
             OpTree opTree = new OpTree(current, OpTree.OpType.valueType);
@@ -508,21 +508,21 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
         ArrayList<Value> idxList = new ArrayList<>();
         idxList.add(CONST_0);
 
-//        else{
-//            OpTree opTree =  new OpTree(current, OpTree.OpType.valueType);
-//            opTree.setValue(symbol.getValue());
-//            current.addChild(opTree);
-//        }
+        // else{
+        // OpTree opTree = new OpTree(current, OpTree.OpType.valueType);
+        // opTree.setValue(symbol.getValue());
+        // current.addChild(opTree);
+        // }
         return null;
     }
 
     @Override
     public Value visitPrimaryExp(SysYParser.PrimaryExpContext ctx) {
-        if(ctx.exp() != null){
+        if (ctx.exp() != null) {
             visit(ctx.exp());
-        }else if(ctx.lVal() != null){
+        } else if (ctx.lVal() != null) {
             visit(ctx.lVal());
-        }else if(ctx.number() != null){
+        } else if (ctx.number() != null) {
             visit(ctx.number());
         }
         return null;
@@ -531,16 +531,16 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
     @Override
     public Value visitNumber(SysYParser.NumberContext ctx) {
         OpTree opTree = new OpTree(current, OpTree.OpType.number);
-        if(ctx.FLOAT_CONST() != null){
+        if (ctx.FLOAT_CONST() != null) {
             opTree.setNumber(Float.parseFloat(ctx.FLOAT_CONST().getText()));
-        }else if(ctx.DECIMAL_CONST() != null){
+        } else if (ctx.DECIMAL_CONST() != null) {
             opTree.setNumber(Integer.parseInt(ctx.DECIMAL_CONST().getText()));
-        }else if(ctx.OCTAL_CONST() != null){
-            if(ctx.OCTAL_CONST().getText().length() >1)
+        } else if (ctx.OCTAL_CONST() != null) {
+            if (ctx.OCTAL_CONST().getText().length() > 1)
                 opTree.setNumber(Integer.parseInt(ctx.OCTAL_CONST().getText().substring(1), 8));
             else
                 opTree.setNumber(Integer.parseInt("0"));
-        }else if(ctx.HEX_CONST() != null){
+        } else if (ctx.HEX_CONST() != null) {
             opTree.setNumber(Integer.parseInt(ctx.HEX_CONST().getText().substring(2), 16));
         }
         current.addChild(opTree);
@@ -549,18 +549,18 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
 
     @Override
     public Value visitUnaryExp(SysYParser.UnaryExpContext ctx) {
-        if(ctx.primaryExp() != null){
+        if (ctx.primaryExp() != null) {
             visit(ctx.primaryExp());
-        }else if(ctx.IDENT() != null){
+        } else if (ctx.IDENT() != null) {
             String ident = ctx.IDENT().getText();
             Function function = Manager.getFunctions().get(ident);
             assert function != null;
             ArrayList<Value> params = new ArrayList<>();
             visit(ctx.funcRParams());
-            for(int i = 0; i < curFuncRParams.size(); i++){
+            for (int i = 0; i < curFuncRParams.size(); i++) {
                 Value value = curFuncRParams.get(i);
                 Function.Param param = function.getParams().get(i);
-                if(param.getType() instanceof Int32Type || param.getType() instanceof FloatType){
+                if (param.getType() instanceof Int32Type || param.getType() instanceof FloatType) {
                     value = turnTo(value, param.getType());
                 }
                 params.add(value);
@@ -568,8 +568,8 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
             OpTree opTree = new OpTree(current, OpTree.OpType.valueType);
             opTree.setValue(new Call(function, params, curBasicBlock));
             current.addChild(opTree);
-        }else{
-            switch (ctx.unaryOp().getText()){
+        } else {
+            switch (ctx.unaryOp().getText()) {
                 case "+" -> {
                     visit(ctx.unaryExp());
                 }
@@ -584,13 +584,13 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
         return null;
     }
 
-    public void visitNegOrNotUnaryExp(SysYParser.UnaryExpContext ctx, OpTree.Operator op){
-        OpTree opTree = new OpTree(new ArrayList<>(),new ArrayList<>(), current, OpTree.OpType.unaryType);
+    public void visitNegOrNotUnaryExp(SysYParser.UnaryExpContext ctx, OpTree.Operator op) {
+        OpTree opTree = new OpTree(new ArrayList<>(), new ArrayList<>(), current, OpTree.OpType.unaryType);
         opTree.appendOp(op);
         current.addChild(opTree);
         current = opTree;
         visit(ctx.unaryExp());
-        if(current.getOperators().size() != 0 && current.getOperators().get(0) == op){
+        if (current.getOperators().size() != 0 && current.getOperators().get(0) == op) {
             current.getParent().removeLast();
             current.getChildren().get(0).setParent(current.getParent());
             current.getParent().addChild(current.getChildren().get(0));
@@ -605,27 +605,27 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
 
     @Override
     public Value visitFuncRParams(SysYParser.FuncRParamsContext ctx) {
-        curFuncRParams =  new ArrayList<>();
-        for(int i = 0; i < ctx.exp().size(); i++){
+        curFuncRParams = new ArrayList<>();
+        for (int i = 0; i < ctx.exp().size(); i++) {
             visit(ctx.exp(i));
-            curFuncRParams.add(OpTreeHandler.evalExp(current.getLast(),curBasicBlock));
+            curFuncRParams.add(OpTreeHandler.evalExp(current.getLast(), curBasicBlock));
         }
         return null;
     }
 
     @Override
     public Value visitMulExp(SysYParser.MulExpContext ctx) {
-        if(ctx.unaryExp().size() == 1){
+        if (ctx.unaryExp().size() == 1) {
             visit(ctx.unaryExp(0));
-        }else{
-            OpTree opTree = new OpTree(new ArrayList<>(),new ArrayList<>(),current, OpTree.OpType.binaryType);
+        } else {
+            OpTree opTree = new OpTree(new ArrayList<>(), new ArrayList<>(), current, OpTree.OpType.binaryType);
             current.addChild(opTree);
             current = opTree;
-            for(int i = 0; i < ctx.unaryExp().size(); i++){
+            for (int i = 0; i < ctx.unaryExp().size(); i++) {
                 visit(ctx.unaryExp(i));
-                if(i == 0)
+                if (i == 0)
                     continue;
-                switch (ctx.mulOp(i-1).getText()) {
+                switch (ctx.mulOp(i - 1).getText()) {
                     case "*" -> {
                         opTree.appendOp(OpTree.Operator.Mul);
                     }
@@ -649,17 +649,17 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
 
     @Override
     public Value visitAddExp(SysYParser.AddExpContext ctx) {
-        if(ctx.mulExp().size() == 1){
+        if (ctx.mulExp().size() == 1) {
             visit(ctx.mulExp(0));
-        }else{
-            OpTree opTree = new OpTree(new ArrayList<>(),new ArrayList<>(),current, OpTree.OpType.binaryType);
+        } else {
+            OpTree opTree = new OpTree(new ArrayList<>(), new ArrayList<>(), current, OpTree.OpType.binaryType);
             current.addChild(opTree);
             current = opTree;
-            for(int i = 0; i < ctx.mulExp().size(); i++){
+            for (int i = 0; i < ctx.mulExp().size(); i++) {
                 visit(ctx.mulExp(i));
-                if(i == 0)
+                if (i == 0)
                     continue;
-                switch (ctx.addOp(i-1).getText()) {
+                switch (ctx.addOp(i - 1).getText()) {
                     case "+" -> {
                         opTree.appendOp(OpTree.Operator.Add);
                     }
@@ -669,8 +669,8 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
                 }
             }
             current = current.getParent();
-//            System.out.println(current.getLast().getLast().getNumberType());
-//            System.out.println(Evaluate.evalConstExp(current.getLast()));
+            // System.out.println(current.getLast().getLast().getNumberType());
+            // System.out.println(Evaluate.evalConstExp(current.getLast()));
         }
         return null;
     }
@@ -682,27 +682,27 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
 
     @Override
     public Value visitRelExp(SysYParser.RelExpContext ctx) {
-        if(ctx.addExp().size() == 1){
+        if (ctx.addExp().size() == 1) {
             visit(ctx.addExp(0));
-        }else{
-            OpTree opTree = new OpTree(new ArrayList<>(),new ArrayList<>(), current, OpTree.OpType.condType);
+        } else {
+            OpTree opTree = new OpTree(new ArrayList<>(), new ArrayList<>(), current, OpTree.OpType.condType);
             current.addChild(opTree);
             current = opTree;
-            for(int i = 0; i < ctx.addExp().size(); i++){
+            for (int i = 0; i < ctx.addExp().size(); i++) {
                 visit(ctx.addExp(i));
-                if(i == 0)
+                if (i == 0)
                     continue;
-                switch (ctx.relOp(i - 1).getText()){
-                    case "<"->{
+                switch (ctx.relOp(i - 1).getText()) {
+                    case "<" -> {
                         opTree.appendOp(OpTree.Operator.Lt);
                     }
-                    case ">"->{
+                    case ">" -> {
                         opTree.appendOp(OpTree.Operator.Gt);
                     }
-                    case "<="->{
+                    case "<=" -> {
                         opTree.appendOp(OpTree.Operator.Le);
                     }
-                    case ">="->{
+                    case ">=" -> {
                         opTree.appendOp(OpTree.Operator.Ge);
                     }
                 }
@@ -719,18 +719,18 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
 
     @Override
     public Value visitEqExp(SysYParser.EqExpContext ctx) {
-        if(ctx.relExp().size() == 1){
+        if (ctx.relExp().size() == 1) {
             visit(ctx.relExp(0));
-        }else{
-            OpTree opTree = new OpTree(new ArrayList<>(),new ArrayList<>(), current, OpTree.OpType.condType);
+        } else {
+            OpTree opTree = new OpTree(new ArrayList<>(), new ArrayList<>(), current, OpTree.OpType.condType);
             current.addChild(opTree);
             current = opTree;
-            for(int i = 0; i < ctx.relExp().size(); i++){
+            for (int i = 0; i < ctx.relExp().size(); i++) {
                 visit(ctx.relExp(i));
-                if(i == 0)
+                if (i == 0)
                     continue;
-                switch (ctx.eqOp(i - 1).getText()){
-                    case "=="-> {
+                switch (ctx.eqOp(i - 1).getText()) {
+                    case "==" -> {
                         opTree.appendOp(OpTree.Operator.Eq);
                     }
                     case "!=" -> {
@@ -750,15 +750,15 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
 
     @Override
     public Value visitLAndExp(SysYParser.LAndExpContext ctx) {
-        if(ctx.eqExp().size() == 1){
+        if (ctx.eqExp().size() == 1) {
             visit(ctx.eqExp(0));
-        }else{
-            OpTree opTree = new OpTree(new ArrayList<>(),new ArrayList<>(), current, OpTree.OpType.condType);
+        } else {
+            OpTree opTree = new OpTree(new ArrayList<>(), new ArrayList<>(), current, OpTree.OpType.condType);
             current.addChild(opTree);
             current = opTree;
-            for(int i = 0; i < ctx.eqExp().size(); i++){
+            for (int i = 0; i < ctx.eqExp().size(); i++) {
                 visit(ctx.eqExp(i));
-                if(i == 0)
+                if (i == 0)
                     continue;
                 opTree.appendOp(OpTree.Operator.And);
             }
@@ -769,15 +769,15 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
 
     @Override
     public Value visitLOrExp(SysYParser.LOrExpContext ctx) {
-        if(ctx.lAndExp().size() == 1){
+        if (ctx.lAndExp().size() == 1) {
             visit(ctx.lAndExp(0));
-        }else{
-            OpTree opTree = new OpTree(new ArrayList<>(),new ArrayList<>(), current, OpTree.OpType.condType);
+        } else {
+            OpTree opTree = new OpTree(new ArrayList<>(), new ArrayList<>(), current, OpTree.OpType.condType);
             current.addChild(opTree);
             current = opTree;
-            for(int i = 0; i < ctx.lAndExp().size(); i++){
+            for (int i = 0; i < ctx.lAndExp().size(); i++) {
                 visit(ctx.lAndExp(i));
-                if(i == 0)
+                if (i == 0)
                     continue;
                 opTree.appendOp(OpTree.Operator.Or);
             }

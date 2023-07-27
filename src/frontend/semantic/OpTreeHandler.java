@@ -10,6 +10,7 @@ import ir.type.Int32Type;
 import ir.type.Type;
 import ir.Variable;
 import ir.instruction.Binary;
+import ir.instruction.Branch;
 import ir.instruction.Unary;
 
 public class OpTreeHandler {
@@ -61,12 +62,36 @@ public class OpTreeHandler {
         return val;
     }
 
-    public static Value evalCond(OpTree opTree, BasicBlock trueBlock, BasicBlock falseBlock) {
-        // if (opTree.getType() == OpTree.OpType.binaryType) {
-        // return evalBinaryCond(opTree, basicBlock);
-        // } else if (opTree.getType() == OpTree.OpType.unaryType) {
-        // return evalUnaryCond(opTree, basicBlock);
-        // }
+    public static Value evalCond(OpTree opTree, BasicBlock trueBlock, BasicBlock falseBlock, BasicBlock basicBlock) {
+        if (opTree.getType() == OpTree.OpType.binaryType) {
+            return evalBinaryCond(opTree, trueBlock, falseBlock, basicBlock);
+        } else if (opTree.getType() == OpTree.OpType.unaryType) {
+            return evalUnaryCond(opTree);
+        }
+        return null;
+    }
+
+    private static Value evalBinaryCond(OpTree opTree, BasicBlock trueBlock, BasicBlock falseBlock,
+            BasicBlock basicBlock) {
+        Iterator<OpTree> it = opTree.getChildren().listIterator();
+        Iterator<OpTree.Operator> itOp = opTree.getOperators().listIterator();
+        OpTree child = it.next();
+        Value first = evalCond(child, trueBlock, falseBlock, basicBlock);
+        Value second = null;
+        while (it.hasNext()) {
+            OpTree.Operator op = itOp.next();
+            if (op == OpTree.Operator.And) {
+                BasicBlock newTrueBlock = new BasicBlock();
+                first = new Branch(second, trueBlock, falseBlock, newTrueBlock);
+            }
+            child = it.next();
+            second = evalCond(child, trueBlock, falseBlock, basicBlock);
+
+        }
+        return null;
+    }
+
+    private static Value evalUnaryCond(OpTree opTree) {
         return null;
     }
 
