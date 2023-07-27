@@ -57,10 +57,10 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
                 return new Sitofp(value, curBasicBlock);
             } else {
                 if (value.getType().equals(Int32Type.getInstance())) {
-                    return new Icmp(value, new Variable.ConstInt(0), Icmp.Op.NE, curBasicBlock);
+                    return new Icmp(value, new Variable.ConstInt(0), OpTree.Operator.Ne, curBasicBlock);
                 } else {
                     assert value.getType().equals(FloatType.getInstance());
-                    return new Fcmp(value, new Variable.ConstFloat(0), Fcmp.Op.ONE, curBasicBlock);
+                    return new Fcmp(value, new Variable.ConstFloat(0), OpTree.Operator.Ne, curBasicBlock);
                 }
             }
 
@@ -448,6 +448,7 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
             visit(ctx.cond());
             followBlock = new BasicBlock(curFunction);
             Value cond = OpTreeHandler.evalCond(current.getLast(), thenBlock, followBlock, curBasicBlock);
+            cond = turnTo(cond, Int1Type.getInstance());
             new Branch(cond, thenBlock, followBlock, curBasicBlock);
             curBasicBlock = thenBlock;
             visit(ctx.stmt(0));
@@ -457,6 +458,7 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
             followBlock = new BasicBlock(curFunction);
             visit(ctx.cond());
             Value cond = OpTreeHandler.evalCond(current.getLast(), thenBlock, elseBlock, curBasicBlock);
+            cond = turnTo(cond, Int1Type.getInstance());
             new Branch(cond, thenBlock, elseBlock, curBasicBlock);
             curBasicBlock = thenBlock;
             visit(ctx.stmt(0));
@@ -478,6 +480,7 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
         curBasicBlock = condBlock;
         visit(ctx.cond());
         Value cond = OpTreeHandler.evalCond(current.getLast(), bodyBlock, followBlock, curBasicBlock);
+        cond = turnTo(cond, Int1Type.getInstance());
         new Branch(cond, bodyBlock, followBlock, curBasicBlock);
         curBasicBlock = bodyBlock;
         blockHeads.push(condBlock);
