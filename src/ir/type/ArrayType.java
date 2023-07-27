@@ -1,7 +1,6 @@
 package ir.type;
 
 public class ArrayType extends Type{
-    private final Type basicType;
     private final int size;
 
     public ArrayType(Type basicType, int size){
@@ -16,10 +15,6 @@ public class ArrayType extends Type{
 
     public int getSize() {
         return size;
-    }
-
-    public Type getBasicType() {
-        return basicType;
     }
 
     public int getDims(){

@@ -1,5 +1,6 @@
 package ir;
 
+import ir.instruction.Instr;
 import ir.type.Type;
 import util.MyList;
 
@@ -18,7 +19,7 @@ public class Function extends Value {
 
     public static class Param extends Value {
         public Param(String name, Type type) {
-            this.name = name;
+            this.name = "%f" + Instr.getCount();
             this.type = type;
         }
 
@@ -50,7 +51,7 @@ public class Function extends Value {
         } else {
             for (Param param : params) {
                 String paramName = param.getName();
-                paramList.add(param.getType().toString() + " %" + paramName);
+                paramList.add(param.getType().toString() + " " + paramName);
             }
             sb.append(String.join(", ", paramList)).append(") \n{\n");
 
@@ -72,7 +73,7 @@ public class Function extends Value {
         }
         for (Param param : params) {
             String paramName = param.getName();
-            paramList.add(param.getType().toString() + " %" + paramName);
+            paramList.add(param.getType().toString() + paramName);
         }
         sb.append(String.join(", ", paramList)).append(")\n");
         return sb.toString();

@@ -48,9 +48,11 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
             return value;
         }else{
             if(targetType instanceof Int32Type){
+                assert value.getType() instanceof FloatType;
                 return new Fptosi(value, curBasicBlock);
             }else{
                 assert targetType instanceof FloatType;
+                assert value.getType() instanceof Int32Type;
                 return new Sitofp(value, curBasicBlock);
             }
         }
@@ -137,7 +139,7 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
                 new Store(value, pointer, curBasicBlock);
             }
         }else{
-            pointer = new GlobalValue(currentType,initVal);
+            pointer = new GlobalValue(ident, currentType,initVal);
         }
 
         Symbol symbol = new Symbol(ident, defContextType,true, initVal, pointer);
@@ -228,10 +230,9 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
                 new Store(value, pointer, curBasicBlock);
             }
         }else{
-            pointer = new GlobalValue(currentType,initVal);
+            pointer = new GlobalValue( ident, currentType, initVal);
         }
-
-        Symbol symbol = new Symbol(ident, defContextType,true, initVal, pointer);
+        Symbol symbol = new Symbol(ident, defContextType,false, initVal, pointer);
         curSymTable.add(symbol);
         if(isGlobal()){
             manager.addGlobal((GlobalValue) pointer);
@@ -244,7 +245,27 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
         Value ret;
         if(ctx.exp() != null){
             visit(ctx.exp());
-            ret = OpTreeHandler.evalExp(current.getLast(), curBasicBlock);
+            if(isGlobal()){
+                var number = Evaluate.evalConstExp(current.getLast());
+                if(number instanceof Integer){
+                    if(defContextType instanceof Int32Type){
+                        ret = new Variable.ConstInt((int)number);
+                    }else{
+                        assert defContextType instanceof FloatType;
+                        ret = new Variable.ConstFloat((float) ((int)number));
+                    }
+                }else{
+                    assert number instanceof Float;
+                    if(defContextType instanceof Int32Type){
+                        ret = new Variable.ConstInt((int) ((float)number));
+                    }else{
+                        assert defContextType instanceof FloatType;
+                        ret = new Variable.ConstFloat((float)number);
+                    }
+                }
+            }else {
+                ret = OpTreeHandler.evalExp(current.getLast(), curBasicBlock);
+            }
         }else{
             ret = new Variable.VarArray(null);
             for(int i = 0; i < ctx.initVal().size(); i++){
@@ -264,10 +285,9 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
         BasicBlock entry = new BasicBlock();
         curBasicBlock = entry;
         curSymTable = new SymTable(curSymTable);
-
+        curFuncParams = new ArrayList<>();
         int idx = 0;
         if(ctx.funcFParams() != null){
-            curFuncParams = new ArrayList<>();
             visit(ctx.funcFParams());
             for(Function.Param param: curFuncParams){
                 Value paramPointer = new Alloc( param.getType(), curBasicBlock);
@@ -387,7 +407,7 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
         BasicBlock followBlock =  new BasicBlock(curFunction);
         if(ctx.stmt().size() == 1){
             visit(ctx.cond());
-            Value cond = OpTreeHandler.evalCond(current.getLast());
+            Value cond = OpTreeHandler.evalCond(current.getLast(), thenBlock, followBlock);
             new Branch(cond, thenBlock, followBlock, curBasicBlock);
             curBasicBlock = thenBlock;
             visit(ctx.stmt(0));
@@ -395,7 +415,7 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
             assert ctx.stmt().size() == 2;
             BasicBlock elseBlock =  new BasicBlock(curFunction);
             visit(ctx.cond());
-            Value cond = OpTreeHandler.evalCond(current.getLast());
+            Value cond = OpTreeHandler.evalCond(current.getLast(), thenBlock, elseBlock);
             new Branch(cond, thenBlock, elseBlock, curBasicBlock);
             curBasicBlock = thenBlock;
             visit(ctx.stmt(0));
@@ -416,7 +436,7 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
         new Jump(condBlock, curBasicBlock);
         curBasicBlock = condBlock;
         visit(ctx.cond());
-        Value cond = OpTreeHandler.evalCond(current.getLast());
+        Value cond = OpTreeHandler.evalCond(current.getLast(), bodyBlock, followBlock);
         new Branch(cond, bodyBlock, followBlock, curBasicBlock);
         curBasicBlock = bodyBlock;
         blockHeads.push(condBlock);
@@ -472,10 +492,27 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
     public Value visitLVal(SysYParser.LValContext ctx) {
         String ident = ctx.IDENT().getText();
         Symbol symbol = curSymTable.get(ident, true);
-        if((symbol.isConst() || isGlobal()) && ctx.exp() == null){
+        if((symbol.isConst() || isGlobal()) && ctx.exp().size() == 0){
             OpTree opTree = new OpTree(current, OpTree.OpType.number);
             opTree.setNumber(symbol.getNumber());
+            current.addChild(opTree);
         }
+        else if(ctx.exp().size() == 0){
+            Value pointer = symbol.getValue();
+            Value value = new Load(pointer, curBasicBlock);
+            OpTree opTree = new OpTree(current, OpTree.OpType.valueType);
+            opTree.setValue(value);
+            current.addChild(opTree);
+        }
+
+        ArrayList<Value> idxList = new ArrayList<>();
+        idxList.add(CONST_0);
+
+//        else{
+//            OpTree opTree =  new OpTree(current, OpTree.OpType.valueType);
+//            opTree.setValue(symbol.getValue());
+//            current.addChild(opTree);
+//        }
         return null;
     }
 

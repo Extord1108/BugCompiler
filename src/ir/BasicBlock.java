@@ -33,6 +33,10 @@ public class BasicBlock extends Value {
         function.addAtEnd(this);
     }
 
+    public void addInstrHead(Instr instr){
+        instrs.insertHead(instr);
+    }
+
     public void addInstr(Instr instr) {
         instrs.insertTail(instr);
     }

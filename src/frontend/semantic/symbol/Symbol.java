@@ -2,7 +2,12 @@ package frontend.semantic.symbol;
 
 import frontend.semantic.InitVal;
 import ir.Value;
+import ir.Variable;
+import ir.type.FloatType;
+import ir.type.Int32Type;
 import ir.type.Type;
+
+import java.awt.geom.Arc2D;
 
 public class Symbol {
     private final String name;
@@ -23,8 +28,18 @@ public class Symbol {
         return this.isConst;
     }
 
+    public Value getValue() {
+        return pointer;
+    }
+
     public Object getNumber(){
-        return Integer.parseInt("0");
+        if(type instanceof Int32Type){
+            return ((Variable.ConstInt)(initVal.getValue())).getIntVal();
+        }else{
+            assert type instanceof FloatType;
+            return  ((Variable.ConstFloat)(initVal.getValue())).getFloatVal();
+        }
+
     }
 
     public String getName(){

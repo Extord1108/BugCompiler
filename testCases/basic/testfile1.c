@@ -1,8 +1,10 @@
 const int a[5][8] = {};
+int e = 5;
+int d = e + 1;
 int b(int a)
 {
     int c = 1 + 19 + 0;
-    return a;
+    return c;
 }
 
 int main(){

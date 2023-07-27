@@ -1,7 +1,6 @@
 package ir.type;
 
 public class PointerType extends Type{
-    private final Type basicType;
 
     public PointerType(Type basicType){
         this.basicType = basicType;
@@ -10,6 +9,10 @@ public class PointerType extends Type{
     @Override
     public String toString() {
         return basicType + "*";
+    }
+
+    public Type getBasicType() {
+        return basicType;
     }
 
     public Type getContentType(){

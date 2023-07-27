@@ -15,7 +15,7 @@ public class Variable extends Value {
     }
 
     public static class ConstInt extends Variable {
-        int intVal;
+        Integer intVal;
 
         public ConstInt(int intVal) {
             super(Int32Type.getInstance());
@@ -23,18 +23,18 @@ public class Variable extends Value {
             this.name = ((Integer)intVal).toString();
         }
 
-        public int getIntVal() {
+        public Integer getIntVal() {
             return intVal;
         }
 
         @Override
         public String toString() {
-            return type + " " + intVal;
+            return intVal.toString();
         }
     }
 
     public static class ConstFloat extends Variable {
-        float floatVal;
+        Float floatVal;
 
         public ConstFloat(float floatVal) {
             super(FloatType.getInstance());
@@ -42,13 +42,13 @@ public class Variable extends Value {
             this.name = ((Float)floatVal).toString();
         }
 
-        public float getFloatVal() {
+        public Float getFloatVal() {
             return floatVal;
         }
 
         @Override
         public String toString() {
-            return type + " " + floatVal;
+            return floatVal.toString();
         }
     }
 
@@ -174,10 +174,10 @@ public class Variable extends Value {
         public String toString() {
             String ret = "[";
             for (int i = 0; i < varArray.size() - 1; i++) {
-                ret = ret + varArray.get(i).toString() + ", ";
+                ret = ret + varArray.get(i).getType() + " " + varArray.get(i).toString() + ", ";
             }
             if (varArray.size() > 0)
-                ret += varArray.get(varArray.size() - 1).toString() + "]";
+                ret += varArray.get(varArray.size() - 1).getType() + " " + varArray.get(varArray.size() - 1).toString() + "]";
             return ret;
         }
     }

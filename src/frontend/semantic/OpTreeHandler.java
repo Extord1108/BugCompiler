@@ -61,7 +61,7 @@ public class OpTreeHandler {
         return val;
     }
 
-    public static Value evalCond(OpTree opTree) {
+    public static Value evalCond(OpTree opTree, BasicBlock trueBlock, BasicBlock falseBlock) {
         // if (opTree.getType() == OpTree.OpType.binaryType) {
         // return evalBinaryCond(opTree, basicBlock);
         // } else if (opTree.getType() == OpTree.OpType.unaryType) {
