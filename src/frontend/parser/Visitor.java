@@ -554,17 +554,46 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
                 current.addChild(opTree);
             }
         } else {
-            System.err.println("visitLVal尚未支持数组");
+            ArrayList<Value> idxList = new ArrayList<>();
+            Value pointer = symbol.getValue();
+            Type basicType = pointer.getType().getBasicType();
+            for(int i = 0; i < ctx.exp().size(); i ++){
+                visit(ctx.exp(i));
+                Value offset = OpTreeHandler.evalExp(current.getLast(), curBasicBlock);
+                offset = turnTo(offset, Int32Type.getInstance());
+                if(i == 0)
+                {
+                    if(basicType instanceof PointerType){
+                        basicType = basicType.getBasicType();
+                        pointer = new Load(pointer, curBasicBlock);
+                    }else{
+                        assert basicType instanceof ArrayType;
+                        basicType = basicType.getBasicType();
+                        idxList.add(CONST_0);
+                    }
+                    idxList.add(offset);
+                }else{
+                    basicType = basicType.getBasicType();
+                    idxList.add(offset);
+                }
+            }
+            pointer = new GetElementPtr(basicType, pointer, idxList, curBasicBlock);
+            if(needPointer){
+                return pointer;
+            }
+            Value value;
+            if(basicType instanceof ArrayType){
+                idxList =  new ArrayList<>();
+                idxList.add(CONST_0);
+                idxList.add(CONST_0);
+                value = new GetElementPtr(basicType.getBasicType(), pointer, idxList, curBasicBlock);
+            }else {
+                value =  new Load(pointer, curBasicBlock);
+            }
+            OpTree opTree = new OpTree(current, OpTree.OpType.valueType);
+            opTree.setValue(value);
+            current.addChild(opTree);
         }
-
-        ArrayList<Value> idxList = new ArrayList<>();
-        idxList.add(CONST_0);
-
-        // else{
-        // OpTree opTree = new OpTree(current, OpTree.OpType.valueType);
-        // opTree.setValue(symbol.getValue());
-        // current.addChild(opTree);
-        // }
         return null;
     }
 

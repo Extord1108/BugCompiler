@@ -1,6 +1,7 @@
 package ir;
 
 import ir.instruction.Instr;
+import ir.type.PointerType;
 import ir.type.Type;
 import util.MyList;
 

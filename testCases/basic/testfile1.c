@@ -1,18 +1,19 @@
 int a[5][8];
 int e;
-int b(int a)
+int b(int a[][2])
 {
-
-    int c = 1 + 19 + 0;
-    return c;
+    return 0;
 }
 
 int main(){
-<<<<<<< HEAD
-    int a = 1;
-    while(a>2)
+    int a = e;
+    if(1>2)
     {
         a=2;
     }
-    return b(1.0);
+    else{
+    a=3;
+    }
+    int c[2][2][2] = {1};
+    return b(c[1]);
 }

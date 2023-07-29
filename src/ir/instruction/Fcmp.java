@@ -3,6 +3,7 @@ package ir.instruction;
 import ir.Value;
 import frontend.semantic.OpTree;
 import ir.BasicBlock;
+import ir.type.Int1Type;
 
 public class Fcmp extends Instr {
     Value lhs, rhs;
@@ -29,7 +30,7 @@ public class Fcmp extends Instr {
     }
 
     public Fcmp(Value lhs, Value rhs, OpTree.Operator op, BasicBlock basicBlock) {
-        super(lhs.getType(), basicBlock);
+        super(Int1Type.getInstance(), basicBlock);
         this.lhs = lhs;
         this.rhs = rhs;
         this.op = op;
