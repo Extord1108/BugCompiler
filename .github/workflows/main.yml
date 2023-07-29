@@ -19,7 +19,7 @@ jobs:
           pass: ${{ secrets.MY_PASS }} # 服务器密码
           connect_timeout: 10s
           local: './*' # 源路径（工作流）
-          remote: '/root/complier/code' # 目标路径（服务器）
+          remote: '/root/compiler/code' # 目标路径（服务器）
 
       - name: Executing remote ssh commands #执行命令
         uses: appleboy/ssh-action@master
