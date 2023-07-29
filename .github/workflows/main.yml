@@ -1,0 +1,33 @@
+name: test CI
+on:
+  push:
+    branches:
+      - 'test-llvm'
+jobs:
+  test-llvm:
+    if: github.ref == 'refs/heads/test-llvm'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout #checkout项目到工作流的虚拟机上
+        uses: actions/checkout@v3
+        
+      - name: deploy file to server #将文件上传到服务器
+        uses: cross-the-world/scp-pipeline@master
+        with:
+          host: ${{ secrets.MY_HOST }} # 服务器IP
+          user: ${{ secrets.MY_USER }} # 服务器用户名
+          pass: ${{ secrets.MY_PASS }} # 服务器密码
+          connect_timeout: 10s
+          local: './*' # 源路径（工作流）
+          remote: '/root/complier/code' # 目标路径（服务器）
+
+      - name: Executing remote ssh commands #执行命令
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }} # 服务器IP
+          username: ${{ secrets.MY_USER }} # 服务器用户名
+          password: ${{ secrets.MY_PASS }} # 服务器密码
+          script: |
+            cd /root/compiler
+            bash test.sh
+            
