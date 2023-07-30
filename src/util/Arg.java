@@ -4,15 +4,18 @@ public class Arg {
 
     public final String srcFile;
     public final String targetFile;
+    public final String llvmFile;
     public static boolean opt = false;
 
-    public Arg (String srcFile,String targetFile){
+    public Arg (String srcFile,String targetFile,String llvmFile){
         this.srcFile =srcFile;
         this.targetFile = targetFile;
+        this.llvmFile = llvmFile;
     }
     public static Arg parse(String[] args){
         String src = "";
         String target = "";
+        String llvm = "";
 
         for(int i = 0; i < args.length; i++){
 
@@ -21,6 +24,7 @@ public class Arg {
                 if(optLevel == 1){
                     opt = true;
                 }
+                continue;
             }
 
             if(args[i].equals("-S")){
@@ -32,6 +36,17 @@ public class Arg {
                 i += 2;
                 continue;
             }
+
+            if(args[i].equals("-emit-llvm")){
+                if(i + 2 < args.length && args[i + 1].equals("-o")){
+                    llvm = args[i + 2];
+                }else{
+                    throw new RuntimeException("-S expected -o filename");
+                }
+                i += 2;
+                continue;
+            }
+
             if (!src.isEmpty()) {
                 throw new RuntimeException("We got more than one source file when we expected only one.");
             }
@@ -41,7 +56,7 @@ public class Arg {
             printHelp();
             throw new RuntimeException("source file should be specified.");
         }
-        Arg arg = new Arg(src,target);
+        Arg arg = new Arg(src,target,llvm);
         return arg;
     }
 
