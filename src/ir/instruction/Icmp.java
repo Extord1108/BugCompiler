@@ -14,6 +14,8 @@ public class Icmp extends Instr {
         this.lhs = lhs;
         this.rhs = rhs;
         this.op = op;
+        this.addUse(lhs);
+        this.addUse(rhs);
     }
 
     @Override

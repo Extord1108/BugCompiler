@@ -15,6 +15,7 @@ public class Return extends Instr {
     public Return(Value returnValue, BasicBlock basicBlock) {
         super(returnValue.getType(), basicBlock);
         this.returnValue = returnValue;
+        this.addUse(returnValue);
     }
 
     @Override

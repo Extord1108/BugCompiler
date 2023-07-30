@@ -8,13 +8,12 @@ import frontend.semantic.OpTree;
 public class Binary extends Instr {
 
     private OpTree.Operator op;
-    Value left, right;
 
     public Binary(Type type, OpTree.Operator op, Value left, Value right, BasicBlock basicBlock) {
         super(type, basicBlock);
         this.op = op;
-        this.left = left;
-        this.right = right;
+        this.addUse(left);
+        this.addUse(right);
     }
 
     @Override
@@ -27,10 +26,10 @@ public class Binary extends Instr {
     }
 
     public Value getLeft() {
-        return left;
+        return this.getUse(0);
     }
 
     public Value getRight() {
-        return right;
+        return this.getUse(1);
     }
 }

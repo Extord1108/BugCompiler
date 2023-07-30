@@ -17,6 +17,10 @@ public class GetElementPtr extends Instr{
         super(new PointerType(type.getContentType()), basicBlock);
         this.pointer = pointer;
         this.idxList = idxList;
+        this.addUse(pointer);
+        for(Value idx: idxList){
+            this.addUse(idx);
+        }
     }
 
     @Override

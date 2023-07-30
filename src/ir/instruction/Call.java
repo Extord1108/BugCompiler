@@ -17,6 +17,10 @@ public class Call extends Instr{
         super(function.getType(), basicBlock);
         this.function = function;
         this.params = params;
+        this.addUse(function);
+        for(Value param: params){
+            this.addUse(param);
+        }
     }
 
     @Override
