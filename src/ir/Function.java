@@ -1,12 +1,10 @@
 package ir;
 
 import ir.instruction.Instr;
-import ir.type.PointerType;
 import ir.type.Type;
 import util.MyList;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class Function extends Value {
     private ArrayList<Param> params;
@@ -20,6 +18,11 @@ public class Function extends Value {
 
     public static class Param extends Value {
         public Param(String name, Type type) {
+            this.name = "%f" + Instr.getCount();
+            this.type = type;
+        }
+
+        public Param( Type type) {
             this.name = "%f" + Instr.getCount();
             this.type = type;
         }
@@ -40,6 +43,14 @@ public class Function extends Value {
 
     public void addAtEnd(BasicBlock basicBlock) {
         basicBlocks.insertTail(basicBlock);
+    }
+
+    public static ArrayList<Param> packParamTypes(Type... types) {
+        ArrayList<Param> params = new ArrayList<>();
+        for (Type type : types) {
+            params.add(new Param(type));
+        }
+        return params;
     }
 
     @Override
@@ -73,8 +84,7 @@ public class Function extends Value {
             return sb.toString();
         }
         for (Param param : params) {
-            String paramName = param.getName();
-            paramList.add(param.getType().toString() + paramName);
+            paramList.add(param.getType().toString()+" ");
         }
         sb.append(String.join(", ", paramList)).append(")\n");
         return sb.toString();
