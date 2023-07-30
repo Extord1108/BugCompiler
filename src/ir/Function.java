@@ -23,7 +23,7 @@ public class Function extends Value {
         }
 
         public Param( Type type) {
-            this.name = "%f" + Instr.getCount();
+            this.name = "";
             this.type = type;
         }
 
@@ -62,8 +62,7 @@ public class Function extends Value {
             sb.append(") \n{\n");
         } else {
             for (Param param : params) {
-                String paramName = param.getName();
-                paramList.add(param.getType().toString() + " " + paramName);
+                paramList.add(param.getType().toString() + " " + param.getName());
             }
             sb.append(String.join(", ", paramList)).append(") \n{\n");
 
@@ -84,7 +83,7 @@ public class Function extends Value {
             return sb.toString();
         }
         for (Param param : params) {
-            paramList.add(param.getType().toString()+" ");
+            paramList.add(param.getType().toString()+" "+ param.getName());
         }
         sb.append(String.join(", ", paramList)).append(")\n");
         return sb.toString();
