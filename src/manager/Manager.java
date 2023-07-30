@@ -1,11 +1,11 @@
-package ir;
+package manager;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import ir.Function;
+import ir.GlobalValue;
 import util.OutputHandler;
 
 public class Manager {
@@ -14,6 +14,10 @@ public class Manager {
     private static final ArrayList<GlobalValue> globals = new ArrayList<>();
 
     private Manager() {
+    }
+
+    public static ArrayList<GlobalValue> getGlobals() {
+        return globals;
     }
 
     public static Manager getManager() {
@@ -57,5 +61,9 @@ public class Manager {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void outputArm(OutputStream out){
+
     }
 }

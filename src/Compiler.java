@@ -1,8 +1,11 @@
+import backend.CodeGen;
+import backend.RegAllocate;
 import frontend.parser.SysYLexer;
 import frontend.parser.SysYParser;
 import frontend.parser.Visitor;
-import ir.Manager;
+import manager.Manager;
 
+import midend.MidEndRunner;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -26,9 +29,23 @@ public class Compiler {
             visitor.visit(tree);
 
             // 输出 LLVM
-            FileOutputStream fileOut = OutputHandler.getOutputFile("llvm.txt");
-            Manager.getManager().outputLLVM(fileOut);
-            OutputHandler.closeOutputFile(fileOut);
+            FileOutputStream llvmOut = OutputHandler.getOutputFile("llvm.txt");
+            Manager.getManager().outputLLVM(llvmOut);
+            OutputHandler.closeOutputFile(llvmOut);
+
+            var midEndRunner = new MidEndRunner(Manager.getFunctions(), Manager.getGlobals(), arg.opt);
+            midEndRunner.run();
+
+            var codeGen = CodeGen.Instance;
+            codeGen.gen();
+
+            var regAllocate = RegAllocate.Instance;
+            regAllocate.alloc();
+
+            // 输出 机器代码arm
+            FileOutputStream armOut = OutputHandler.getOutputFile(arg.targetFile);
+            Manager.getManager().outputArm(armOut);
+            OutputHandler.closeOutputFile(armOut);
 
         } catch (IOException e) {
             e.printStackTrace();

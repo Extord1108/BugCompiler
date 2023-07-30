@@ -9,12 +9,10 @@ import frontend.semantic.symbol.Symbol;
 import ir.*;
 import ir.instruction.*;
 import ir.type.*;
+import manager.Manager;
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
-import util.MyList;
-import util.MyNode;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Stack;
 
 public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisitor<Value> {

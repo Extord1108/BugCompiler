@@ -4,7 +4,7 @@
 
 ### zmm
 
-- [ ] visitLVal完善
+- [x] visitLVal完善
 - [x] visitVarDef完善，补0，补未定义
 ### gyf
 - [x] 关于evalExp类型传递的修正
