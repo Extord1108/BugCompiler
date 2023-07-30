@@ -14,6 +14,7 @@ public class Unary extends Instr {
         super(type, basicBlock);
         this.op = op;
         this.val = val;
+        this.addUse(val);
     }
 
     @Override

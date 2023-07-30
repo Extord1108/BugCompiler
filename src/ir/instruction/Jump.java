@@ -11,6 +11,7 @@ public class Jump extends Instr {
     public Jump(BasicBlock targetBlock, BasicBlock basicBlock) {
         super(VoidType.getInstance(), basicBlock);
         this.targetBlock = targetBlock;
+        this.addUse(targetBlock);
     }
 
     @Override

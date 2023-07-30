@@ -16,6 +16,9 @@ public class Branch extends Instr {
         this.cond = cond;
         this.thenBlock = thenBlock;
         this.elseBlock = elseBlock;
+        this.addUse(cond);
+        this.addUse(thenBlock);
+        this.addUse(elseBlock);
     }
 
     @Override

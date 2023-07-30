@@ -12,6 +12,7 @@ public class Load extends Instr{
     public Load(Value pointer, BasicBlock basicBlock) {
         super(((PointerType)(pointer.getType())).getBasicType(), basicBlock);
         this.pointer = pointer;
+        this.addUse(pointer);
     }
 
     @Override

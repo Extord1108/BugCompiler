@@ -14,6 +14,8 @@ public class Store extends Instr {
         super(VoidType.getInstance(), basicBlock);
         this.value = value;
         this.address = address;
+        this.addUse(value);
+        this.addUse(address);
     }
 
     @Override

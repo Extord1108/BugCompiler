@@ -13,6 +13,10 @@ public class BasicBlock extends Value {
 
     MyList<Instr> instrs = new MyList<>();
 
+    public ArrayList<BasicBlock> precBBlocks = new ArrayList<>();
+    public ArrayList<BasicBlock> succBBlocks = new ArrayList<>();
+
+
     private int label;
     private static Integer block_count = 0;
 
