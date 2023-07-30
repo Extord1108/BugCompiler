@@ -1,6 +1,7 @@
 package manager;
 
 import java.io.OutputStream;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -53,21 +54,30 @@ public class Manager {
     }
 
     private void addExternalFunctions() {
-        externalFunctions.put(ExternFunction.GET_INT.getName(), ExternFunction.GET_INT);
-        externalFunctions.put(ExternFunction.GET_CH.getName(), ExternFunction.GET_CH);
-        externalFunctions.put(ExternFunction.GET_FLOAT.getName(), ExternFunction.GET_FLOAT);
-        externalFunctions.put(ExternFunction.GET_ARR.getName(), ExternFunction.GET_ARR);
-        externalFunctions.put(ExternFunction.GET_FARR.getName(), ExternFunction.GET_FARR);
-        externalFunctions.put(ExternFunction.PUT_INT.getName(), ExternFunction.PUT_INT);
-        externalFunctions.put(ExternFunction.PUT_CH.getName(), ExternFunction.PUT_CH);
-        externalFunctions.put(ExternFunction.PUT_FLOAT.getName(), ExternFunction.PUT_FLOAT);
-        externalFunctions.put(ExternFunction.PUT_ARR.getName(), ExternFunction.PUT_ARR);
-        externalFunctions.put(ExternFunction.PUT_FARR.getName(), ExternFunction.PUT_FARR);
-        externalFunctions.put(ExternFunction.MEM_SET.getName(), ExternFunction.MEM_SET);
-        externalFunctions.put(ExternFunction.START_TIME.getName(), ExternFunction.START_TIME);
-        externalFunctions.put(ExternFunction.STOP_TIME.getName(), ExternFunction.STOP_TIME);
-        externalFunctions.put(ExternFunction.PARALLEL_START.getName(), ExternFunction.PARALLEL_START);
-        externalFunctions.put(ExternFunction.PARALLEL_END.getName(), ExternFunction.PARALLEL_END);
+        for (Field field : ExternFunction.class.getDeclaredFields()) {
+            try {
+                Function function = (Function) field.get(ExternFunction.class);
+                externalFunctions.put(function.getName(), function);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+        functions.putAll(externalFunctions);
+        // externalFunctions.put(ExternFunction.GET_INT.getName(), ExternFunction.GET_INT);
+        // externalFunctions.put(ExternFunction.GET_CH.getName(), ExternFunction.GET_CH);
+        // externalFunctions.put(ExternFunction.GET_FLOAT.getName(), ExternFunction.GET_FLOAT);
+        // externalFunctions.put(ExternFunction.GET_ARR.getName(), ExternFunction.GET_ARR);
+        // externalFunctions.put(ExternFunction.GET_FARR.getName(), ExternFunction.GET_FARR);
+        // externalFunctions.put(ExternFunction.PUT_INT.getName(), ExternFunction.PUT_INT);
+        // externalFunctions.put(ExternFunction.PUT_CH.getName(), ExternFunction.PUT_CH);
+        // externalFunctions.put(ExternFunction.PUT_FLOAT.getName(), ExternFunction.PUT_FLOAT);
+        // externalFunctions.put(ExternFunction.PUT_ARR.getName(), ExternFunction.PUT_ARR);
+        // externalFunctions.put(ExternFunction.PUT_FARR.getName(), ExternFunction.PUT_FARR);
+        // externalFunctions.put(ExternFunction.MEM_SET.getName(), ExternFunction.MEM_SET);
+        // externalFunctions.put(ExternFunction.START_TIME.getName(), ExternFunction.START_TIME);
+        // externalFunctions.put(ExternFunction.STOP_TIME.getName(), ExternFunction.STOP_TIME);
+        // externalFunctions.put(ExternFunction.PARALLEL_START.getName(), ExternFunction.PARALLEL_START);
+        // externalFunctions.put(ExternFunction.PARALLEL_END.getName(), ExternFunction.PARALLEL_END);
     }
 
     public void addGlobal(GlobalValue value) {
@@ -96,6 +106,7 @@ public class Manager {
         }
         // 函数定义
         for (Function function : functions.values()) {
+            if(externalFunctions.containsKey(function.getName())) continue;
             OutputHandler.addLlvmString(function.toString());
         }
         try {
