@@ -62,7 +62,7 @@ public class OpTreeHandler {
         return null;
     }
 
-    private static Value evalArray(OpTree opTree, BasicBlock basicBlock){
+    public static Value evalArray(OpTree opTree, BasicBlock basicBlock){
         ArrayList<Value> idxList = new ArrayList<>();
         Value pointer = opTree.getValue();
         Type basicType = pointer.getType().getBasicType();

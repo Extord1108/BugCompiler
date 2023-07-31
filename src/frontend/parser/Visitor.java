@@ -600,6 +600,9 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
 //                }
             }
             opTree.setNeedPointer(needPointer);
+            if(needPointer){
+                return OpTreeHandler.evalArray(opTree, curBasicBlock);
+            }
 
 //            pointer = new GetElementPtr(basicType, pointer, idxList, curBasicBlock);
 //            if(needPointer){
