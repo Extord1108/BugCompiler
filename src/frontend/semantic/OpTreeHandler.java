@@ -95,20 +95,23 @@ public class OpTreeHandler {
         while (it.hasNext()) {
             OpTree.Operator op = itOp.next();
             child = it.next();
-            second = evalCond(child, trueBlock, falseBlock, basicBlock);
+
             if (op == OpTree.Operator.And) { // and时，左右都为Int1
+                BasicBlock newTrueBlock = new BasicBlock(basicBlock.getFunction());
+                second = evalCond(child, trueBlock, falseBlock, newTrueBlock);
                 first = Visitor.Instance.turnTo(first, Int1Type.getInstance());
                 second = Visitor.Instance.turnTo(second, Int1Type.getInstance());
-                BasicBlock newTrueBlock = new BasicBlock(basicBlock.getFunction());
-                newTrueBlock.addInstr(new Branch(second, trueBlock, falseBlock, newTrueBlock));
+                new Branch(second, trueBlock, falseBlock, newTrueBlock);
                 first = new Branch(first, newTrueBlock, falseBlock, basicBlock);
             } else if (op == OpTree.Operator.Or) {// or时，左右都为Int1
+                BasicBlock newFalseBlock = new BasicBlock(basicBlock.getFunction());
+                second = evalCond(child, trueBlock, falseBlock, newFalseBlock);
                 first = Visitor.Instance.turnTo(first, Int1Type.getInstance());
                 second = Visitor.Instance.turnTo(second, Int1Type.getInstance());
-                BasicBlock newFalseBlock = new BasicBlock(basicBlock.getFunction());
-                newFalseBlock.addInstr(new Branch(second, trueBlock, falseBlock, newFalseBlock));
+                new Branch(second, trueBlock, falseBlock, newFalseBlock);
                 first = new Branch(first, trueBlock, newFalseBlock, basicBlock);
             } else {// 比较运算时，根据左边和右边的类型进行相应转换
+                second = evalCond(child, trueBlock, falseBlock, basicBlock);
                 if (first.getType() instanceof FloatType || second.getType() instanceof FloatType) {// 其中有一个float则都为float
                     first = Visitor.Instance.turnTo(first, FloatType.getInstance());
                     second = Visitor.Instance.turnTo(second, FloatType.getInstance());

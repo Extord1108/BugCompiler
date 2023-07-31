@@ -2,6 +2,7 @@ package ir.instruction;
 
 import ir.BasicBlock;
 import ir.Value;
+import ir.type.Int1Type;
 import ir.type.Type;
 import ir.type.VoidType;
 
@@ -12,7 +13,7 @@ public class Branch extends Instr {
     private BasicBlock elseBlock;
 
     public Branch(Value cond, BasicBlock thenBlock, BasicBlock elseBlock, BasicBlock basicBlock) {
-        super(VoidType.getInstance(), basicBlock);
+        super(Int1Type.getInstance(), basicBlock);
         this.cond = cond;
         this.thenBlock = thenBlock;
         this.elseBlock = elseBlock;

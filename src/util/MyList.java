@@ -65,11 +65,11 @@ public class MyList<E extends MyNode> implements Iterable<E> {
     }
 
     public void insertAfter(E p, E node){
-            node.setNext(p.getNext());
-            node.setPrev(p);
-            p.getNext().setPrev(node);
-            p.setNext(node);
-            size ++;
+        node.setNext(p.getNext());
+        node.setPrev(p);
+        p.getNext().setPrev(node);
+        p.setNext(node);
+        size ++;
     }
 
     public void insertBefore(E p, E node){
