@@ -19,7 +19,20 @@ public class Unary extends Instr {
 
     @Override
     public String toString() {
-        return this.getName() + " = " + op + " " + this.getType() + " " + this.getVal();
+
+        if(op == OpTree.Operator.Neg)
+        {
+            if(type instanceof ir.type.FloatType)
+            return this.getName() + " = " + OpTree.Operator.Sub.getfName() + " " + this.getType() + " 0, " + this.getVal();
+            else
+            return this.getName() + " = fneg " + this.getType() + " " + this.getVal();
+        }
+        else if (op == OpTree.Operator.Not)
+        {
+            return this.getName() + " = xor " + this.getType() + " 1, " + this.getVal();
+        }
+        else
+        return this.getName() + " = " + op + " " + this.getType() + " 0, " + this.getVal();
     }
 
     public Value getVal() {
