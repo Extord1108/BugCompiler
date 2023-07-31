@@ -77,53 +77,63 @@ public class OpTreeHandler {
         return val;
     }
 
-    public static Value evalCond(OpTree opTree, BasicBlock trueBlock, BasicBlock falseBlock, BasicBlock basicBlock) {
+    public static Value evalCond(OpTree opTree, BasicBlock trueBlock, BasicBlock falseBlock) {
         if (opTree.getType() == OpTree.OpType.condType) {
-            return evalBinaryCond(opTree, trueBlock, falseBlock, basicBlock);
+            return evalBinaryCond(opTree, trueBlock, falseBlock);
         } else {
-            return evalExp(opTree, basicBlock);
+            return evalExp(opTree, Visitor.Instance.getCurBasicBlock());
         }
     }
 
-    private static Value evalBinaryCond(OpTree opTree, BasicBlock trueBlock, BasicBlock falseBlock,
-            BasicBlock basicBlock) {
+    private static Value evalBinaryCond(OpTree opTree, BasicBlock trueBlock, BasicBlock falseBlock) {
         Iterator<OpTree> it = opTree.getChildren().listIterator();
         Iterator<OpTree.Operator> itOp = opTree.getOperators().listIterator();
-        OpTree child = it.next();
-        Value first = evalCond(child, trueBlock, falseBlock, basicBlock);
+        OpTree child;
+        Value first = null;
+        if(!(it.hasNext() && opTree.getOperators().get(0) ==OpTree.Operator.Or)){
+            child = it.next();
+            first = evalCond(child, trueBlock, falseBlock);;
+        }
         Value second = null;
         while (it.hasNext()) {
-            OpTree.Operator op = itOp.next();
             child = it.next();
+            OpTree.Operator op = OpTree.Operator.Or;
+            if(itOp.hasNext())
+                op = itOp.next();
+
 
             if (op == OpTree.Operator.And) { // and时，左右都为Int1
-                BasicBlock newTrueBlock = new BasicBlock(basicBlock.getFunction());
-                second = evalCond(child, trueBlock, falseBlock, newTrueBlock);
-//                first = Visitor.Instance.turnTo(first, Int1Type.getInstance());
-                second = Visitor.Instance.turnTo(second, Int1Type.getInstance());
-                new Branch(second, trueBlock, falseBlock, newTrueBlock);
-//                first = new Branch(first, newTrueBlock, falseBlock, basicBlock);
+                BasicBlock newTrueBlock = new BasicBlock(Visitor.Instance.getCurBasicBlock().getFunction());
+                first = Visitor.Instance.turnTo(first, Int1Type.getInstance());
+                new Branch(first, newTrueBlock, falseBlock, Visitor.Instance.getCurBasicBlock());
+                Visitor.Instance.setCurBasicBlock(newTrueBlock);
+                first = evalCond(child, null, null);
             } else if (op == OpTree.Operator.Or) {// or时，左右都为Int1
-                BasicBlock newFalseBlock = new BasicBlock(basicBlock.getFunction());
-                second = evalCond(child, trueBlock, falseBlock, newFalseBlock);
-//                first = Visitor.Instance.turnTo(first, Int1Type.getInstance());
-                second = Visitor.Instance.turnTo(second, Int1Type.getInstance());
-                new Branch(second, trueBlock, falseBlock, newFalseBlock);
-//                first = new Branch(first, trueBlock, newFalseBlock, basicBlock);
+                if(it.hasNext()) {
+                    BasicBlock newFalseBlock = new BasicBlock(Visitor.Instance.getCurBasicBlock().getFunction());
+                    first = evalCond(child, trueBlock, newFalseBlock);
+                    first = Visitor.Instance.turnTo(first, Int1Type.getInstance());
+                    new Branch(first, trueBlock, newFalseBlock, Visitor.Instance.getCurBasicBlock());
+                    Visitor.Instance.setCurBasicBlock(newFalseBlock);
+                }
+                else
+                {
+                    first = evalCond(child, trueBlock, falseBlock);
+                }
             } else {// 比较运算时，根据左边和右边的类型进行相应转换
-                second = evalCond(child, trueBlock, falseBlock, basicBlock);
+                second = evalCond(child, trueBlock, falseBlock);
                 if (first.getType() instanceof FloatType || second.getType() instanceof FloatType) {// 其中有一个float则都为float
                     first = Visitor.Instance.turnTo(first, FloatType.getInstance());
                     second = Visitor.Instance.turnTo(second, FloatType.getInstance());
-                    first = new Fcmp(first, second, op, basicBlock);
+                    first = new Fcmp(first, second, op, Visitor.Instance.getCurBasicBlock());
                 } else if (first.getType() instanceof Int32Type || second.getType() instanceof Int32Type) {// 其中有一个int则都为int
                     first = Visitor.Instance.turnTo(first, Int32Type.getInstance());
                     second = Visitor.Instance.turnTo(second, Int32Type.getInstance());
-                    first = new Icmp(first, second, op, basicBlock);
+                    first = new Icmp(first, second, op, Visitor.Instance.getCurBasicBlock());
                 } else {
                     assert op == OpTree.Operator.Eq || op == OpTree.Operator.Ne;// 只有ne和eq的两边才可能为int1
                     assert first.getType() instanceof Int1Type && second.getType() instanceof Int1Type;
-                    first = new Icmp(first, second, op, basicBlock);
+                    first = new Icmp(first, second, op, Visitor.Instance.getCurBasicBlock());
                 }
             }
         }

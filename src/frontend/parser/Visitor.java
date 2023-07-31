@@ -43,6 +43,14 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
         return curBasicBlock == null;
     }
 
+    public BasicBlock getCurBasicBlock() {
+        return curBasicBlock;
+    }
+
+    public void setCurBasicBlock(BasicBlock curBasicBlock) {
+        this.curBasicBlock = curBasicBlock;
+    }
+
     public Value turnTo(Value value, Type targetType) {
         if (value.getType().equals(targetType)) {
             return value;
@@ -445,7 +453,7 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
         if (ctx.stmt().size() == 1) {
             visit(ctx.cond());
             followBlock = new BasicBlock(curFunction);
-            Value cond = OpTreeHandler.evalCond(current.getLast(), thenBlock, followBlock, curBasicBlock);
+            Value cond = OpTreeHandler.evalCond(current.getLast(), thenBlock, followBlock);
             cond = turnTo(cond, Int1Type.getInstance());
             new Branch(cond, thenBlock, followBlock, curBasicBlock);
             curBasicBlock = thenBlock;
@@ -455,7 +463,7 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
             BasicBlock elseBlock = new BasicBlock(curFunction);
             followBlock = new BasicBlock(curFunction);
             visit(ctx.cond());
-            Value cond = OpTreeHandler.evalCond(current.getLast(), thenBlock, elseBlock, curBasicBlock);
+            Value cond = OpTreeHandler.evalCond(current.getLast(), thenBlock, elseBlock);
             cond = turnTo(cond, Int1Type.getInstance());
             new Branch(cond, thenBlock, elseBlock, curBasicBlock);
             curBasicBlock = thenBlock;
@@ -477,7 +485,7 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
         new Jump(condBlock, curBasicBlock);
         curBasicBlock = condBlock;
         visit(ctx.cond());
-        Value cond = OpTreeHandler.evalCond(current.getLast(), bodyBlock, followBlock, curBasicBlock);
+        Value cond = OpTreeHandler.evalCond(current.getLast(), bodyBlock, followBlock);
         cond = turnTo(cond, Int1Type.getInstance());
         new Branch(cond, bodyBlock, followBlock, curBasicBlock);
         curBasicBlock = bodyBlock;
