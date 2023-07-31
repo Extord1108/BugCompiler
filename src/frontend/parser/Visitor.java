@@ -51,6 +51,10 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
         this.curBasicBlock = curBasicBlock;
     }
 
+    public Variable.ConstInt getCONST_0() {
+        return CONST_0;
+    }
+
     public Value turnTo(Value value, Type targetType) {
         if (value.getType().equals(targetType)) {
             return value;
@@ -554,52 +558,55 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
                 current.addChild(opTree);
             } else {
                 Value pointer = symbol.getValue();
-                Value value = new Load(pointer, curBasicBlock);
-                OpTree opTree = new OpTree(current, OpTree.OpType.valueType);
-                opTree.setValue(value);
+//                Value value = new Load(pointer, curBasicBlock);
+                OpTree opTree = new OpTree(current, OpTree.OpType.loadType);
+                opTree.setValue(pointer);
                 current.addChild(opTree);
             }
         } else {
-            ArrayList<Value> idxList = new ArrayList<>();
+//            ArrayList<Value> idxList = new ArrayList<>();
             Value pointer = symbol.getValue();
-            Type basicType = pointer.getType().getBasicType();
-            OpTree opTree = new OpTree(current, OpTree.OpType.valueType);
+//            Type basicType = pointer.getType().getBasicType();
+            OpTree opTree = new OpTree(current, OpTree.OpType.arrayType);
+            opTree.setValue(pointer);
             current.addChild(opTree);
             current = opTree;
             for(int i = 0; i < ctx.exp().size(); i ++){
                 visit(ctx.exp(i));
-                Value offset = OpTreeHandler.evalExp(current.getLast(), curBasicBlock);
-                offset = turnTo(offset, Int32Type.getInstance());
-                if(i == 0)
-                {
-                    if(basicType instanceof PointerType){
-                        basicType = basicType.getBasicType();
-                        pointer = new Load(pointer, curBasicBlock);
-                    }else{
-                        assert basicType instanceof ArrayType;
-                        basicType = basicType.getBasicType();
-                        idxList.add(CONST_0);
-                    }
-                    idxList.add(offset);
-                }else{
-                    basicType = basicType.getBasicType();
-                    idxList.add(offset);
-                }
+//                Value offset = OpTreeHandler.evalExp(current.getLast(), curBasicBlock);
+//                offset = turnTo(offset, Int32Type.getInstance());
+//                if(i == 0)
+//                {
+//                    if(basicType instanceof PointerType){
+//                        basicType = basicType.getBasicType();
+//                        pointer = new Load(pointer, curBasicBlock);
+//                    }else{
+//                        assert basicType instanceof ArrayType;
+//                        basicType = basicType.getBasicType();
+//                        idxList.add(CONST_0);
+//                    }
+//                    idxList.add(offset);
+//                }else{
+//                    basicType = basicType.getBasicType();
+//                    idxList.add(offset);
+//                }
             }
-            pointer = new GetElementPtr(basicType, pointer, idxList, curBasicBlock);
-            if(needPointer){
-                return pointer;
-            }
-            Value value;
-            if(basicType instanceof ArrayType){
-                idxList =  new ArrayList<>();
-                idxList.add(CONST_0);
-                idxList.add(CONST_0);
-                value = new GetElementPtr(basicType.getBasicType(), pointer, idxList, curBasicBlock);
-            }else {
-                value =  new Load(pointer, curBasicBlock);
-            }
-            opTree.setValue(value);
+            opTree.setNeedPointer(needPointer);
+
+//            pointer = new GetElementPtr(basicType, pointer, idxList, curBasicBlock);
+//            if(needPointer){
+//                return pointer;
+//            }
+//            Value value;
+//            if(basicType instanceof ArrayType){
+//                idxList =  new ArrayList<>();
+//                idxList.add(CONST_0);
+//                idxList.add(CONST_0);
+//                value = new GetElementPtr(basicType.getBasicType(), pointer, idxList, curBasicBlock);
+//            }else {
+//                value =  new Load(pointer, curBasicBlock);
+//            }
+//            opTree.setValue(value);
             current = opTree.getParent();
         }
         return null;
@@ -645,20 +652,15 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
             Function function = Manager.getFunctions().get(ident);
             assert function != null;
             ArrayList<Value> params = new ArrayList<>();
+            OpTree opTree = new OpTree(current, OpTree.OpType.funcType);
+            opTree.setValue(function);
+            current.addChild(opTree);
+            current = opTree;
             if(ctx.funcRParams()!= null){
                 visit(ctx.funcRParams());
-                for (int i = 0; i < curFuncRParams.size(); i++) {
-                    Value value = curFuncRParams.get(i);
-                    Function.Param param = function.getParams().get(i);
-                    if (param.getType() instanceof Int32Type || param.getType() instanceof FloatType) {
-                        value = turnTo(value, param.getType());
-                    }
-                    params.add(value);
-                }
             }
-            OpTree opTree = new OpTree(current, OpTree.OpType.valueType);
-            opTree.setValue(new Call(function, params, curBasicBlock));
-            current.addChild(opTree);
+
+            current = current.getParent();
         } else {
             switch (ctx.unaryOp().getText()) {
                 case "+" -> {
@@ -696,10 +698,10 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
 
     @Override
     public Value visitFuncRParams(SysYParser.FuncRParamsContext ctx) {
-        curFuncRParams = new ArrayList<>();
+//        curFuncRParams = new ArrayList<>();
         for (int i = 0; i < ctx.exp().size(); i++) {
             visit(ctx.exp(i));
-            curFuncRParams.add(OpTreeHandler.evalExp(current.getLast(), curBasicBlock));
+//            curFuncRParams.add(OpTreeHandler.evalExp(current.getLast(), curBasicBlock));
         }
         return null;
     }

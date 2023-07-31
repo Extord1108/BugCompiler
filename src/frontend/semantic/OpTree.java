@@ -11,6 +11,7 @@ public class OpTree {
     private final OpType type;
     private Value value;
     private ConstNumber number;
+    private boolean needPointer;
 
     public OpTree(ArrayList<OpTree> children, ArrayList<Operator> operators, OpTree parent, OpType type) {
         this.children = children;
@@ -20,7 +21,7 @@ public class OpTree {
     }
 
     public OpTree(OpTree parent, OpType type) {
-        if(type == OpType.valueType){
+        if(type == OpType.funcType || type == OpType.arrayType){
             children = new ArrayList<>();
             operators = new ArrayList<>();
         }else{
@@ -29,6 +30,13 @@ public class OpTree {
         }
         this.parent = parent;
         this.type = type;
+    }
+
+    public boolean getNeedPointer(){
+        return this.needPointer;
+    }
+    public void setNeedPointer(boolean needPointer) {
+        this.needPointer = needPointer;
     }
 
     public void setValue(Value value) {
@@ -146,7 +154,10 @@ public class OpTree {
         binaryType,
         condType,
         number,
-        valueType
+        valueType,
+        loadType,
+        funcType,
+        arrayType
 
     }
 }

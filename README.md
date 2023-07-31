@@ -12,6 +12,9 @@
 - [x] Binary中的类型检查
 - [x] Branch往后的tostring的实现
 
+### bug
+visitUnaryExp value返回的时候如果与func相关会出错
+
 ## 实现细节
 关于未显式初始化的局部变量，对于数组元素不足的情况，任采用补0的方式进行，并不是不确定的
 

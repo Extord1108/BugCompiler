@@ -1,20 +1,15 @@
 package frontend.semantic;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import frontend.parser.Visitor;
 import ir.BasicBlock;
+import ir.Function;
 import ir.Value;
-import ir.type.FloatType;
-import ir.type.Int1Type;
-import ir.type.Int32Type;
-import ir.type.Type;
+import ir.instruction.*;
+import ir.type.*;
 import ir.Variable;
-import ir.instruction.Binary;
-import ir.instruction.Branch;
-import ir.instruction.Fcmp;
-import ir.instruction.Icmp;
-import ir.instruction.Unary;
 
 public class OpTreeHandler {
 
@@ -41,10 +36,72 @@ public class OpTreeHandler {
                 assert opTree.getNumberType() == ConstNumber.NumberType.INT;
                 return new Variable.ConstInt((int) opTree.getNumber());
             }
-        } else if (opTree.getType() == OpTree.OpType.valueType) {
+        } else if (opTree.getType() == OpTree.OpType.loadType){
+            return new Load(opTree.getValue(), basicBlock);
+        } else if(opTree.getType() == OpTree.OpType.arrayType) {
+            return evalArray(opTree, basicBlock);
+        } else if(opTree.getType() == OpTree.OpType.funcType){
+            ArrayList<Value> params = new ArrayList<>();
+            Function function = (Function) opTree.getValue();
+            Iterator<OpTree> it = opTree.getChildren().listIterator();
+            int i = 0;
+            while (it.hasNext()){
+                Value value = OpTreeHandler.evalExp(it.next(), basicBlock);
+                Function.Param param = function.getParams().get(i);
+                if (param.getType() instanceof Int32Type || param.getType() instanceof FloatType) {
+                    value = Visitor.Instance.turnTo(value, param.getType());
+                }
+                params.add(value);
+                i ++;
+            }
+            return new Call(function, params, basicBlock);
+        }
+        else if (opTree.getType() == OpTree.OpType.valueType) {
             return opTree.getValue();
         }
         return null;
+    }
+
+    private static Value evalArray(OpTree opTree, BasicBlock basicBlock){
+        ArrayList<Value> idxList = new ArrayList<>();
+        Value pointer = opTree.getValue();
+        Type basicType = pointer.getType().getBasicType();
+        boolean first = true;
+        Iterator<OpTree> it = opTree.getChildren().listIterator();
+        while (it.hasNext()){
+            Value offset = OpTreeHandler.evalExp(it.next(), basicBlock);
+            offset = Visitor.Instance.turnTo(offset, Int32Type.getInstance());
+            if(first)
+            {
+                first = false;
+                if(basicType instanceof PointerType){
+                    basicType = basicType.getBasicType();
+                    pointer = new Load(pointer, basicBlock);
+                }else{
+                    assert basicType instanceof ArrayType;
+                    basicType = basicType.getBasicType();
+                    idxList.add(Visitor.Instance.getCONST_0());
+                }
+                idxList.add(offset);
+            }else{
+                basicType = basicType.getBasicType();
+                idxList.add(offset);
+            }
+        }
+        pointer = new GetElementPtr(basicType, pointer, idxList, basicBlock);
+        if(opTree.getNeedPointer()){
+            return pointer;
+        }
+        Value value;
+        if(basicType instanceof ArrayType){
+            idxList =  new ArrayList<>();
+            idxList.add(Visitor.Instance.getCONST_0());
+            idxList.add(Visitor.Instance.getCONST_0());
+            value = new GetElementPtr(basicType.getBasicType(), pointer, idxList, basicBlock);
+        }else {
+            value =  new Load(pointer, basicBlock);
+        }
+        return value;
     }
 
     private static Value evalBinaryExp(OpTree opTree, BasicBlock basicBlock) {
