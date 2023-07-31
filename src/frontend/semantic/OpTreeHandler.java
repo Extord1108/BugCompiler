@@ -62,6 +62,8 @@ public class OpTreeHandler {
             } else {
                 assert (first.getType() instanceof FloatType || second.getType() instanceof FloatType);
                 currentType = FloatType.getInstance();
+                first = Visitor.Instance.turnTo(first,FloatType.getInstance());
+                second = Visitor.Instance.turnTo(second,FloatType.getInstance());
             }
             first = new Binary(currentType, itOp.next(), first, second, basicBlock);
         }
@@ -70,10 +72,13 @@ public class OpTreeHandler {
 
     private static Value evalUnaryExp(OpTree opTree, BasicBlock basicBlock) {
         Iterator<OpTree> it = opTree.getChildren().listIterator();
-        Iterator<OpTree.Operator> itOp = opTree.getOperators().listIterator();
+        OpTree.Operator op = opTree.getOperators().get(0);
         OpTree child = it.next();
         Value val = evalExp(child, basicBlock);
-        val = new Unary(val.getType(), itOp.next(), val, basicBlock);
+        if(op ==OpTree.Operator.Not)
+            val = new Unary(Int1Type.getInstance(), op, val, basicBlock);
+        else
+        val = new Unary(val.getType(), op, val, basicBlock);
         return val;
     }
 

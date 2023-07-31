@@ -39,7 +39,7 @@ public class Variable extends Value {
         public ConstFloat(float floatVal) {
             super(FloatType.getInstance());
             this.floatVal = floatVal;
-            this.name = ((Float)floatVal).toString();
+            this.name = String.format("0x%x", Double.doubleToRawLongBits((floatVal)));
         }
 
         public Float getFloatVal() {
