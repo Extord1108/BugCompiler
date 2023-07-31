@@ -1,19 +1,18 @@
-int a[5][8];
-int e;
-int b(int a[][2])
-{
-    return 0;
+// test if-{if-else}
+int if_ifElse_() {
+  int a;
+  a = 5;
+  int b;
+  b = 10;
+  if(a == 5){
+    if (b == 10)
+      a = 25;
+    else
+      a = a + 15;
+  }
+  return (a);
 }
 
 int main(){
-    int a = e;
-    if(1>2)
-    {
-        a=2;
-    }
-    else{
-    a=3;
-    }
-    int c[2][2][2] = {1};
-    return b(c[1]);
+  return (if_ifElse_());
 }

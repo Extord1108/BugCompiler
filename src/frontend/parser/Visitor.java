@@ -446,8 +446,8 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
             visit(ctx.cond());
             followBlock = new BasicBlock(curFunction);
             Value cond = OpTreeHandler.evalCond(current.getLast(), thenBlock, followBlock, curBasicBlock);
-//            cond = turnTo(cond, Int1Type.getInstance());
-//            new Branch(cond, thenBlock, followBlock, curBasicBlock);
+            cond = turnTo(cond, Int1Type.getInstance());
+            new Branch(cond, thenBlock, followBlock, curBasicBlock);
             curBasicBlock = thenBlock;
             visit(ctx.stmt(0));
         } else {
@@ -456,8 +456,8 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
             followBlock = new BasicBlock(curFunction);
             visit(ctx.cond());
             Value cond = OpTreeHandler.evalCond(current.getLast(), thenBlock, elseBlock, curBasicBlock);
-//            cond = turnTo(cond, Int1Type.getInstance());
-//            new Branch(cond, thenBlock, elseBlock, curBasicBlock);
+            cond = turnTo(cond, Int1Type.getInstance());
+            new Branch(cond, thenBlock, elseBlock, curBasicBlock);
             curBasicBlock = thenBlock;
             visit(ctx.stmt(0));
             new Jump(followBlock, curBasicBlock);

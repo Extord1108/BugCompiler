@@ -23,16 +23,16 @@ public class Unary extends Instr {
         if(op == OpTree.Operator.Neg)
         {
             if(type instanceof ir.type.FloatType)
-            return this.getName() + " = fneg " + this.getType() + " " + this.getVal();
+            return this.getName() + " = fneg " + this.getType() + " " + this.val.getName();
             else
-            return this.getName() + " = sub " + this.getType() + " 0, " + this.getVal();
+            return this.getName() + " = sub " + this.getType() + " 0, " + this.val.getName();
         }
         else if (op == OpTree.Operator.Not)
         {
-            return this.getName() + " = xor " + this.getType() + " 1, " + this.getVal();
+            return this.getName() + " = xor " + this.getType() + " 1, " + this.val.getName();
         }
         else
-        return this.getName() + " = " + op + " " + this.getType() + " 0, " + this.getVal();
+        return this.getName() + " = " + op + " " + this.getType() + " 0, " + this.val.getName();
     }
 
     public Value getVal() {
