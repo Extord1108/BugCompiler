@@ -45,9 +45,11 @@ public class Compiler {
             regAllocate.alloc();
 
             // 输出 机器代码arm
-            FileOutputStream armOut = OutputHandler.getOutputFile(arg.targetFile);
+            if (!arg.targetFile.isEmpty()){
+                FileOutputStream armOut = OutputHandler.getOutputFile(arg.targetFile);
             Manager.getManager().outputArm(armOut);
             OutputHandler.closeOutputFile(armOut);
+            }
 
         } catch (IOException e) {
             e.printStackTrace();

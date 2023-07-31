@@ -68,7 +68,7 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
 
     @Override
     public Value visitCompUnit(SysYParser.CompUnitContext ctx) {
-        System.out.println("visitCompUnit");
+        //System.out.println("visitCompUnit");
         visitChildren(ctx);
         return null;
     }
