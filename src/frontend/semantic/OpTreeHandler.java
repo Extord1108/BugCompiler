@@ -46,7 +46,7 @@ public class OpTreeHandler {
             Iterator<OpTree> it = opTree.getChildren().listIterator();
             int i = 0;
             while (it.hasNext()){
-                Value value = OpTreeHandler.evalExp(it.next(), basicBlock);
+                Value value = evalExp(it.next(), basicBlock);
                 Function.Param param = function.getParams().get(i);
                 if (param.getType() instanceof Int32Type || param.getType() instanceof FloatType) {
                     value = Visitor.Instance.turnTo(value, param.getType());

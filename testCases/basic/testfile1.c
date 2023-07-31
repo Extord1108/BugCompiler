@@ -1,21 +1,11 @@
-int g = 0;
+int a, b, d;
 
-int func(int n) {
-  g = g + n;
-  putint(g);
-  return g;
-}
+int set_a(int val) { a = val; return a; }
+int set_b(int val) { b = val; return b; }
+int set_d(int val) { d = val; return d; }
 
-int main() {
-  int i;
-  i = getint();
-  if (i > 10 && func(i)) i = 1; else i = 0;
-  i = getint();
-  if (i > 11 && func(i)) i = 1; else i = 0;
-  i = getint();
-  if (i <= 99 || func(i)) i = 1; else i = 0;
-  i = getint();
-  if (i <= 100 || func(i)) i = 1; else i = 0;
-  if (!func(99) && func(100)) i = 1; else i = 0;
-  return 0;
+int main()
+{
+    if (1 < 8 != 7 % 2) { putch(67); }
+    return 0;
 }

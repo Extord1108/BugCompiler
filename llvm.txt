@@ -1,4 +1,6 @@
-@g = dso_local global i32 0
+@a = dso_local global i32 0
+@b = dso_local global i32 0
+@d = dso_local global i32 0
 declare i32 @getch()
 declare i32 @parallel_start()
 declare i32 @getfarray(float* )
@@ -14,105 +16,47 @@ declare void @putfloat(float )
 declare void @putch(i32 )
 declare float @getfloat()
 declare void @parallel_end(i32 )
-define dso_local i32 @main() 
-{
-b2:
-	%r11 = alloca i32
-	%r12 = call i32 @getint()
-	store i32 %r12, i32* %r11
-	%r14 = load i32, i32* %r11
-	%r15 = icmp sgt i32 %r14, 10
-	br i1 %r15, label %b6, label %b4
-b3:
-	store i32 1, i32* %r11
-	br label %b5
-b4:
-	store i32 0, i32* %r11
-	br label %b5
-b5:
-	%r25 = call i32 @getint()
-	store i32 %r25, i32* %r11
-	%r27 = load i32, i32* %r11
-	%r28 = icmp sgt i32 %r27, 11
-	br i1 %r28, label %b10, label %b8
-b6:
-	%r17 = load i32, i32* %r11
-	%r18 = call i32 @func(i32 %r17)
-	%r19 = icmp ne i32 %r18, 0
-	br i1 %r19, label %b3, label %b4
-b7:
-	store i32 1, i32* %r11
-	br label %b9
-b8:
-	store i32 0, i32* %r11
-	br label %b9
-b9:
-	%r38 = call i32 @getint()
-	store i32 %r38, i32* %r11
-	%r40 = load i32, i32* %r11
-	%r41 = icmp sle i32 %r40, 99
-	br i1 %r41, label %b11, label %b14
-b10:
-	%r30 = load i32, i32* %r11
-	%r31 = call i32 @func(i32 %r30)
-	%r32 = icmp ne i32 %r31, 0
-	br i1 %r32, label %b7, label %b8
-b11:
-	store i32 1, i32* %r11
-	br label %b13
-b12:
-	store i32 0, i32* %r11
-	br label %b13
-b13:
-	%r51 = call i32 @getint()
-	store i32 %r51, i32* %r11
-	%r53 = load i32, i32* %r11
-	%r54 = icmp sle i32 %r53, 100
-	br i1 %r54, label %b15, label %b18
-b14:
-	%r43 = load i32, i32* %r11
-	%r44 = call i32 @func(i32 %r43)
-	%r45 = icmp ne i32 %r44, 0
-	br i1 %r45, label %b11, label %b12
-b15:
-	store i32 1, i32* %r11
-	br label %b17
-b16:
-	store i32 0, i32* %r11
-	br label %b17
-b17:
-	%r64 = call i32 @func(i32 99)
-	%r65 = icmp eq i32 %r64, 0
-	br i1 %r65, label %b22, label %b20
-b18:
-	%r56 = load i32, i32* %r11
-	%r57 = call i32 @func(i32 %r56)
-	%r58 = icmp ne i32 %r57, 0
-	br i1 %r58, label %b15, label %b16
-b19:
-	store i32 1, i32* %r11
-	br label %b21
-b20:
-	store i32 0, i32* %r11
-	br label %b21
-b21:
-	ret i32 0
-b22:
-	%r67 = call i32 @func(i32 100)
-	%r68 = icmp ne i32 %r67, 0
-	br i1 %r68, label %b19, label %b20
-}
-define dso_local i32 @func(i32 %f0) 
+define dso_local i32 @set_a(i32 %f0) 
 {
 b1:
 	%r1 = alloca i32
 	store i32 %f0, i32* %r1
-	%r3 = load i32, i32* @g
-	%r4 = load i32, i32* %r1
-	%r5 = add i32 %r3, %r4
-	store i32 %r5, i32* @g
-	%r7 = load i32, i32* @g
-	call void @putint(i32 %r7)
-	%r9 = load i32, i32* @g
-	ret i32 %r9
+	%r3 = load i32, i32* %r1
+	store i32 %r3, i32* @a
+	%r5 = load i32, i32* @a
+	ret i32 %r5
+}
+define dso_local i32 @set_b(i32 %f7) 
+{
+b2:
+	%r8 = alloca i32
+	store i32 %f7, i32* %r8
+	%r10 = load i32, i32* %r8
+	store i32 %r10, i32* @b
+	%r12 = load i32, i32* @b
+	ret i32 %r12
+}
+define dso_local i32 @set_d(i32 %f14) 
+{
+b3:
+	%r15 = alloca i32
+	store i32 %f14, i32* %r15
+	%r17 = load i32, i32* %r15
+	store i32 %r17, i32* @d
+	%r19 = load i32, i32* @d
+	ret i32 %r19
+}
+define dso_local i32 @main() 
+{
+b4:
+	%r21 = icmp slt i32 1, 8
+	%r22 = srem i32 7, 2
+	%r23 = zext i1 %r21 to i32
+	%r24 = icmp ne i32 %r23, %r22
+	br i1 %r24, label %b5, label %b6
+b5:
+	call void @putch(i32 67)
+	br label %b6
+b6:
+	ret i32 0
 }

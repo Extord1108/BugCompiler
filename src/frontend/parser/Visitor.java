@@ -61,10 +61,16 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
         } else {
             if (targetType instanceof Int32Type) {
                 assert value.getType() instanceof FloatType || value.getType() instanceof Int1Type;
-                return new Fptosi(value, curBasicBlock);
+                if(value.getType() instanceof FloatType)
+                    return new Fptosi(value, curBasicBlock);
+                else
+                    return new Zext(value, curBasicBlock);
             } else if (targetType instanceof FloatType) {
                 assert value.getType() instanceof Int32Type || value.getType() instanceof Int1Type;
-                return new Sitofp(value, curBasicBlock);
+                if(value.getType() instanceof Int32Type)
+                    return new Sitofp(value, curBasicBlock);
+                else
+                    return new Fcmp( value, CONST_0f, OpTree.Operator.Ne,  curBasicBlock);
             } else {
                 if (value.getType().equals(Int32Type.getInstance())) {
                     return new Icmp(value, new Variable.ConstInt(0), OpTree.Operator.Ne, curBasicBlock);
