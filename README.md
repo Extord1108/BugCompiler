@@ -15,6 +15,7 @@
 ### bug
 28 e-1词法错误
 
+生成失败:/root/compiler/testcases/hidden_functional/23_json  需要添加zero区域赋值为0的操作
 
 ## 实现细节
 关于未显式初始化的局部变量，对于数组元素不足的情况，任采用补0的方式进行，并不是不确定的
