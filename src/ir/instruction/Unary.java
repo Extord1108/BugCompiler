@@ -23,9 +23,9 @@ public class Unary extends Instr {
         if(op == OpTree.Operator.Neg)
         {
             if(type instanceof ir.type.FloatType)
-            return this.getName() + " = " + OpTree.Operator.Sub.getfName() + " " + this.getType() + " 0, " + this.getVal();
-            else
             return this.getName() + " = fneg " + this.getType() + " " + this.getVal();
+            else
+            return this.getName() + " = sub " + this.getType() + " 0, " + this.getVal();
         }
         else if (op == OpTree.Operator.Not)
         {
