@@ -61,6 +61,8 @@ lOrExp: lAndExp (OR lAndExp)*;
 constExp: addExp;
 
 // 词法规则
+LINE_COMMENT: '//' ~[\r\n]* -> skip;
+BLOCK_COMMENT: '/*' .*? '*/' -> skip;
 WS : [ \t\n\r]+ -> skip;
 CONST: 'const';
 INT: 'int';
