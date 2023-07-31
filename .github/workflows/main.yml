@@ -29,5 +29,6 @@ jobs:
           password: ${{ secrets.MY_PASS }} # 服务器密码
           script: |
             cd /root/compiler
-            bash test.sh
+            bash clean.sh
+            bash test-llvm.sh 2> log.txt
             
