@@ -353,7 +353,9 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
         entry.addFunction(function);
         curFunction = function;
         visit(ctx.block());
-
+//        if(curBasicBlock.getInstrs().size() == 0){
+//
+//        }
         if (!curBasicBlock.isTerminated()) {
             if (returnType instanceof VoidType) {
                 new Return(curBasicBlock);
