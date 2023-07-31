@@ -2,6 +2,7 @@ package ir;
 
 import ir.instruction.Instr;
 import ir.type.Type;
+import manager.Manager;
 import util.MyList;
 
 import java.util.ArrayList;
@@ -14,6 +15,10 @@ public class Function extends Value {
         this.name = name;
         this.params = params;
         this.type = type;
+    }
+
+    public boolean isExternal(){
+        return Manager.getExternalFunctions().containsValue(this);
     }
 
     public static class Param extends Value {
@@ -31,6 +36,10 @@ public class Function extends Value {
         public String toString() {
             return type + " " + name;
         }
+    }
+
+    public MyList<BasicBlock> getBasicBlocks() {
+        return basicBlocks;
     }
 
     public ArrayList<Param> getParams() {

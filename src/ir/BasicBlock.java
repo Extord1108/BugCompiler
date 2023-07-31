@@ -37,6 +37,10 @@ public class BasicBlock extends Value {
         function.addAtEnd(this);
     }
 
+    public MyList<Instr> getInstrs() {
+        return instrs;
+    }
+
     public void addInstrHead(Instr instr) {
         instrs.insertHead(instr);
     }

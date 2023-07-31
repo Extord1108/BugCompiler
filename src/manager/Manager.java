@@ -49,6 +49,10 @@ public class Manager {
         return manager;
     }
 
+    public static HashMap<String, Function> getExternalFunctions() {
+        return externalFunctions;
+    }
+
     public void addFunction(Function function) {
         functions.put(function.getName(), function);
     }
