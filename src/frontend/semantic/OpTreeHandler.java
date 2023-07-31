@@ -132,10 +132,14 @@ public class OpTreeHandler {
         OpTree.Operator op = opTree.getOperators().get(0);
         OpTree child = it.next();
         Value val = evalExp(child, basicBlock);
-        if(op ==OpTree.Operator.Not)
+        if(op ==OpTree.Operator.Not) {
             val = new Unary(Int1Type.getInstance(), op, val, basicBlock);
-        else
-        val = new Unary(val.getType(), op, val, basicBlock);
+        }
+        else{
+            val = Visitor.Instance.turnTo(val, Int32Type.getInstance());
+            val = new Unary(val.getType(), op, val, basicBlock);
+        }
+
         return val;
     }
 
