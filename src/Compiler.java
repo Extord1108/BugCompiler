@@ -29,9 +29,11 @@ public class Compiler {
             visitor.visit(tree);
 
             // 输出 LLVM
-            FileOutputStream llvmOut = OutputHandler.getOutputFile(arg.llvmFile);
-            Manager.getManager().outputLLVM(llvmOut);
-            OutputHandler.closeOutputFile(llvmOut);
+            if (!arg.llvmFile.isEmpty()) {
+                FileOutputStream llvmOut = OutputHandler.getOutputFile(arg.llvmFile);
+                Manager.getManager().outputLLVM(llvmOut);
+                OutputHandler.closeOutputFile(llvmOut);
+            }
 
             var midEndRunner = new MidEndRunner(Manager.getFunctions(), Manager.getGlobals(), arg.opt);
             midEndRunner.run();
