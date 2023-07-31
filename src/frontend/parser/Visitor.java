@@ -327,7 +327,7 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
             for (Function.Param param : curFuncParams) {
                 Value paramPointer = new Alloc(param.getType(), curBasicBlock);
                 new Store(param, paramPointer, curBasicBlock);
-                curSymTable.add(new Symbol(param.getName(), param.getType(), false, null, paramPointer));
+                curSymTable.add(new Symbol(param.getParamName(), param.getType(), false, null, paramPointer));
             }
         }
         Function function = new Function(ident, curFuncParams, returnType);
@@ -637,14 +637,16 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
             Function function = Manager.getFunctions().get(ident);
             assert function != null;
             ArrayList<Value> params = new ArrayList<>();
-            visit(ctx.funcRParams());
-            for (int i = 0; i < curFuncRParams.size(); i++) {
-                Value value = curFuncRParams.get(i);
-                Function.Param param = function.getParams().get(i);
-                if (param.getType() instanceof Int32Type || param.getType() instanceof FloatType) {
-                    value = turnTo(value, param.getType());
+            if(ctx.funcRParams()!= null){
+                visit(ctx.funcRParams());
+                for (int i = 0; i < curFuncRParams.size(); i++) {
+                    Value value = curFuncRParams.get(i);
+                    Function.Param param = function.getParams().get(i);
+                    if (param.getType() instanceof Int32Type || param.getType() instanceof FloatType) {
+                        value = turnTo(value, param.getType());
+                    }
+                    params.add(value);
                 }
-                params.add(value);
             }
             OpTree opTree = new OpTree(current, OpTree.OpType.valueType);
             opTree.setValue(new Call(function, params, curBasicBlock));

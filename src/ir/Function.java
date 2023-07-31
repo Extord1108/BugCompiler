@@ -17,14 +17,20 @@ public class Function extends Value {
     }
 
     public static class Param extends Value {
+        public String paramName;
         public Param(String name, Type type) {
             this.name = "%f" + Instr.getCount();
+            this.paramName = name;
             this.type = type;
         }
 
         public Param( Type type) {
             this.name = "";
             this.type = type;
+        }
+
+        public String getParamName() {
+            return paramName;
         }
 
         @Override

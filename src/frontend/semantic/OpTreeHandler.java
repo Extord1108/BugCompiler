@@ -48,13 +48,6 @@ public class OpTreeHandler {
     }
 
     private static Value evalBinaryExp(OpTree opTree, BasicBlock basicBlock) {
-        opTree.getChildren().forEach(child -> {
-            if (child.getType() == OpTree.OpType.number)
-            System.out.println(child.getNumber());
-            else
-            System.out.println(child.getValue());
-        });
-        System.out.println(opTree.getOperators());
         Iterator<OpTree> it = opTree.getChildren().listIterator();
         Iterator<OpTree.Operator> itOp = opTree.getOperators().listIterator();
         OpTree child = it.next();
