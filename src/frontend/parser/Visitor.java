@@ -555,6 +555,9 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
             ArrayList<Value> idxList = new ArrayList<>();
             Value pointer = symbol.getValue();
             Type basicType = pointer.getType().getBasicType();
+            OpTree opTree = new OpTree(current, OpTree.OpType.valueType);
+            current.addChild(opTree);
+            current = opTree;
             for(int i = 0; i < ctx.exp().size(); i ++){
                 visit(ctx.exp(i));
                 Value offset = OpTreeHandler.evalExp(current.getLast(), curBasicBlock);
@@ -588,9 +591,8 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
             }else {
                 value =  new Load(pointer, curBasicBlock);
             }
-            OpTree opTree = new OpTree(current, OpTree.OpType.valueType);
             opTree.setValue(value);
-            current.addChild(opTree);
+            current = opTree.getParent();
         }
         return null;
     }

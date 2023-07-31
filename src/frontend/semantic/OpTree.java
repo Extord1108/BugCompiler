@@ -20,8 +20,13 @@ public class OpTree {
     }
 
     public OpTree(OpTree parent, OpType type) {
-        children = null;
-        operators = null;
+        if(type == OpType.valueType){
+            children = new ArrayList<>();
+            operators = new ArrayList<>();
+        }else{
+            children = null;
+            operators = null;
+        }
         this.parent = parent;
         this.type = type;
     }
@@ -142,5 +147,6 @@ public class OpTree {
         condType,
         number,
         valueType
+
     }
 }
