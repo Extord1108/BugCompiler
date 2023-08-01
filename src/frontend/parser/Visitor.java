@@ -248,9 +248,13 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
         if (ctx.initVal() != null) {
             if (currentType instanceof ArrayType) {
                 Variable.VarArray varArray = (Variable.VarArray) visit(ctx.initVal());
-                varArray.setAddZero(false);
-                varArray = varArray.changeType((ArrayType) currentType);
-                initVal = new InitVal(currentType, varArray);
+                if(varArray.getSize() == 0){
+                    initVal = new InitVal(currentType, new Variable.ZeroInit(currentType));
+                } else{
+                    varArray.setAddZero(false);
+                    varArray = varArray.changeType((ArrayType) currentType);
+                    initVal = new InitVal(currentType, varArray);
+                }
             } else {
                 initVal = new InitVal(currentType, visit(ctx.initVal()));
             }
@@ -276,21 +280,30 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
             if (initVal != null) {
                 Type initType = initVal.getType();
                 if (initType instanceof ArrayType) {
-                    ArrayList<Value> flatten = initVal.flatten();
                     ArrayList<Value> idxList = new ArrayList<>();
                     for (int i = 0; i <= ((ArrayType) initType).getDims(); i++) {
                         idxList.add(CONST_0);
                     }
                     Type contextType = ((ArrayType) initType).getContextType();
                     Value pl = new GetElementPtr(contextType, pointer, idxList, curBasicBlock);
-                    if(!(flatten.get(0) instanceof Variable.Undef))
-                        new Store(turnTo(flatten.get(0), contextType), pl, curBasicBlock);
-                    for (int i = 1; i < flatten.size(); i++) {
-                        idxList = new ArrayList<>();
-                        idxList.add(new Variable.ConstInt(i));
-                        Value p = new GetElementPtr(contextType, pl, idxList, curBasicBlock);
+                    if(initVal.getValue() instanceof Variable.VarArray){
+                        ArrayList<Value> flatten = initVal.flatten();
                         if(!(flatten.get(0) instanceof Variable.Undef))
-                            new Store(turnTo(flatten.get(i), contextType), p, curBasicBlock);
+                            new Store(turnTo(flatten.get(0), contextType), pl, curBasicBlock);
+                        for (int i = 1; i < flatten.size(); i++) {
+                            idxList = new ArrayList<>();
+                            idxList.add(new Variable.ConstInt(i));
+                            Value p = new GetElementPtr(contextType, pl, idxList, curBasicBlock);
+                            if(!(flatten.get(0) instanceof Variable.Undef))
+                                new Store(turnTo(flatten.get(i), contextType), p, curBasicBlock);
+                        }
+                    }else {
+                        assert initVal.getValue() instanceof Variable.ZeroInit;
+                        ArrayList<Value> params = new ArrayList<>();
+                        params.add(pl);
+                        params.add(CONST_0);
+                        params.add(new Variable.ConstInt(((ArrayType) initType).getFattenSize() * 4));
+                        new Call(Manager.ExternFunction.MEM_SET, params, curBasicBlock);
                     }
                 } else if ((initType instanceof FloatType) || (initType instanceof Int32Type)) {
                     Value value = turnTo(initVal.getValue(), initType);
