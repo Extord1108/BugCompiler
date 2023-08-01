@@ -1,49 +1,55 @@
-int n;
-int select_sort(int A[],int n)
-{
-    int i;
-    int j;
-    int min;
-    i =0;
-    while(i < n-1)
-    {
-        min=i;//
-        j = i + 1;
-        while(j < n)
-        {
-            if(A[min]>A[j])
-            {
-                min=j;
+int g;
+int h;
+int f;
+int e;
+int EightWhile() {
+  int a;
+  a = 5;
+  int b;
+  int c;
+  b = 6;
+  c = 7;
+  int d;
+  d = 10;
+  while (a < 20) {
+    a = a + 3;
+    while(b < 10){
+      b = b + 1;
+      while(c == 7){
+        c = c - 1;
+        while(d < 20){
+          d = d + 3;
+          while(e > 1){
+            e = e-1;
+            while(f > 2){
+              f = f -2;
+              while(g < 3){
+                g = g +10;
+                while(h < 10){
+                  h = h + 8;
+                }
+                h = h-1;
+              }
+              g = g- 8;
             }
-            j=j+1;
+            f = f + 1;
+          }
+          e = e + 1;
         }
-        if(min!=i)
-        {
-            int tmp;
-            tmp = A[min];
-            A[min] = A[i];
-            A[i] = tmp;
-        }
-        i = i + 1;
+        d = d - 1;
+      }
+      c = c + 1;
     }
-    return 0;
+    b = b - 2;
+  }
+
+  return (a + (b + d) + c)-(e + d - g + h);
 }
 
-int main(){
-    n = 10;
-    int a[10];
-    a[0]=4;a[1]=3;a[2]=9;a[3]=2;a[4]=0;
-    a[5]=1;a[6]=6;a[7]=5;a[8]=7;a[9]=8;
-    int i;
-    i = 0;
-    i = select_sort(a, n);
-    while (i < n) {
-        int tmp;
-        tmp = a[i];
-        putint(tmp);
-        tmp = 10;
-        putch(tmp);
-        i = i + 1;
-    }
-    return 0;
+int main() {
+  g = 1;
+  h = 2;
+  e = 4;
+  f = 6;
+  return EightWhile();
 }
