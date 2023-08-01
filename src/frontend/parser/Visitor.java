@@ -262,9 +262,7 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
             // Global情况下补0,非global的情况下值为不确定的值,init为null
             if (isGlobal()) {
                 if (currentType instanceof ArrayType) {
-                    Variable.VarArray varArray = new Variable.VarArray(null);
-                    varArray = varArray.changeType((ArrayType) currentType);
-                    initVal = new InitVal(currentType, varArray);
+                    initVal = new InitVal(currentType, new Variable.ZeroInit(currentType));
                 } else if (currentType instanceof Int32Type) {
                     initVal = new InitVal(currentType, CONST_0);
                 } else {
