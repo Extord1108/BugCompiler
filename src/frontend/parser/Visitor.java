@@ -293,9 +293,10 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
                         for (int i = 1; i < flatten.size(); i++) {
                             idxList = new ArrayList<>();
                             idxList.add(new Variable.ConstInt(i));
-                            Value p = new GetElementPtr(contextType, pl, idxList, curBasicBlock);
-                            if(!(flatten.get(0) instanceof Variable.Undef))
+                            if(!(flatten.get(i) instanceof Variable.Undef)){
+                                Value p = new GetElementPtr(contextType, pl, idxList, curBasicBlock);
                                 new Store(turnTo(flatten.get(i), contextType), p, curBasicBlock);
+                            }
                         }
                     }else {
                         assert initVal.getValue() instanceof Variable.ZeroInit;
