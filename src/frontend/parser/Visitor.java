@@ -746,8 +746,8 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
         visit(ctx.unaryExp());
         if (current.getLast().getType().equals(OpTree.OpType.unaryType) && current.getLast().getOperators().get(0) == op) {
             current.getParent().removeLast();
-            current.getChildren().get(0).setParent(current.getParent());
-            current.getParent().addChild(current.getChildren().get(0));
+            current.getChildren().get(0).getChildren().get(0).setParent(current.getParent());
+            current.getParent().addChild(current.getChildren().get(0).getChildren().get(0));
         }
         current = current.getParent();
     }
