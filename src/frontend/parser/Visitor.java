@@ -30,7 +30,6 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
     private SymTable curSymTable = new SymTable(null);
     private BasicBlock curBasicBlock = null;
     private Function curFunction = null;
-    private ArrayList<Value> curFuncRParams = null;
 
     private Variable.ConstFloat CONST_0f = new Variable.ConstFloat(0.0f);
     private Variable.ConstInt CONST_0 = new Variable.ConstInt(0);
@@ -251,8 +250,8 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
                 if(varArray.getSize() == 0){
                     initVal = new InitVal(currentType, new Variable.ZeroInit(currentType));
                 } else{
-//                    if(!isGlobal())
-//                        varArray.setAddZero(false);
+                    if(!isGlobal())
+                        varArray.setAddZero(false);
                     varArray = varArray.changeType((ArrayType) currentType);
                     initVal = new InitVal(currentType, varArray);
                 }
@@ -287,6 +286,17 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
                     Value pl = new GetElementPtr(contextType, pointer, idxList, curBasicBlock);
                     if(initVal.getValue() instanceof Variable.VarArray){
                         ArrayList<Value> flatten = initVal.flatten();
+                        // 存在undef需要memset一次
+                        for(int i = 0; i < flatten.size(); i++){
+                            if(flatten.get(i) instanceof Variable.Undef){
+                                ArrayList<Value> params = new ArrayList<>();
+                                params.add(pl);
+                                params.add(CONST_0);
+                                params.add(new Variable.ConstInt(((ArrayType) initType).getFattenSize() * 4));
+                                new Call(Manager.ExternFunction.MEM_SET, params, curBasicBlock);
+                                break;
+                            }
+                        }
                         if(!(flatten.get(0) instanceof Variable.Undef))
                             new Store(turnTo(flatten.get(0), contextType), pl, curBasicBlock);
                         for (int i = 1; i < flatten.size(); i++) {
@@ -305,7 +315,8 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
                         params.add(new Variable.ConstInt(((ArrayType) initType).getFattenSize() * 4));
                         new Call(Manager.ExternFunction.MEM_SET, params, curBasicBlock);
                     }
-                } else if ((initType instanceof FloatType) || (initType instanceof Int32Type)) {
+                }
+                else if ((initType instanceof FloatType) || (initType instanceof Int32Type)) {
                     Value value = turnTo(initVal.getValue(), initType);
                     new Store(value, pointer, curBasicBlock);
                 }

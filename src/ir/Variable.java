@@ -48,7 +48,8 @@ public class Variable extends Value {
 
         @Override
         public String toString() {
-            return floatVal.toString();
+            String out = String.format("0x%x", Double.doubleToRawLongBits((floatVal)));
+            return out;
         }
     }
 
