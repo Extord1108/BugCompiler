@@ -120,7 +120,11 @@ public class Variable extends Value {
                             i--;// 如果还有剩余则回退一个
                         else if (i == this.getSize() && childArray.getSize() < size) { // 如果没有剩余但是子数组的元素个数不够
                             for (int j = childArray.getSize(); j < size; j++) {
-                                if (type.getContextType() instanceof Int32Type) {
+                                if(!addZero)
+                                {
+                                    childArray.add(new Undef(type.getContextType()));
+                                }
+                                else if (type.getContextType() instanceof Int32Type) {
                                     childArray.add(new Variable.ConstInt(0));
                                 } else {
                                     assert type.getContextType() instanceof FloatType;
