@@ -88,7 +88,9 @@ public class OpTreeHandler {
                 idxList.add(offset);
             }
         }
-        pointer = new GetElementPtr(basicType, pointer, idxList, basicBlock);
+        // 防止a[10]取a的情况出现，没有idxList
+        if(idxList.size() != 0)
+            pointer = new GetElementPtr(basicType, pointer, idxList, basicBlock);
         if(opTree.getNeedPointer()){
             return pointer;
         }
