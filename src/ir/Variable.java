@@ -54,9 +54,14 @@ public class Variable extends Value {
 
     public static class VarArray extends Variable {
         private ArrayList<Value> varArray = new ArrayList<>();
+        private boolean addZero = true;
 
         public VarArray(Type type) {
             super(type);
+        }
+
+        public void setAddZero(boolean addZero) {
+            this.addZero = addZero;
         }
 
         public void add(Value variable) {
@@ -124,7 +129,6 @@ public class Variable extends Value {
                                 // System.out.println("add 0");
                             }
                         }
-
                         assert childArray.getSize() == size;
                         ret.add(childArray.changeType((ArrayType) type.getBasicType()));
                     }
@@ -159,17 +163,6 @@ public class Variable extends Value {
             return ret;
         }
 
-        // public Constant getConst(ArrayList<Integer> dims){
-        // int index = 0;
-        // ArrayType type = (ArrayType) this.type;
-        // for(int i = 0; i < dims.size() - 1; i++){
-        // index += dims.get(i) * ((ArrayType)type.getBasicType()).getFattenSize();
-        // }
-        // index += dims.get(dims.size() - 1);
-        // assert index < varArray.size();
-        // return varArray.get(index);
-        // }
-
         @Override
         public String toString() {
             String ret = "[";
@@ -179,6 +172,24 @@ public class Variable extends Value {
             if (varArray.size() > 0)
                 ret += varArray.get(varArray.size() - 1).getType() + " " + varArray.get(varArray.size() - 1).toString() + "]";
             return ret;
+        }
+    }
+
+    public static class Undef extends Variable {
+        public Undef(Type type){
+            super(type);
+        }
+    }
+
+    public static class ZeroInit extends Variable {
+
+        public ZeroInit(Type type) {
+            super(type);
+        }
+
+        @Override
+        public String toString(){
+            return "zeroinitializer";
         }
     }
 
