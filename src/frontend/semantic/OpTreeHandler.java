@@ -1,20 +1,15 @@
 package frontend.semantic;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import frontend.parser.Visitor;
 import ir.BasicBlock;
+import ir.Function;
 import ir.Value;
-import ir.type.FloatType;
-import ir.type.Int1Type;
-import ir.type.Int32Type;
-import ir.type.Type;
+import ir.instruction.*;
+import ir.type.*;
 import ir.Variable;
-import ir.instruction.Binary;
-import ir.instruction.Branch;
-import ir.instruction.Fcmp;
-import ir.instruction.Icmp;
-import ir.instruction.Unary;
 
 public class OpTreeHandler {
 
@@ -41,10 +36,74 @@ public class OpTreeHandler {
                 assert opTree.getNumberType() == ConstNumber.NumberType.INT;
                 return new Variable.ConstInt((int) opTree.getNumber());
             }
-        } else if (opTree.getType() == OpTree.OpType.valueType) {
+        } else if (opTree.getType() == OpTree.OpType.loadType){
+            return new Load(opTree.getValue(), basicBlock);
+        } else if(opTree.getType() == OpTree.OpType.arrayType) {
+            return evalArray(opTree, basicBlock);
+        } else if(opTree.getType() == OpTree.OpType.funcType){
+            ArrayList<Value> params = new ArrayList<>();
+            Function function = (Function) opTree.getValue();
+            Iterator<OpTree> it = opTree.getChildren().listIterator();
+            int i = 0;
+            while (it.hasNext()){
+                Value value = evalExp(it.next(), basicBlock);
+                Function.Param param = function.getParams().get(i);
+                if (param.getType() instanceof Int32Type || param.getType() instanceof FloatType) {
+                    value = Visitor.Instance.turnTo(value, param.getType());
+                }
+                params.add(value);
+                i ++;
+            }
+            return new Call(function, params, basicBlock);
+        }
+        else if (opTree.getType() == OpTree.OpType.valueType) {
             return opTree.getValue();
         }
         return null;
+    }
+
+    public static Value evalArray(OpTree opTree, BasicBlock basicBlock){
+        ArrayList<Value> idxList = new ArrayList<>();
+        Value pointer = opTree.getValue();
+        Type basicType = pointer.getType().getBasicType();
+        boolean first = true;
+        Iterator<OpTree> it = opTree.getChildren().listIterator();
+        while (it.hasNext()){
+            Value offset = OpTreeHandler.evalExp(it.next(), basicBlock);
+            offset = Visitor.Instance.turnTo(offset, Int32Type.getInstance());
+            if(first)
+            {
+                first = false;
+                if(basicType instanceof PointerType){
+                    basicType = basicType.getBasicType();
+                    pointer = new Load(pointer, basicBlock);
+                }else{
+                    assert basicType instanceof ArrayType;
+                    basicType = basicType.getBasicType();
+                    idxList.add(Visitor.Instance.getCONST_0());
+                }
+                idxList.add(offset);
+            }else{
+                basicType = basicType.getBasicType();
+                idxList.add(offset);
+            }
+        }
+        // 防止a[10]取a的情况出现，没有idxList
+        if(idxList.size() != 0)
+            pointer = new GetElementPtr(basicType, pointer, idxList, basicBlock);
+        if(opTree.getNeedPointer()){
+            return pointer;
+        }
+        Value value;
+        if(basicType instanceof ArrayType){
+            idxList =  new ArrayList<>();
+            idxList.add(Visitor.Instance.getCONST_0());
+            idxList.add(Visitor.Instance.getCONST_0());
+            value = new GetElementPtr(basicType.getBasicType(), pointer, idxList, basicBlock);
+        }else {
+            value =  new Load(pointer, basicBlock);
+        }
+        return value;
     }
 
     private static Value evalBinaryExp(OpTree opTree, BasicBlock basicBlock) {
@@ -57,11 +116,14 @@ public class OpTreeHandler {
             child = it.next();
             second = evalExp(child, basicBlock);
             Type currentType = null;
-            if (first.getType() instanceof Int32Type && second.getType() instanceof Int32Type) {
-                currentType = Int32Type.getInstance();
-            } else {
-                assert (first.getType() instanceof FloatType || second.getType() instanceof FloatType);
+            if(first.getType() instanceof FloatType || second.getType() instanceof FloatType) {
                 currentType = FloatType.getInstance();
+                first = Visitor.Instance.turnTo(first,FloatType.getInstance());
+                second = Visitor.Instance.turnTo(second,FloatType.getInstance());
+            } else {
+                currentType = Int32Type.getInstance();
+                first = Visitor.Instance.turnTo(first,Int32Type.getInstance());
+                second = Visitor.Instance.turnTo(second,Int32Type.getInstance());
             }
             first = new Binary(currentType, itOp.next(), first, second, basicBlock);
         }
@@ -70,57 +132,78 @@ public class OpTreeHandler {
 
     private static Value evalUnaryExp(OpTree opTree, BasicBlock basicBlock) {
         Iterator<OpTree> it = opTree.getChildren().listIterator();
-        Iterator<OpTree.Operator> itOp = opTree.getOperators().listIterator();
+        OpTree.Operator op = opTree.getOperators().get(0);
         OpTree child = it.next();
         Value val = evalExp(child, basicBlock);
-        val = new Unary(val.getType(), itOp.next(), val, basicBlock);
+        if(op ==OpTree.Operator.Not) {
+            val = new Unary(Int1Type.getInstance(), op, val, basicBlock);
+        }
+        else{
+            if(val.getType() instanceof Int1Type)
+                val = Visitor.Instance.turnTo(val, Int32Type.getInstance());
+            val = new Unary(val.getType(), op, val, basicBlock);
+        }
+
         return val;
     }
 
-    public static Value evalCond(OpTree opTree, BasicBlock trueBlock, BasicBlock falseBlock, BasicBlock basicBlock) {
+    public static Value evalCond(OpTree opTree, BasicBlock trueBlock, BasicBlock falseBlock) {
         if (opTree.getType() == OpTree.OpType.condType) {
-            return evalBinaryCond(opTree, trueBlock, falseBlock, basicBlock);
+            return evalBinaryCond(opTree, trueBlock, falseBlock);
         } else {
-            return evalExp(opTree, basicBlock);
+            return evalExp(opTree, Visitor.Instance.getCurBasicBlock());
         }
     }
 
-    private static Value evalBinaryCond(OpTree opTree, BasicBlock trueBlock, BasicBlock falseBlock,
-            BasicBlock basicBlock) {
+    private static Value evalBinaryCond(OpTree opTree, BasicBlock trueBlock, BasicBlock falseBlock) {
         Iterator<OpTree> it = opTree.getChildren().listIterator();
         Iterator<OpTree.Operator> itOp = opTree.getOperators().listIterator();
-        OpTree child = it.next();
-        Value first = evalCond(child, trueBlock, falseBlock, basicBlock);
+        OpTree child;
+        Value first = null;
+        if(!(it.hasNext() && opTree.getOperators().get(0) ==OpTree.Operator.Or)){
+            child = it.next();
+            first = evalCond(child, trueBlock, falseBlock);;
+        }
         Value second = null;
         while (it.hasNext()) {
-            OpTree.Operator op = itOp.next();
             child = it.next();
-            second = evalCond(child, trueBlock, falseBlock, basicBlock);
+            OpTree.Operator op = OpTree.Operator.Or;
+            if(itOp.hasNext())
+                op = itOp.next();
+
+
             if (op == OpTree.Operator.And) { // and时，左右都为Int1
+                BasicBlock newTrueBlock = new BasicBlock(Visitor.Instance.getCurBasicBlock().getFunction());
                 first = Visitor.Instance.turnTo(first, Int1Type.getInstance());
-                second = Visitor.Instance.turnTo(second, Int1Type.getInstance());
-                BasicBlock newTrueBlock = new BasicBlock(basicBlock.getFunction());
-                newTrueBlock.addInstr(new Branch(second, trueBlock, falseBlock, newTrueBlock));
-                first = new Branch(first, newTrueBlock, falseBlock, basicBlock);
+                new Branch(first, newTrueBlock, falseBlock, Visitor.Instance.getCurBasicBlock());
+                Visitor.Instance.setCurBasicBlock(newTrueBlock);
+                first = evalCond(child, null, null);
             } else if (op == OpTree.Operator.Or) {// or时，左右都为Int1
-                first = Visitor.Instance.turnTo(first, Int1Type.getInstance());
-                second = Visitor.Instance.turnTo(second, Int1Type.getInstance());
-                BasicBlock newFalseBlock = new BasicBlock(basicBlock.getFunction());
-                newFalseBlock.addInstr(new Branch(second, trueBlock, falseBlock, newFalseBlock));
-                first = new Branch(first, trueBlock, newFalseBlock, basicBlock);
+                if(it.hasNext()) {
+                    BasicBlock newFalseBlock = new BasicBlock(Visitor.Instance.getCurBasicBlock().getFunction());
+                    first = evalCond(child, trueBlock, newFalseBlock);
+                    first = Visitor.Instance.turnTo(first, Int1Type.getInstance());
+                    new Branch(first, trueBlock, newFalseBlock, Visitor.Instance.getCurBasicBlock());
+                    Visitor.Instance.setCurBasicBlock(newFalseBlock);
+                }
+                else
+                {
+                    first = evalCond(child, trueBlock, falseBlock);
+                }
             } else {// 比较运算时，根据左边和右边的类型进行相应转换
+                second = evalCond(child, trueBlock, falseBlock);
                 if (first.getType() instanceof FloatType || second.getType() instanceof FloatType) {// 其中有一个float则都为float
                     first = Visitor.Instance.turnTo(first, FloatType.getInstance());
                     second = Visitor.Instance.turnTo(second, FloatType.getInstance());
-                    first = new Fcmp(first, second, op, basicBlock);
+                    first = new Fcmp(first, second, op, Visitor.Instance.getCurBasicBlock());
                 } else if (first.getType() instanceof Int32Type || second.getType() instanceof Int32Type) {// 其中有一个int则都为int
                     first = Visitor.Instance.turnTo(first, Int32Type.getInstance());
                     second = Visitor.Instance.turnTo(second, Int32Type.getInstance());
-                    first = new Icmp(first, second, op, basicBlock);
+                    first = new Icmp(first, second, op, Visitor.Instance.getCurBasicBlock());
                 } else {
                     assert op == OpTree.Operator.Eq || op == OpTree.Operator.Ne;// 只有ne和eq的两边才可能为int1
                     assert first.getType() instanceof Int1Type && second.getType() instanceof Int1Type;
-                    first = new Icmp(first, second, op, basicBlock);
+                    first = new Icmp(first, second, op, Visitor.Instance.getCurBasicBlock());
                 }
             }
         }

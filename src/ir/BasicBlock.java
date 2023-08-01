@@ -50,6 +50,8 @@ public class BasicBlock extends Value {
     }
 
     public boolean isTerminated() {
+        if(instrs.size() == 0)
+            return false;
         return getLast() instanceof Return;
     }
 

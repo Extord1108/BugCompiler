@@ -39,7 +39,7 @@ public class Variable extends Value {
         public ConstFloat(float floatVal) {
             super(FloatType.getInstance());
             this.floatVal = floatVal;
-            this.name = ((Float)floatVal).toString();
+            this.name = String.format("0x%x", Double.doubleToRawLongBits((floatVal)));
         }
 
         public Float getFloatVal() {
@@ -48,15 +48,21 @@ public class Variable extends Value {
 
         @Override
         public String toString() {
-            return floatVal.toString();
+            String out = String.format("0x%x", Double.doubleToRawLongBits((floatVal)));
+            return out;
         }
     }
 
     public static class VarArray extends Variable {
         private ArrayList<Value> varArray = new ArrayList<>();
+        private boolean addZero = true;
 
         public VarArray(Type type) {
             super(type);
+        }
+
+        public void setAddZero(boolean addZero) {
+            this.addZero = addZero;
         }
 
         public void add(Value variable) {
@@ -93,6 +99,7 @@ public class Variable extends Value {
                 if (varArray.get(i) instanceof Variable.VarArray) {// 数组则放到下一层考虑
                     // System.out.println("get " + constant);
                     assert type.getBasicType() instanceof ArrayType;
+                    ((Variable.VarArray) variable).setAddZero(addZero);
                     ret.add(((Variable.VarArray) variable).changeType((ArrayType) type.getBasicType()));
                 } else {
                     if(!(type.getBasicType() instanceof ArrayType)){//非数组元素直接加入
@@ -115,7 +122,11 @@ public class Variable extends Value {
                             i--;// 如果还有剩余则回退一个
                         else if (i == this.getSize() && childArray.getSize() < size) { // 如果没有剩余但是子数组的元素个数不够
                             for (int j = childArray.getSize(); j < size; j++) {
-                                if (type.getContextType() instanceof Int32Type) {
+                                if(!addZero)
+                                {
+                                    childArray.add(new Undef(type.getContextType()));
+                                }
+                                else if (type.getContextType() instanceof Int32Type) {
                                     childArray.add(new Variable.ConstInt(0));
                                 } else {
                                     assert type.getContextType() instanceof FloatType;
@@ -124,7 +135,6 @@ public class Variable extends Value {
                                 // System.out.println("add 0");
                             }
                         }
-
                         assert childArray.getSize() == size;
                         ret.add(childArray.changeType((ArrayType) type.getBasicType()));
                     }
@@ -134,16 +144,29 @@ public class Variable extends Value {
             // 如果count < needSize则需要补0
             while (count < needSize) {
                 if (type.getBasicType() instanceof Int32Type) {
-                    ret.add(new Variable.ConstInt(0));
+                    if(!addZero)
+                    {
+                        ret.add(new Undef(type.getContextType()));
+                    } else {
+                        ret.add(new Variable.ConstInt(0));
+                    }
                     // System.out.println("add 0");
                 } else if (type.getBasicType() instanceof FloatType) {
-                    ret.add(new Variable.ConstFloat(0));
+                    if(!addZero)
+                    {
+                        ret.add(new Undef(type.getContextType()));
+                    } else {
+                        ret.add(new Variable.ConstFloat(0));
+                    }
                     // System.out.println("add 0");
                 } else if (type.getBasicType() instanceof ArrayType) {
                     int size = ((ArrayType) type.getBasicType()).getFattenSize();
                     Variable.VarArray childArray = new Variable.VarArray(type.getBasicType());
                     for (int j = 0; j < size; j++) {
-                        if (type.getContextType() instanceof Int32Type) {
+                        if(!addZero)
+                        {
+                            childArray.add(new Undef(type.getContextType()));
+                        } else if (type.getContextType() instanceof Int32Type) {
                             childArray.add(new Variable.ConstInt(0));
                         } else {
                             assert type.getContextType() instanceof FloatType;
@@ -159,17 +182,6 @@ public class Variable extends Value {
             return ret;
         }
 
-        // public Constant getConst(ArrayList<Integer> dims){
-        // int index = 0;
-        // ArrayType type = (ArrayType) this.type;
-        // for(int i = 0; i < dims.size() - 1; i++){
-        // index += dims.get(i) * ((ArrayType)type.getBasicType()).getFattenSize();
-        // }
-        // index += dims.get(dims.size() - 1);
-        // assert index < varArray.size();
-        // return varArray.get(index);
-        // }
-
         @Override
         public String toString() {
             String ret = "[";
@@ -179,6 +191,24 @@ public class Variable extends Value {
             if (varArray.size() > 0)
                 ret += varArray.get(varArray.size() - 1).getType() + " " + varArray.get(varArray.size() - 1).toString() + "]";
             return ret;
+        }
+    }
+
+    public static class Undef extends Variable {
+        public Undef(Type type){
+            super(type);
+        }
+    }
+
+    public static class ZeroInit extends Variable {
+
+        public ZeroInit(Type type) {
+            super(type);
+        }
+
+        @Override
+        public String toString(){
+            return "zeroinitializer";
         }
     }
 

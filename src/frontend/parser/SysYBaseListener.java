@@ -1,4 +1,4 @@
-// Generated from /Users/mingming/Documents/编译大赛/javaCompiler/src/antlr/SysY.g4 by ANTLR 4.12.0
+// Generated from D:/codefile/CODE_Java/Complier/javaCompiler/src/antlr\SysY.g4 by ANTLR 4.12.0
 package frontend.parser;
 
 import org.antlr.v4.runtime.ParserRuleContext;

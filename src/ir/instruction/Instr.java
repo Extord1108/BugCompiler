@@ -15,7 +15,7 @@ public class Instr extends Value {
     public Instr(Type type, BasicBlock basicBlock) {
         this.type = type;
         this.basicBlock = basicBlock;
-        this.name = "%" + count++;
+        this.name = "%r" + count++;
         this.uses = new ArrayList<>();
         basicBlock.addInstr(this);
     }
@@ -23,9 +23,10 @@ public class Instr extends Value {
     public Instr(Type type, BasicBlock basicBlock, boolean head) {
         this.type = type;
         this.basicBlock = basicBlock;
-        this.name = "%" + count++;
+        this.name = "%r" + count++;
         this.uses = new ArrayList<>();
-        basicBlock.addInstrHead(this);
+//        basicBlock.addInstrHead(this);
+        basicBlock.getFunction().getBasicBlocks().get(0).addInstrHead(this);
     }
 
     public ArrayList<Value> getUses() {

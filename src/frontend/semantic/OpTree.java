@@ -11,6 +11,7 @@ public class OpTree {
     private final OpType type;
     private Value value;
     private ConstNumber number;
+    private boolean needPointer;
 
     public OpTree(ArrayList<OpTree> children, ArrayList<Operator> operators, OpTree parent, OpType type) {
         this.children = children;
@@ -20,10 +21,22 @@ public class OpTree {
     }
 
     public OpTree(OpTree parent, OpType type) {
-        children = null;
-        operators = null;
+        if(type == OpType.funcType || type == OpType.arrayType){
+            children = new ArrayList<>();
+            operators = new ArrayList<>();
+        }else{
+            children = null;
+            operators = null;
+        }
         this.parent = parent;
         this.type = type;
+    }
+
+    public boolean getNeedPointer(){
+        return this.needPointer;
+    }
+    public void setNeedPointer(boolean needPointer) {
+        this.needPointer = needPointer;
     }
 
     public void setValue(Value value) {
@@ -91,11 +104,11 @@ public class OpTree {
     public enum Operator {
         Neg("neg"),
         Not("not"),
-        Mul("mul"),
-        Div("div"),
-        Mod("mod"),
-        Add("add"),
-        Sub("sub"),
+        Mul("mul","fmul"),
+        Div("sdiv","fdiv"),
+        Mod("srem","frem"),
+        Add("add","fadd"),
+        Sub("sub","fsub"),
         Lt("slt","olt"),
         Gt("sgt","ogt"),
         Le("sle","ole"),
@@ -141,6 +154,10 @@ public class OpTree {
         binaryType,
         condType,
         number,
-        valueType
+        valueType,
+        loadType,
+        funcType,
+        arrayType
+
     }
 }

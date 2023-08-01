@@ -1,6 +1,7 @@
 package ir.instruction;
 
 import ir.BasicBlock;
+import ir.type.FloatType;
 import ir.type.Type;
 import ir.Value;
 import frontend.semantic.OpTree;
@@ -18,7 +19,11 @@ public class Binary extends Instr {
 
     @Override
     public String toString() {
-        return this.getName() + " = " + op + " " + this.getType() + " " + this.getLeft().getName() + ", " + this.getRight().getName();
+        if(type instanceof FloatType)
+        return this.getName() + " = " + op.getfName() + " " + this.getType() + " " + this.getLeft().getName() + ", " + this.getRight().getName();
+        else{
+            return this.getName() + " = " + op + " " + this.getType() + " " + this.getLeft().getName() + ", " + this.getRight().getName();
+        }
     }
 
     public OpTree.Operator getOp() {
