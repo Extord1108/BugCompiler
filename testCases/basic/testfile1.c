@@ -1,98 +1,201 @@
-// float global constants
-const float RADIUS = 5.5, PI = 03.141592653589793, EPS = 1e-6;
+int __HELLO [
 
-// hexadecimal float constant
-const float PI_HEX = 0x1.921fb6p+1, HEX2 = 0x.AP-3;
+ 
+100
+  ] 
+= {
+87, 101, 108, 99,
+111, 109, 101,  
+32, 116, 111, 32,
+116,  104,
+101, 32,  74,
+97,
+ 
+112, 97,
+ 
+ 114,  105, 32, 80, 97, 
+ 
+ 
 
-// float constant evaluation
-const float FACT = -.33E+5, EVAL1 = PI * RADIUS * RADIUS, EVAL2 = 2 * PI_HEX * RADIUS, EVAL3 = PI * 2 * RADIUS;
 
-// float constant implicit conversion
-const float CONV1 = 233, CONV2 = 0xfff;
-const int MAX = 1e9, TWO = 2.9, THREE = 3.2, FIVE = TWO + THREE;
+114, 107,  33, 10 }; /* Names of 
+kemono
+friends */ int N4__mE___[6][50]  = { { 83, 97, 97, 98,
+97, 
+114,
+117  },  { 75, 97, 98, 
 
-// float -> float function
-float float_abs(float x) {
-  if (x < 0) return -x;
-  return x;
+97,  110
+ 
+}, { 
+ 
+
+72,
+
+   97,
+115, 104, 105,
+98, 105, 114, 111,
+
+ 
+
+ 
+  
+
+107,
+  111,
+ 
+
+117
+
+}, { 65, 114,
+
+97, 
+
+105,
+103, 
+
+117,
+109, 
+
+
+   97 }, 
+ { 72, 117,
+110, 98, 111, 114,
+117,
+
+116, 111,   32, 80,
+101, 110,
+ 
+ 103, 105,  110
+},
+  { 84, 97, 105, 114, 105, 107, 117, 32, 79,
+ 
+  
+111, 107,
+97, 
+109,
+ 
+ 
+ 
+  
+
+
+ 105 } };
+ int
+
+saY_HeI10_To[40] = { 32,
+115, 97,  121,  
+ 
+  115,
+
+32,
+104,
+
+ 101, 108, 108, 111, 
+
+ 32,
+ 
+ 
+116, 111, 
+32 }; int
+  RET[5]
+=
+{10}; int putstr(  
+int str[ ] )  { 
+  int
+
+ iNd__1X ; iNd__1X  = 0 ; while ( str
+  [ iNd__1X
+ ] ) { 
+ 
+ putch (
+
+str[ iNd__1X 
+]  
+ ) ; iNd__1X
+=
+iNd__1X
+  
+ + 1  
+
+; } return iNd__1X
+ ; } int main( /* no param */ ) {
+putstr(
+__HELLO )  ; int i = 
+ 0 ; /* say
+
+ 
+ hello to
+ kemono friends 
+~ */ while (  
+ 
+ 1 ) {
+
+int _  
+ = i
+ 
+/ 6
+ 
+; int __
+=  
+i % 6
+
+;
+     
+ if 
+( 
+
+_ 
+
+!=
+
+
+ __ )
+ { putstr(
+
+N4__mE___
+
+ [  _ 
+ ] ) 
+; putstr( 
+saY_HeI10_To ) ;
+putstr(
+N4__mE___ [ 
+  
+ 
+
+__ ]  )
+
+ 
+;
+
+  putstr( 
+RET
+) ;
 }
+/*
+  do
+ 
+ linear
+modulo 
+to find  the   next pair of friends  */ i = ( i
+*
+  
 
-// int -> float function & float/int expression
-float circle_area(int radius) {
-  return (PI * radius * radius + (radius * radius) * PI) / 2;
-}
+17
 
-// float -> float -> int function & float/int expression
-int float_eq(float a, float b) {
-  if (float_abs(a - b) < EPS) {
-    return 1 * 2. / 2;
-  } else {
-    return 0;
-  }
-}
++  23
+)
+%
 
-void error() {
-  putch(101);
-  putch(114);
-  putch(114);
-  putch(111);
-  putch(114);
-  putch(10);
-}
 
-void ok() {
-  putch(111);
-  putch(107);
-  putch(10);
-}
+32  
 
-void assert(int cond) {
-  if (!cond) {
-    error();
-  } else {
-    ok();
-  }
-}
+ 
+ ;
+if ( i 
+==
+ 0 ) { break ;  }
 
-void assert_not(int cond) {
-  if (cond) {
-    error();
-  } else {
-    ok();
-  }
-}
-
-int main() {
-  assert_not(float_eq(HEX2, FACT));
-  assert_not(float_eq(EVAL1, EVAL2));
-  assert(float_eq(EVAL2, EVAL3));
-  assert(float_eq(circle_area(RADIUS) /* f->i implicit conversion */,
-                  circle_area(FIVE)));
-  assert_not(float_eq(CONV1, CONV2) /* i->f implicit conversion */);
-
-  // float conditional expressions
-  if (1.5) ok();
-  if (!!3.3) ok();
-  if (.0 && 3) error();
-  if (0 || 0.3) ok();
-
-  // float array & I/O functions
-  int i = 1, p = 0;
-  float arr[10] = {1., 2};
-  int len = getfarray(arr);
-  while (i < MAX) {
-    float input = getfloat();
-    float area = PI * input * input, area_trunc = circle_area(input);
-    arr[p] = arr[p] + input;
-
-    putfloat(area);
-    putch(32);
-    putint(area_trunc); // f->i implicit conversion
-    putch(10);
-
-    i = i * - -1e1;
-    p = p + 1;
-  }
-  putfarray(len, arr);
-  return 0;
-}
+ 
+ } return 0; }
