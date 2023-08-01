@@ -98,6 +98,7 @@ public class Variable extends Value {
                 if (varArray.get(i) instanceof Variable.VarArray) {// 数组则放到下一层考虑
                     // System.out.println("get " + constant);
                     assert type.getBasicType() instanceof ArrayType;
+                    ((Variable.VarArray) variable).setAddZero(addZero);
                     ret.add(((Variable.VarArray) variable).changeType((ArrayType) type.getBasicType()));
                 } else {
                     if(!(type.getBasicType() instanceof ArrayType)){//非数组元素直接加入
@@ -142,16 +143,29 @@ public class Variable extends Value {
             // 如果count < needSize则需要补0
             while (count < needSize) {
                 if (type.getBasicType() instanceof Int32Type) {
-                    ret.add(new Variable.ConstInt(0));
+                    if(!addZero)
+                    {
+                        ret.add(new Undef(type.getContextType()));
+                    } else {
+                        ret.add(new Variable.ConstInt(0));
+                    }
                     // System.out.println("add 0");
                 } else if (type.getBasicType() instanceof FloatType) {
-                    ret.add(new Variable.ConstFloat(0));
+                    if(!addZero)
+                    {
+                        ret.add(new Undef(type.getContextType()));
+                    } else {
+                        ret.add(new Variable.ConstFloat(0));
+                    }
                     // System.out.println("add 0");
                 } else if (type.getBasicType() instanceof ArrayType) {
                     int size = ((ArrayType) type.getBasicType()).getFattenSize();
                     Variable.VarArray childArray = new Variable.VarArray(type.getBasicType());
                     for (int j = 0; j < size; j++) {
-                        if (type.getContextType() instanceof Int32Type) {
+                        if(!addZero)
+                        {
+                            childArray.add(new Undef(type.getContextType()));
+                        } else if (type.getContextType() instanceof Int32Type) {
                             childArray.add(new Variable.ConstInt(0));
                         } else {
                             assert type.getContextType() instanceof FloatType;
