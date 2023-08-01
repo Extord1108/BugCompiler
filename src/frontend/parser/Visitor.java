@@ -248,9 +248,13 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
         if (ctx.initVal() != null) {
             if (currentType instanceof ArrayType) {
                 Variable.VarArray varArray = (Variable.VarArray) visit(ctx.initVal());
-                varArray.setAddZero(false);
-                varArray = varArray.changeType((ArrayType) currentType);
-                initVal = new InitVal(currentType, varArray);
+                if(varArray.getSize() == 0){
+                    initVal = new InitVal(currentType, new Variable.ZeroInit(currentType));
+                } else{
+                    varArray.setAddZero(false);
+                    varArray = varArray.changeType((ArrayType) currentType);
+                    initVal = new InitVal(currentType, varArray);
+                }
             } else {
                 initVal = new InitVal(currentType, visit(ctx.initVal()));
             }
