@@ -55,6 +55,7 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
     }
 
     public Value turnTo(Value value, Type targetType) {
+
         if (value.getType().equals(targetType)) {
             return value;
         } else {
@@ -68,8 +69,10 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
                 assert value.getType() instanceof Int32Type || value.getType() instanceof Int1Type;
                 if(value.getType() instanceof Int32Type)
                     return new Sitofp(value, curBasicBlock);
-                else
-                    return new Fcmp( value, CONST_0f, OpTree.Operator.Ne,  curBasicBlock);
+                else{
+                    value = new Zext(value, curBasicBlock);
+                    return new Sitofp(value, curBasicBlock);
+                }
             } else {
                 if (value.getType().equals(Int32Type.getInstance())) {
                     return new Icmp(value, new Variable.ConstInt(0), OpTree.Operator.Ne, curBasicBlock);

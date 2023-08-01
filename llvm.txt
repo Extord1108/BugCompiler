@@ -15,20 +15,24 @@ declare float @getfloat()
 declare void @parallel_end(i32 )
 define dso_local i32 @main() 
 {
-b2:
-	%r4 = fcmp one float 0x400a666660000000, 0x0
-	br i1 %r4, label %b3, label %b4
-b3:
-	call void @ok()
-	br label %b4
-b4:
-	ret i32 0
-}
-define dso_local void @ok() 
-{
 b1:
-	call void @putch(i32 111)
-	call void @putch(i32 107)
-	call void @putch(i32 10)
-	ret void
+	%r0 = alloca float
+	store float 0x3ff0000000000000, float* %r0
+	%r2 = load float, float* %r0
+	%r3 = sitofp i32 0 to float
+	%r4 = fcmp one float %r2, %r3
+	%r5 = zext i1 %r4 to i32
+	%r6 = icmp ne i32 %r5, 0
+	%r7 = zext i1 %r6 to i32
+	%r8 = sitofp i32 %r7 to float
+	%r9 = fcmp one float %r8, 0x0
+	%r10 = zext i1 %r9 to i32
+	%r11 = sitofp i32 %r10 to float
+	%r12 = fcmp one float %r11, 0x0
+	br i1 %r12, label %b2, label %b3
+b2:
+	ret i32 1
+	br label %b3
+b3:
+	ret i32 0
 }
