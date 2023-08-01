@@ -393,7 +393,9 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
         curBasicBlock = entry;
         curSymTable = new SymTable(curSymTable);
         curFuncParams = new ArrayList<>();
-        int idx = 0;
+        Function function = new Function(ident, curFuncParams, returnType);
+        manager.addFunction(function);
+        entry.addFunction(function);
         if (ctx.funcFParams() != null) {
             visit(ctx.funcFParams());
             for (Function.Param param : curFuncParams) {
@@ -402,9 +404,6 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
                 curSymTable.add(new Symbol(param.getParamName(), param.getType(), false, null, paramPointer));
             }
         }
-        Function function = new Function(ident, curFuncParams, returnType);
-        manager.addFunction(function);
-        entry.addFunction(function);
         curFunction = function;
         visit(ctx.block());
 //        if(curBasicBlock.getInstrs().size() == 0){
