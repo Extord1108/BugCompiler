@@ -13,7 +13,7 @@ public class BitCast extends Instr{
 
     @Override
     public String toString() {
-        return getName() + " = bitcast " + value.getName() + " to " + getType();
+        return getName() + " = bitcast " + value.getType() + " " + value.getName() + " to " + getType();
     }
 }
 

@@ -116,13 +116,14 @@ public class OpTreeHandler {
             child = it.next();
             second = evalExp(child, basicBlock);
             Type currentType = null;
-            if (first.getType() instanceof Int32Type && second.getType() instanceof Int32Type) {
-                currentType = Int32Type.getInstance();
-            } else {
-                assert (first.getType() instanceof FloatType || second.getType() instanceof FloatType);
+            if(first.getType() instanceof FloatType || second.getType() instanceof FloatType) {
                 currentType = FloatType.getInstance();
                 first = Visitor.Instance.turnTo(first,FloatType.getInstance());
                 second = Visitor.Instance.turnTo(second,FloatType.getInstance());
+            } else {
+                currentType = Int32Type.getInstance();
+                first = Visitor.Instance.turnTo(first,Int32Type.getInstance());
+                second = Visitor.Instance.turnTo(second,Int32Type.getInstance());
             }
             first = new Binary(currentType, itOp.next(), first, second, basicBlock);
         }
