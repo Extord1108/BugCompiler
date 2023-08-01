@@ -139,7 +139,8 @@ public class OpTreeHandler {
             val = new Unary(Int1Type.getInstance(), op, val, basicBlock);
         }
         else{
-            val = Visitor.Instance.turnTo(val, Int32Type.getInstance());
+            if(val.getType() instanceof Int1Type)
+                val = Visitor.Instance.turnTo(val, Int32Type.getInstance());
             val = new Unary(val.getType(), op, val, basicBlock);
         }
 
