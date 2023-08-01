@@ -449,8 +449,7 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
     @Override
     public Value visitAssignStmt(SysYParser.AssignStmtContext ctx) {
         needPointer = true;
-        visit(ctx.lVal());
-        Value left = OpTreeHandler.evalExp(current.getLast(), curBasicBlock);
+        Value left = visit(ctx.lVal());
         visit(ctx.exp());
         Value right = OpTreeHandler.evalExp(current.getLast(), curBasicBlock);
         assert left.type instanceof PointerType;
@@ -602,9 +601,9 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
             }
             opTree.setNeedPointer(needPointer);
             current = opTree.getParent();
-//            if(needPointer){
-//                return OpTreeHandler.evalArray(opTree, curBasicBlock);
-//            }
+            if(needPointer){
+                return OpTreeHandler.evalArray(opTree, curBasicBlock);
+            }
 
 //            pointer = new GetElementPtr(basicType, pointer, idxList, curBasicBlock);
 //            if(needPointer){
