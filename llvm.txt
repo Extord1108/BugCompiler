@@ -16,23 +16,207 @@ declare void @parallel_end(i32 )
 define dso_local i32 @main() 
 {
 b1:
-	%r0 = alloca float
-	store float 0x3ff0000000000000, float* %r0
-	%r2 = load float, float* %r0
-	%r3 = sitofp i32 0 to float
-	%r4 = fcmp one float %r2, %r3
-	%r5 = zext i1 %r4 to i32
-	%r6 = icmp ne i32 %r5, 0
-	%r7 = zext i1 %r6 to i32
-	%r8 = sitofp i32 %r7 to float
-	%r9 = fcmp one float %r8, 0x0
-	%r10 = zext i1 %r9 to i32
-	%r11 = sitofp i32 %r10 to float
-	%r12 = fcmp one float %r11, 0x0
-	br i1 %r12, label %b2, label %b3
+	%r86 = alloca i32
+	%r80 = alloca i32
+	%r74 = alloca i32
+	%r68 = alloca i32
+	%r62 = alloca i32
+	%r56 = alloca i32
+	%r50 = alloca i32
+	%r44 = alloca i32
+	%r38 = alloca i32
+	%r32 = alloca i32
+	%r26 = alloca i32
+	%r20 = alloca i32
+	%r14 = alloca i32
+	%r8 = alloca i32
+	%r2 = alloca i32
+	%r0 = alloca i32
+	store i32 0, i32* %r0
+	store i32 0, i32* %r2
+	br label %b2
 b2:
-	ret i32 1
-	br label %b3
+	%r5 = load i32, i32* %r2
+	%r6 = icmp slt i32 %r5, 3
+	br i1 %r6, label %b3, label %b4
 b3:
-	ret i32 0
+	store i32 0, i32* %r8
+	br label %b5
+b4:
+	%r156 = load i32, i32* %r0
+	ret i32 %r156
+b5:
+	%r11 = load i32, i32* %r8
+	%r12 = icmp slt i32 %r11, 4
+	br i1 %r12, label %b6, label %b7
+b6:
+	store i32 0, i32* %r14
+	br label %b8
+b7:
+	%r152 = load i32, i32* %r2
+	%r153 = add i32 %r152, 1
+	store i32 %r153, i32* %r2
+	br label %b2
+b8:
+	%r17 = load i32, i32* %r14
+	%r18 = icmp slt i32 %r17, 5
+	br i1 %r18, label %b9, label %b10
+b9:
+	store i32 0, i32* %r20
+	br label %b11
+b10:
+	%r148 = load i32, i32* %r8
+	%r149 = add i32 %r148, 1
+	store i32 %r149, i32* %r8
+	br label %b5
+b11:
+	%r23 = load i32, i32* %r20
+	%r24 = icmp slt i32 %r23, 3
+	br i1 %r24, label %b12, label %b13
+b12:
+	store i32 0, i32* %r26
+	br label %b14
+b13:
+	%r144 = load i32, i32* %r14
+	%r145 = add i32 %r144, 1
+	store i32 %r145, i32* %r14
+	br label %b8
+b14:
+	%r29 = load i32, i32* %r26
+	%r30 = icmp slt i32 %r29, 5
+	br i1 %r30, label %b15, label %b16
+b15:
+	store i32 0, i32* %r32
+	br label %b17
+b16:
+	%r140 = load i32, i32* %r20
+	%r141 = add i32 %r140, 1
+	store i32 %r141, i32* %r20
+	br label %b11
+b17:
+	%r35 = load i32, i32* %r32
+	%r36 = icmp slt i32 %r35, 4
+	br i1 %r36, label %b18, label %b19
+b18:
+	store i32 0, i32* %r38
+	br label %b20
+b19:
+	%r136 = load i32, i32* %r26
+	%r137 = add i32 %r136, 1
+	store i32 %r137, i32* %r26
+	br label %b14
+b20:
+	%r41 = load i32, i32* %r38
+	%r42 = icmp slt i32 %r41, 6
+	br i1 %r42, label %b21, label %b22
+b21:
+	store i32 0, i32* %r44
+	br label %b23
+b22:
+	%r132 = load i32, i32* %r32
+	%r133 = add i32 %r132, 1
+	store i32 %r133, i32* %r32
+	br label %b17
+b23:
+	%r47 = load i32, i32* %r44
+	%r48 = icmp slt i32 %r47, 5
+	br i1 %r48, label %b24, label %b25
+b24:
+	store i32 0, i32* %r50
+	br label %b26
+b25:
+	%r128 = load i32, i32* %r38
+	%r129 = add i32 %r128, 1
+	store i32 %r129, i32* %r38
+	br label %b20
+b26:
+	%r53 = load i32, i32* %r50
+	%r54 = icmp slt i32 %r53, 5
+	br i1 %r54, label %b27, label %b28
+b27:
+	store i32 0, i32* %r56
+	br label %b29
+b28:
+	%r124 = load i32, i32* %r44
+	%r125 = add i32 %r124, 1
+	store i32 %r125, i32* %r44
+	br label %b23
+b29:
+	%r59 = load i32, i32* %r56
+	%r60 = icmp slt i32 %r59, 3
+	br i1 %r60, label %b30, label %b31
+b30:
+	store i32 0, i32* %r62
+	br label %b32
+b31:
+	%r120 = load i32, i32* %r50
+	%r121 = add i32 %r120, 1
+	store i32 %r121, i32* %r50
+	br label %b26
+b32:
+	%r65 = load i32, i32* %r62
+	%r66 = icmp slt i32 %r65, 6
+	br i1 %r66, label %b33, label %b34
+b33:
+	store i32 0, i32* %r68
+	br label %b35
+b34:
+	%r116 = load i32, i32* %r56
+	%r117 = add i32 %r116, 1
+	store i32 %r117, i32* %r56
+	br label %b29
+b35:
+	%r71 = load i32, i32* %r68
+	%r72 = icmp slt i32 %r71, 7
+	br i1 %r72, label %b36, label %b37
+b36:
+	store i32 0, i32* %r74
+	br label %b38
+b37:
+	%r112 = load i32, i32* %r62
+	%r113 = add i32 %r112, 2
+	store i32 %r113, i32* %r62
+	br label %b32
+b38:
+	%r77 = load i32, i32* %r74
+	%r78 = icmp slt i32 %r77, 5
+	br i1 %r78, label %b39, label %b40
+b39:
+	store i32 0, i32* %r80
+	br label %b41
+b40:
+	%r108 = load i32, i32* %r68
+	%r109 = add i32 %r108, 2
+	store i32 %r109, i32* %r68
+	br label %b35
+b41:
+	%r83 = load i32, i32* %r80
+	%r84 = icmp slt i32 %r83, 3
+	br i1 %r84, label %b42, label %b43
+b42:
+	store i32 0, i32* %r86
+	br label %b44
+b43:
+	%r104 = load i32, i32* %r74
+	%r105 = add i32 %r104, 2
+	store i32 %r105, i32* %r74
+	br label %b38
+b44:
+	%r89 = load i32, i32* %r86
+	%r90 = icmp slt i32 %r89, 6
+	br i1 %r90, label %b45, label %b46
+b45:
+	%r92 = load i32, i32* %r0
+	%r93 = add i32 %r92, 3
+	%r94 = srem i32 %r93, 999
+	store i32 %r94, i32* %r0
+	%r96 = load i32, i32* %r86
+	%r97 = add i32 %r96, 3
+	store i32 %r97, i32* %r86
+	br label %b44
+b46:
+	%r100 = load i32, i32* %r80
+	%r101 = add i32 %r100, 1
+	store i32 %r101, i32* %r80
+	br label %b41
 }

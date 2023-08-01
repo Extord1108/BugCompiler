@@ -43,6 +43,10 @@ public class Function extends Value {
         return params;
     }
 
+    public MyList<BasicBlock> getBasicBlocks() {
+        return basicBlocks;
+    }
+
     public void addAtBegin(BasicBlock basicBlock) {
         basicBlocks.insertHead(basicBlock);
     }

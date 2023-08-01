@@ -25,7 +25,8 @@ public class Instr extends Value {
         this.basicBlock = basicBlock;
         this.name = "%r" + count++;
         this.uses = new ArrayList<>();
-        basicBlock.addInstrHead(this);
+//        basicBlock.addInstrHead(this);
+        basicBlock.getFunction().getBasicBlocks().get(0).addInstrHead(this);
     }
 
     public ArrayList<Value> getUses() {
