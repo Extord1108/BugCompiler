@@ -164,7 +164,11 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
                 }else {
                     assert initVal.getValue() instanceof Variable.ZeroInit;
                     ArrayList<Value> params = new ArrayList<>();
-                    params.add(pl);
+                    Value newPl = pl;
+                    if(contextType instanceof FloatType){
+                        newPl = new BitCast( pl, new PointerType(Int32Type.getInstance()), curBasicBlock);
+                    }
+                    params.add(newPl);
                     params.add(CONST_0);
                     params.add(new Variable.ConstInt(((ArrayType) initType).getFattenSize() * 4));
                     new Call(Manager.ExternFunction.MEM_SET, params, curBasicBlock);
@@ -290,7 +294,11 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
                         for(int i = 0; i < flatten.size(); i++){
                             if(flatten.get(i) instanceof Variable.Undef){
                                 ArrayList<Value> params = new ArrayList<>();
-                                params.add(pl);
+                                Value newPl = pl;
+                                if(contextType instanceof FloatType){
+                                    newPl = new BitCast( pl, new PointerType(Int32Type.getInstance()), curBasicBlock);
+                                }
+                                params.add(newPl);
                                 params.add(CONST_0);
                                 params.add(new Variable.ConstInt(((ArrayType) initType).getFattenSize() * 4));
                                 new Call(Manager.ExternFunction.MEM_SET, params, curBasicBlock);
@@ -310,7 +318,11 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
                     }else {
                         assert initVal.getValue() instanceof Variable.ZeroInit;
                         ArrayList<Value> params = new ArrayList<>();
-                        params.add(pl);
+                        Value newPl = pl;
+                        if(contextType instanceof FloatType){
+                            newPl = new BitCast( pl, new PointerType(Int32Type.getInstance()), curBasicBlock);
+                        }
+                        params.add(newPl);
                         params.add(CONST_0);
                         params.add(new Variable.ConstInt(((ArrayType) initType).getFattenSize() * 4));
                         new Call(Manager.ExternFunction.MEM_SET, params, curBasicBlock);
