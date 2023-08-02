@@ -9,6 +9,7 @@ public class BitCast extends Instr{
     public BitCast(Value value, Type type, BasicBlock basicBlock) {
         super(type, basicBlock);
         this.value = value;
+        this.addUse(value);
     }
 
     @Override

@@ -7,7 +7,9 @@ import java.util.ArrayList;
 
 public class McMove extends McInstr{
 
-    public McMove(McBlock mcBlock) {
+    public McMove(Operand dstOp, Operand srcOp, McBlock mcBlock) {
         super(mcBlock);
+        defOperands.add(dstOp);
+        useOperands.add(srcOp);
     }
 }
