@@ -3,10 +3,7 @@ package backend;
 import com.sun.jdi.FloatType;
 import frontend.semantic.OpTree;
 import ir.*;
-import ir.instruction.Binary;
-import ir.instruction.BitCast;
-import ir.instruction.Branch;
-import ir.instruction.Instr;
+import ir.instruction.*;
 import ir.type.Int32Type;
 import ir.type.PointerType;
 import lir.McBlock;
@@ -14,6 +11,7 @@ import lir.McFunction;
 import lir.Operand;
 import lir.mcInstr.MCShift;
 import lir.mcInstr.McBinary;
+import lir.mcInstr.McCmp;
 import lir.mcInstr.McMove;
 import manager.Manager;
 import util.MyList;
@@ -36,6 +34,8 @@ public class CodeGen {
     private McBlock curMcBlock;
 
     private HashMap<Value, Operand> value2opd = new HashMap<>();
+    private HashMap<OpTree.Operator, McCmp.Cond> op2cond = new HashMap<>();
+
 
 
     private CodeGen(){
@@ -43,7 +43,6 @@ public class CodeGen {
 
     public void gen(){
         globalGen();
-
         for(Function function: functions.values()){
             McFunction mcFunction = new McFunction(function);
             funcMap.put(function, mcFunction);
@@ -83,15 +82,42 @@ public class CodeGen {
             if(instr instanceof Binary){
                 genBinaryInstr((Binary) instr);
             }
+            else if(instr instanceof Icmp || instr instanceof Fcmp) {
+                genCmp(instr);
+            }
             else if(instr instanceof Branch) {
+                Value cond = ((Branch) instr).getCond();
+                McBlock thenBlock = blockMap.get(((Branch) instr).getThenBlock());
+                McBlock elseBlock = blockMap.get(((Branch) instr).getThenBlock());
+                thenBlock.addPreMcBlock(curMcBlock);
+                elseBlock.addPreMcBlock(curMcBlock);
 
             }
             else if(instr instanceof BitCast) {
                 Operand opd = getOperand(instr.getUse(0));
                 value2opd.put(instr, opd);
-            } else {
+            }
+            else if(instr instanceof Alloc) {
+
+            }
+            else {
                 System.err.println("存在ir类型" + instr.getClass() + "未被解析为lir");
             }
+        }
+    }
+
+    public void genCmp(Instr instr) {
+        Operand dst = getOperand(instr);
+        if(instr instanceof Icmp){
+            Icmp icmp = (Icmp) instr;
+            Value left = icmp.getLhs();
+            Value right = icmp.getRhs();
+            Operand lopd = getOperand(left);
+            Operand ropd = getOperand(right);
+            McCmp.Cond cond = op2cond.get(icmp.getOp());
+        } else {
+            assert instr instanceof Fcmp;
+            Fcmp fcmp = (Fcmp) instr;
         }
     }
 

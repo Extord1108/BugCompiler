@@ -18,6 +18,18 @@ public class Icmp extends Instr {
         this.addUse(rhs);
     }
 
+    public Value getLhs() {
+        return lhs;
+    }
+
+    public Value getRhs() {
+        return rhs;
+    }
+
+    public OpTree.Operator getOp() {
+        return op;
+    }
+
     @Override
     public String toString() {
         return this.getName() + " = icmp " + op + " " + lhs.getType() + " " + lhs.getName() + ", "

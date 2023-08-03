@@ -22,6 +22,18 @@ public class Branch extends Instr {
         this.addUse(elseBlock);
     }
 
+    public Value getCond() {
+        return cond;
+    }
+
+    public BasicBlock getThenBlock() {
+        return thenBlock;
+    }
+
+    public BasicBlock getElseBlock() {
+        return elseBlock;
+    }
+
     @Override
     public String toString() {
         return "br i1 " + cond.getName() + ", label %" + thenBlock.getName() + ", label %" + elseBlock.getName();
