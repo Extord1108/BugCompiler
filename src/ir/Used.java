@@ -12,4 +12,12 @@ public class Used extends MyNode {
         this.user = user;
         this.use = use;
     }
+
+    public Instr getUser() {
+        return user;
+    }
+
+    public Value getUse() {
+        return use;
+    }
 }

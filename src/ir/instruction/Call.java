@@ -39,4 +39,8 @@ public class Call extends Instr{
         }
         return prefix + "call " + returnType + " @" + function.getName() + "(" + params + ")";
     }
+
+    public Function getFunction() {
+        return function;
+    }
 }
