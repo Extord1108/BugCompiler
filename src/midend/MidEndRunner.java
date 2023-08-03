@@ -20,7 +20,7 @@ public class MidEndRunner {
     public void run(){
 
         if(opt){
-
+                new DeadCodeElimination(functions, globals).run();
         }
         return;
     }

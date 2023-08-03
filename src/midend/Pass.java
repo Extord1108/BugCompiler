@@ -13,6 +13,7 @@ public class Pass {
         this.functions = functions;
         this.globals = globals;
     }
+
     void run(){
 
     }

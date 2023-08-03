@@ -225,4 +225,15 @@ public class Variable extends Value {
             return result;
         }
     }
+
+    public static Value getDefaultZero(Type type)
+    {
+        if(type == FloatType.getInstance()){
+            return new Variable.ConstFloat(0);
+        }else if(type == Int32Type.getInstance()) {
+            return new Variable.ConstInt(0);
+        }else{
+            return new Variable.Undef(type);
+        }
+    }
 }

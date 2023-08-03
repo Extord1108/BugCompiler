@@ -42,6 +42,15 @@ public class Instr extends Value {
         value.addUsed(new Used(this, value));
     }
 
+    public void replaceUse(Value oldVal, Value newVal) {
+        for (int i = 0; i < uses.size(); i++) {
+            if (uses.get(i) == oldVal) {
+                uses.set(i, newVal);
+                newVal.addUsed(new Used(this, newVal));
+            }
+        }
+    }
+
     public static int getCount() {
         return count++;
     }

@@ -13,8 +13,10 @@ public class BasicBlock extends Value {
 
     MyList<Instr> instrs = new MyList<>();
 
-    public ArrayList<BasicBlock> precBBlocks = new ArrayList<>();
-    public ArrayList<BasicBlock> succBBlocks = new ArrayList<>();
+    private ArrayList<BasicBlock> precBBlocks = new ArrayList<>();
+    private ArrayList<BasicBlock> succBBlocks = new ArrayList<>();
+    private int domTreeDepth = 0;
+
 
 
     private int label;
@@ -62,6 +64,30 @@ public class BasicBlock extends Value {
     public Function getFunction() {
         return function;
     }
+
+    public void setSuccessors(ArrayList<BasicBlock> succBBlocks) {
+        this.succBBlocks = succBBlocks;
+    }
+    public void setPredecessors(ArrayList<BasicBlock> precBBlocks) {
+        this.precBBlocks = precBBlocks;
+    }
+
+    public ArrayList<BasicBlock> getSuccessors() {
+        return succBBlocks;
+    }
+
+    public ArrayList<BasicBlock> getPredecessors() {
+        return precBBlocks;
+    }
+
+    public int getDomTreeDepth() {
+        return domTreeDepth;
+    }
+    public void setDomTreeDepth(int domTreeDepth) {
+        this.domTreeDepth = domTreeDepth;
+    }
+
+
 
     @Override
     public String toString() {

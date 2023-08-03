@@ -6,10 +6,16 @@ import manager.Manager;
 import util.MyList;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Function extends Value {
     private ArrayList<Param> params;
     private MyList<BasicBlock> basicBlocks = new MyList<>();
+
+    //构造CFG
+    private HashMap<BasicBlock, ArrayList<BasicBlock>> predMap = new HashMap<>();
+    private HashMap<BasicBlock, ArrayList<BasicBlock>> succMap = new HashMap<>();
+    private HashMap<BasicBlock,BasicBlock> domTree = new HashMap<>();
 
     public Function(String name, ArrayList<Param> params, Type type) {
         this.name = name;
@@ -56,6 +62,10 @@ public class Function extends Value {
         basicBlocks.insertHead(basicBlock);
     }
 
+    public BasicBlock getEntryBlock() {
+        return basicBlocks.get(0);
+    }
+
     public void addAtEnd(BasicBlock basicBlock) {
         basicBlocks.insertTail(basicBlock);
     }
@@ -66,6 +76,30 @@ public class Function extends Value {
             params.add(new Param(type));
         }
         return params;
+    }
+
+    public HashMap<BasicBlock, ArrayList<BasicBlock>> getPredecessors() {
+        return predMap;
+    }
+
+    public HashMap<BasicBlock, ArrayList<BasicBlock>> getSuccessors() {
+        return succMap;
+    }
+
+    public void setPredecessors(HashMap<BasicBlock, ArrayList<BasicBlock>> predecessors) {
+        this.predMap = predecessors;
+    }
+
+    public void setSuccessors(HashMap<BasicBlock, ArrayList<BasicBlock>> successors) {
+        this.succMap = successors;
+    }
+
+    public HashMap<BasicBlock, BasicBlock> getDomTree() {
+        return domTree;
+    }
+
+    public void setDomTree(HashMap<BasicBlock, BasicBlock> domTree) {
+        this.domTree = domTree;
     }
 
     @Override
