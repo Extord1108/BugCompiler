@@ -4,8 +4,10 @@ import com.sun.jdi.FloatType;
 import frontend.semantic.OpTree;
 import ir.*;
 import ir.instruction.*;
+import ir.type.ArrayType;
 import ir.type.Int32Type;
 import ir.type.PointerType;
+import ir.type.Type;
 import lir.McBlock;
 import lir.McFunction;
 import lir.Operand;
@@ -90,18 +92,63 @@ public class CodeGen {
                 McBlock elseBlock = blockMap.get(((Branch) instr).getThenBlock());
                 thenBlock.addPreMcBlock(curMcBlock);
                 elseBlock.addPreMcBlock(curMcBlock);
-
+                System.out.println("branch 还没写完");
             }
             else if(instr instanceof Jump) {
                 McBlock targetBlock = blockMap.get(((Jump) instr).getTargetBlock());
-                curMcBlock.
+                curMcBlock.addSuccMcBlock(targetBlock);
+                targetBlock.addPreMcBlock(curMcBlock);
+                new McJump(targetBlock, curMcBlock);
             }
             else if(instr instanceof BitCast) {
                 Operand opd = getOperand(instr.getUse(0));
                 value2opd.put(instr, opd);
             }
             else if(instr instanceof Alloc) {
-
+                Alloc alloc = (Alloc) instr;
+                Type type = alloc.getType().getBasicType();
+                // 其他的应该在mem2reg阶段已经被删除了
+                assert type instanceof ArrayType;
+                Operand addr = getOperand(alloc);
+                Operand offset = getOperand(new Variable.ConstInt(curMcFunc.getStackSize()));
+                curMcFunc.addStackSize(((ArrayType) type).getFattenSize());
+                new McBinary(McBinary.BinaryType.Add, addr, Operand.PhyReg.getPhyReg("sp"), offset, curMcBlock);
+            }
+            else if(instr instanceof Call) {
+                System.out.println("call 还没写");
+            }
+            else if(instr instanceof Fptosi) {
+                Operand src = getOperand(instr.getUse(0));
+                Operand tmp = new Operand.VirtualReg(true, curMcFunc);
+                Operand dst = getOperand(instr);
+                new McVcvt(McVcvt.VcvtType.f2i, tmp, src, curMcBlock);
+                new McMove(dst, tmp, curMcBlock);
+            }
+            else if(instr instanceof GetElementPtr) {
+                System.out.println("GetElementPtr 还没写");
+            }
+            else if(instr instanceof Store){
+                System.out.println("Store 还没写");
+            }
+            else if(instr instanceof Load) {
+                System.out.println("Load 还没写");
+            }
+            else if(instr instanceof Return) {
+                System.out.println("Return 还没写");
+            }
+            else if(instr instanceof Sitofp) {
+                Operand src = getOperand(instr.getUse(0));
+                Operand tmp = new Operand.VirtualReg(true, curMcFunc);
+                Operand dst = getOperand(instr);
+                new McMove(tmp, src, curMcBlock);
+                new McVcvt(McVcvt.VcvtType.i2f, tmp, dst, curMcBlock);
+            }
+            else if(instr instanceof Unary) {
+                System.out.println("Unary 还没写");
+            }
+            else if(instr instanceof Zext) {
+                Operand dst = getOperand(instr.getUse(0));
+                value2opd.put(instr, dst);
             }
             else {
                 System.err.println("存在ir类型" + instr.getClass() + "未被解析为lir");

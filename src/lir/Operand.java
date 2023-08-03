@@ -1,6 +1,11 @@
 package lir;
 
+import ir.Function;
 import ir.GlobalValue;
+import manager.Manager;
+
+import java.lang.reflect.Field;
+import java.util.HashMap;
 
 public class Operand {
 
@@ -59,6 +64,117 @@ public class Operand {
 
         public float getFloatNumber() {
             return floatNumber;
+        }
+    }
+
+    public static class PhyReg extends Operand{
+        int idx;
+        String name;
+        private static HashMap<String, PhyReg> name2reg = new HashMap<>();
+        private static HashMap<Integer, PhyReg> idx2reg = new HashMap<>();
+
+        private PhyReg(int idx, String name){
+            this.idx = idx;
+            this.name = name;
+        }
+
+        public static PhyReg getPhyReg(String name){
+            return name2reg.get(name);
+        }
+
+        public static class PhyRegs{
+            public static final PhyReg R0 = new PhyReg(0, "r0");
+            public static final PhyReg R1 = new PhyReg(1, "r1");
+            public static final PhyReg R2 = new PhyReg(2, "r2");
+            public static final PhyReg R3 = new PhyReg(3, "r3");
+            public static final PhyReg R4 = new PhyReg(4, "r4");
+            public static final PhyReg R5 = new PhyReg(5, "r5");
+            public static final PhyReg R6 = new PhyReg(6, "r6");
+            public static final PhyReg R7 = new PhyReg(7, "r7");
+            public static final PhyReg R8 = new PhyReg(8, "r8");
+            public static final PhyReg R9 = new PhyReg(9, "r9");
+            public static final PhyReg R10 = new PhyReg(10, "r10");
+            public static final PhyReg R11 = new PhyReg(11, "r11");
+            public static final PhyReg R12 = new PhyReg(12, "r12");
+            public static final PhyReg SP = new PhyReg(13, "sp");
+            public static final PhyReg LR = new PhyReg(14, "lr");
+            public static final PhyReg PC = new PhyReg(15, "pc");
+            public static final PhyReg CSPR = new PhyReg(16, "cspr");
+        }
+
+        static {
+            for (Field field : Operand.PhyReg.PhyRegs.class.getDeclaredFields()) {
+                try {
+                    PhyReg phyReg= (PhyReg) field.get(Operand.PhyReg.PhyRegs.class);
+                    name2reg.put(phyReg.name, phyReg);
+                    idx2reg.put(phyReg.idx, phyReg);
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public static class FPhyReg extends Operand{
+        int idx;
+        String name;
+        private static HashMap<String, FPhyReg> name2reg = new HashMap<>();
+        private static HashMap<Integer, FPhyReg> idx2reg = new HashMap<>();
+
+        private FPhyReg(int idx, String name){
+            this.idx = idx;
+            this.name = name;
+        }
+
+        public static FPhyReg getFPhyReg(String name){
+            return name2reg.get(name);
+        }
+
+        public static class FPhyRegs{
+            public static final FPhyReg S0 = new FPhyReg(0, "s0");
+            public static final FPhyReg S1 = new FPhyReg(1, "s1");
+            public static final FPhyReg S2 = new FPhyReg(2, "s2");
+            public static final FPhyReg S3 = new FPhyReg(3, "s3");
+            public static final FPhyReg S4 = new FPhyReg(4, "s4");
+            public static final FPhyReg S5 = new FPhyReg(5, "s5");
+            public static final FPhyReg S6 = new FPhyReg(6, "s6");
+            public static final FPhyReg S7 = new FPhyReg(7, "s7");
+            public static final FPhyReg S8 = new FPhyReg(8, "s8");
+            public static final FPhyReg S9 = new FPhyReg(9, "s9");
+            public static final FPhyReg S10 = new FPhyReg(10, "s10");
+            public static final FPhyReg S11 = new FPhyReg(11, "s11");
+            public static final FPhyReg S12 = new FPhyReg(12, "s12");
+            public static final FPhyReg S13 = new FPhyReg( 13, "s13");
+            public static final FPhyReg S14 = new FPhyReg( 14, "s14");
+            public static final FPhyReg S15 = new FPhyReg( 15, "s15");
+            public static final FPhyReg S16 = new FPhyReg( 16, "s16");
+            public static final FPhyReg S17 = new FPhyReg( 17, "s17");
+            public static final FPhyReg S18 = new FPhyReg( 18, "s18");
+            public static final FPhyReg S19 = new FPhyReg( 19, "s19");
+            public static final FPhyReg S20 = new FPhyReg( 20, "s20");
+            public static final FPhyReg S21 = new FPhyReg( 21, "s21");
+            public static final FPhyReg S22 = new FPhyReg( 22, "s22");
+            public static final FPhyReg S23 = new FPhyReg( 23, "s23");
+            public static final FPhyReg S24 = new FPhyReg( 24, "s24");
+            public static final FPhyReg S25 = new FPhyReg( 25, "s25");
+            public static final FPhyReg S26 = new FPhyReg( 26, "s26");
+            public static final FPhyReg S27 = new FPhyReg( 27, "s27");
+            public static final FPhyReg S28 = new FPhyReg( 28, "s28");
+            public static final FPhyReg S29 = new FPhyReg( 29, "s29");
+            public static final FPhyReg S30 = new FPhyReg( 30, "s30");
+            public static final FPhyReg S31 = new FPhyReg( 31, "s31");
+        }
+
+        static {
+            for (Field field : Operand.FPhyReg.FPhyRegs.class.getDeclaredFields()) {
+                try {
+                    FPhyReg fPhyReg = (FPhyReg) field.get(Operand.FPhyReg.FPhyRegs.class);
+                    name2reg.put(fPhyReg.name, fPhyReg);
+                    idx2reg.put(fPhyReg.idx, fPhyReg);
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 }

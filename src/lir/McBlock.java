@@ -12,6 +12,7 @@ public class McBlock {
     private BasicBlock basicBlock;
     private McFunction mcFunction;
     private Set<McBlock> predMcBlocks = new HashSet<>();
+    private Set<McBlock> succMcBlocks = new HashSet<>();
 
     public McBlock(BasicBlock basicBlock){
         this.basicBlock = basicBlock;
@@ -25,6 +26,9 @@ public class McBlock {
         predMcBlocks.add(block);
     }
 
+    public void addSuccMcBlock(McBlock block) {
+        succMcBlocks.add(block);
+    }
 
 
     public void setMcFunction(McFunction mcFunction) {
