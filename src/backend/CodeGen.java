@@ -94,6 +94,7 @@ public class CodeGen {
             }
             else if(instr instanceof Jump) {
                 McBlock targetBlock = blockMap.get(((Jump) instr).getTargetBlock());
+                curMcBlock.
             }
             else if(instr instanceof BitCast) {
                 Operand opd = getOperand(instr.getUse(0));
