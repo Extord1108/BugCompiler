@@ -27,6 +27,10 @@ public class Value extends MyNode {
         return usedInfo;
     }
 
+    public int getUsedSize(){
+        return usedInfo.size();
+    }
+
     public void addUsed(Used used){
         usedInfo.insertTail(used);
     }

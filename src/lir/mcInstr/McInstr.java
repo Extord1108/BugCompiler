@@ -9,6 +9,7 @@ import java.util.ArrayList;
 public class McInstr extends MyNode {
     public ArrayList<Operand> defOperands = new ArrayList<>();
     public ArrayList<Operand> useOperands = new ArrayList<>();
+    public Cond cond = Cond.Any;
 
     private McBlock mcBlock;
 

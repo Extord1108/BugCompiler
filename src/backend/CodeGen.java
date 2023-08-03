@@ -9,10 +9,7 @@ import ir.type.PointerType;
 import lir.McBlock;
 import lir.McFunction;
 import lir.Operand;
-import lir.mcInstr.MCShift;
-import lir.mcInstr.McBinary;
-import lir.mcInstr.McCmp;
-import lir.mcInstr.McMove;
+import lir.mcInstr.*;
 import manager.Manager;
 import util.MyList;
 
@@ -34,7 +31,7 @@ public class CodeGen {
     private McBlock curMcBlock;
 
     private HashMap<Value, Operand> value2opd = new HashMap<>();
-    private HashMap<OpTree.Operator, McCmp.Cond> op2cond = new HashMap<>();
+    private HashMap<OpTree.Operator, Cond> icmpOp2cond = new HashMap<>();
 
 
 
@@ -42,6 +39,7 @@ public class CodeGen {
     }
 
     public void gen(){
+        initIcmpOp2cond();
         globalGen();
         for(Function function: functions.values()){
             McFunction mcFunction = new McFunction(function);
@@ -114,7 +112,12 @@ public class CodeGen {
             Value right = icmp.getRhs();
             Operand lopd = getOperand(left);
             Operand ropd = getOperand(right);
-            McCmp.Cond cond = op2cond.get(icmp.getOp());
+            Cond cond = icmpOp2cond.get(icmp.getOp());
+            McCmp mcCmp = new McCmp(cond, lopd, ropd, curMcBlock);
+            if(icmp.getNext() instanceof Branch && icmp.getUsedSize() == 1
+                    && icmp.getUsedInfo().get(0).equals(icmp.getNext())) {
+
+            }
         } else {
             assert instr instanceof Fcmp;
             Fcmp fcmp = (Fcmp) instr;
@@ -332,5 +335,14 @@ public class CodeGen {
             n = (n << 30) | (n >> 2);
         }
         return false;
+    }
+
+    public void initIcmpOp2cond(){
+        icmpOp2cond.put(OpTree.Operator.Eq, Cond.Eq);
+        icmpOp2cond.put(OpTree.Operator.Ne, Cond.Ne);
+        icmpOp2cond.put(OpTree.Operator.Ge, Cond.Ge);
+        icmpOp2cond.put(OpTree.Operator.Gt, Cond.Gt);
+        icmpOp2cond.put(OpTree.Operator.Lt, Cond.Lt);
+        icmpOp2cond.put(OpTree.Operator.Le, Cond.Le);
     }
 }
