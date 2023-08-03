@@ -12,4 +12,11 @@ public class McMove extends McInstr{
         defOperands.add(dstOp);
         useOperands.add(srcOp);
     }
+
+    public McMove(Cond cond,Operand dstOp, Operand srcOp, McBlock mcBlock) {
+        super(mcBlock);
+        this.cond = cond;
+        defOperands.add(dstOp);
+        useOperands.add(srcOp);
+    }
 }

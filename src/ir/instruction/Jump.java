@@ -14,6 +14,10 @@ public class Jump extends Instr {
         this.addUse(targetBlock);
     }
 
+    public BasicBlock getTargetBlock() {
+        return targetBlock;
+    }
+
     @Override
     public String toString() {
         return "br label %" + targetBlock.getName();

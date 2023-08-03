@@ -32,6 +32,7 @@ public class CodeGen {
 
     private HashMap<Value, Operand> value2opd = new HashMap<>();
     private HashMap<OpTree.Operator, Cond> icmpOp2cond = new HashMap<>();
+    private HashMap<Value, Cond> value2cond = new HashMap<>();
 
 
 
@@ -91,6 +92,9 @@ public class CodeGen {
                 elseBlock.addPreMcBlock(curMcBlock);
 
             }
+            else if(instr instanceof Jump) {
+                McBlock targetBlock = blockMap.get(((Jump) instr).getTargetBlock());
+            }
             else if(instr instanceof BitCast) {
                 Operand opd = getOperand(instr.getUse(0));
                 value2opd.put(instr, opd);
@@ -106,21 +110,89 @@ public class CodeGen {
 
     public void genCmp(Instr instr) {
         Operand dst = getOperand(instr);
+        Operand dstVr = getOperand(instr);
         if(instr instanceof Icmp){
             Icmp icmp = (Icmp) instr;
+            OpTree.Operator op = icmp.getOp();
             Value left = icmp.getLhs();
             Value right = icmp.getRhs();
             Operand lopd = getOperand(left);
             Operand ropd = getOperand(right);
-            Cond cond = icmpOp2cond.get(icmp.getOp());
-            McCmp mcCmp = new McCmp(cond, lopd, ropd, curMcBlock);
-            if(icmp.getNext() instanceof Branch && icmp.getUsedSize() == 1
-                    && icmp.getUser(0).equals(icmp.getNext())) {
-
+            if(lopd.isImm() && ropd.isImm()){
+                int imm1 = ((Operand.Imm)lopd).getIntNumber();
+                int imm2 = ((Operand.Imm)ropd).getIntNumber();
+                boolean ans = false;
+                ans = ((imm1 <= imm2 && op.equals(OpTree.Operator.Le)) ||
+                        (imm1 < imm2 && op.equals(OpTree.Operator.Lt)) ||
+                        (imm1 > imm2 && op.equals(OpTree.Operator.Gt)) ||
+                        (imm1 >= imm2 && op.equals(OpTree.Operator.Ge)) ||
+                        (imm1 != imm2 && op.equals(OpTree.Operator.Ne)) ||
+                        (imm1 == imm2 && op.equals(OpTree.Operator.Eq)));
+                Operand.Imm imm;
+                if(ans){
+                    imm = new Operand.Imm(1);
+                }else {
+                    imm = new Operand.Imm(0);
+                }
+                new McMove(dstVr, imm, curMcBlock);
+            } else {
+                Cond cond = icmpOp2cond.get(op);
+                if(lopd.isImm()) {
+                    Operand temp = lopd;
+                    lopd = ropd;
+                    ropd = temp;
+                    switch (cond) {
+                        case Ge -> cond = Cond.Le;
+                        case Le -> cond = Cond.Ge;
+                        case Gt -> cond = Cond.Lt;
+                        case Lt -> cond = Cond.Gt;
+                    }
+                }
+                McCmp mcCmp = new McCmp(cond, lopd, ropd, curMcBlock);
+                if(icmp.getNext() instanceof Branch && icmp.getUsedSize() == 1
+                        && icmp.getUser(0).equals(icmp.getNext())) {
+                    value2cond.put(instr, cond);
+                } else {
+                    new McMove( cond, dstVr, new Operand.Imm(1),curMcBlock);
+                    new McMove(getIcmpOppoCond(cond), dstVr, new Operand.Imm(0), curMcBlock);
+                }
             }
-        } else {
+        }
+        else {
             assert instr instanceof Fcmp;
             Fcmp fcmp = (Fcmp) instr;
+            OpTree.Operator op = fcmp.getOp();
+            Value left = fcmp.getLhs();
+            Value right = fcmp.getRhs();
+
+            if(left instanceof Variable.ConstFloat && right instanceof Variable.ConstFloat) {
+                float imm1 = ((Variable.ConstFloat) left).getFloatVal();
+                float imm2 = ((Variable.ConstFloat) right).getFloatVal();
+                boolean ans = false;
+                ans = ((imm1 <= imm2 && op.equals(OpTree.Operator.Le)) ||
+                        (imm1 < imm2 && op.equals(OpTree.Operator.Lt)) ||
+                        (imm1 > imm2 && op.equals(OpTree.Operator.Gt)) ||
+                        (imm1 >= imm2 && op.equals(OpTree.Operator.Ge)) ||
+                        (imm1 != imm2 && op.equals(OpTree.Operator.Ne)) ||
+                        (imm1 == imm2 && op.equals(OpTree.Operator.Eq)));
+                if(ans) {
+                    new McMove(dstVr, new Operand.Imm(1), curMcBlock);
+                } else {
+                    new McMove(dstVr, new Operand.Imm(0), curMcBlock);
+                }
+            } else {
+                Operand lopd = getOperand(left);
+                Operand ropd = getOperand(right);
+                Cond cond = getFcmp2Cond(op);
+                McCmp mcCmp = new McCmp(cond, lopd, ropd, curMcBlock);
+                if(fcmp.getNext() instanceof Branch && fcmp.getUsedSize() == 1
+                        && fcmp.getUser(0).equals(fcmp.getNext())) {
+                    value2cond.put(instr, cond);
+                } else {
+                    new McMove( cond, dstVr, new Operand.Imm(1),curMcBlock);
+                    new McMove(getFcmpOppoCond(cond), dstVr, new Operand.Imm(0), curMcBlock);
+                }
+            }
         }
     }
 
@@ -301,17 +373,11 @@ public class CodeGen {
         Operand opd = value2opd.get(value);
         if(opd == null){
             if(value instanceof Variable.ConstInt){
-                int intVal = ((Variable.ConstInt)value).getIntVal();
-                opd = new Operand.Imm( intVal);
-                if(!canImmSaved(intVal)){
-                    Operand dst = new Operand.VirtualReg(false, curMcFunc);
-                    new McMove(dst, opd, curMcBlock);
-                    opd = dst;
-                }
+                opd = getIntImm(value);
             }
             else if(value instanceof Variable.ConstFloat) {
                 float floatVal = ((Variable.ConstFloat)value).getFloatVal();
-                opd = new Operand.Imm( floatVal);
+                opd = getFloatImm(value);
             }
             else {
                 if(value.getType() instanceof FloatType) {
@@ -323,6 +389,38 @@ public class CodeGen {
             }
         }
         return opd;
+    }
+
+    public Operand getIntImm(Value value){
+        int intVal = ((Variable.ConstInt)value).getIntVal();
+        Operand opd = new Operand.Imm( intVal);
+        if(!canImmSaved(intVal)){
+            Operand dst = new Operand.VirtualReg(false, curMcFunc);
+            new McMove(dst, opd, curMcBlock);
+            opd = dst;
+        }
+        return opd;
+    }
+
+    public Operand getFloatImm(Value value) {
+        float f = ((Variable.ConstFloat)value).getFloatVal();
+        Operand dst = new Operand.VirtualReg(true, curMcFunc);
+        if(canFImmSaved(f)) {
+            Operand imm = new Operand.Imm(f);
+            new McMove(dst, imm, curMcBlock);
+        } else {
+            Operand tmp;
+            int bitFloat = Float.floatToRawIntBits(f);
+            Operand imm = getIntImm(new Variable.ConstInt(bitFloat));
+            if(canImmSaved(bitFloat)){
+                tmp = new Operand.VirtualReg(false, curMcFunc);
+                new McMove(tmp, imm, curMcBlock);
+            } else {
+                tmp = imm;
+            }
+            new McMove(dst, tmp, curMcBlock);
+        }
+        return dst;
     }
 
     // arm有一套神奇的Int的Imm是否能进行使用的机制
@@ -337,6 +435,21 @@ public class CodeGen {
         return false;
     }
 
+    // arm神奇的Float的Imm是否能进行使用的机制
+    public static boolean canFImmSaved(float imm) {
+        float num = imm * 128;
+        int compare;
+        for (int i = 0; i < 8; i++) {
+            for (int j = 16; j < 32; j++) {
+                compare = j * ( 1 << i);
+                if (Math.abs(num - compare) < 1e-14 || Math.abs(num + compare) < 1e-14) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public void initIcmpOp2cond(){
         icmpOp2cond.put(OpTree.Operator.Eq, Cond.Eq);
         icmpOp2cond.put(OpTree.Operator.Ne, Cond.Ne);
@@ -344,5 +457,41 @@ public class CodeGen {
         icmpOp2cond.put(OpTree.Operator.Gt, Cond.Gt);
         icmpOp2cond.put(OpTree.Operator.Lt, Cond.Lt);
         icmpOp2cond.put(OpTree.Operator.Le, Cond.Le);
+    }
+
+    public Cond getFcmp2Cond(OpTree.Operator op) {
+        return switch (op){
+            case Eq -> Cond.Eq;
+            case Ne -> Cond.Ne;
+            case Gt -> Cond.Hi;
+            case Ge -> Cond.Pl;
+            case Lt -> Cond.Lt;
+            case Le -> Cond.Le;
+            default -> null;
+        };
+    }
+
+    public Cond getIcmpOppoCond(Cond cond){
+        return switch (cond) {
+            case Eq -> Cond.Ne;
+            case Ne -> Cond.Eq;
+            case Ge -> Cond.Lt;
+            case Gt -> Cond.Le;
+            case Le -> Cond.Gt;
+            case Lt -> Cond.Ge;
+            case Hi, Pl, Any -> throw new AssertionError("Wrong Icmp oppo cond");
+        };
+    }
+
+    public Cond getFcmpOppoCond(Cond cond){
+        return switch (cond) {
+            case Eq -> Cond.Ne;
+            case Ne -> Cond.Eq;
+            case Hi -> Cond.Le;
+            case Pl -> Cond.Lt;
+            case Le -> Cond.Hi;
+            case Lt -> Cond.Pl;
+            case Ge, Gt, Any -> throw new AssertionError("Wrong Fcmp oppo cond");
+        };
     }
 }

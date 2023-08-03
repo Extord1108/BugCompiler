@@ -12,6 +12,10 @@ public class Operand {
     String pre;
     boolean isFloat = false;
 
+    public boolean isImm(){
+        return this instanceof Imm;
+    }
+
     public static class VirtualReg extends Operand{
         private static int vrCount = 0;
         private int value;
@@ -47,6 +51,14 @@ public class Operand {
             this.isFloat = true;
             this.floatNumber = floatNumber;
             this.pre = "#";
+        }
+
+        public int getIntNumber() {
+            return intNumber;
+        }
+
+        public float getFloatNumber() {
+            return floatNumber;
         }
     }
 }
