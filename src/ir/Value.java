@@ -27,6 +27,10 @@ public class Value extends MyNode {
         return usedInfo;
     }
 
+    public Value getUser(int i){
+        return usedInfo.get(i).getUser();
+    }
+
     public int getUsedSize(){
         return usedInfo.size();
     }

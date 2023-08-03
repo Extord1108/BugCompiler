@@ -115,7 +115,7 @@ public class CodeGen {
             Cond cond = icmpOp2cond.get(icmp.getOp());
             McCmp mcCmp = new McCmp(cond, lopd, ropd, curMcBlock);
             if(icmp.getNext() instanceof Branch && icmp.getUsedSize() == 1
-                    && icmp.getUsedInfo().get(0).equals(icmp.getNext())) {
+                    && icmp.getUser(0).equals(icmp.getNext())) {
 
             }
         } else {
