@@ -54,6 +54,10 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
         return CONST_0;
     }
 
+    public Variable.ConstFloat getCONST_0f() {
+        return CONST_0f;
+    }
+
     public Value turnTo(Value value, Type targetType) {
 
         if (value.getType().equals(targetType)) {

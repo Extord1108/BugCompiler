@@ -23,6 +23,14 @@ public class GetElementPtr extends Instr{
         }
     }
 
+    public Value getPointer() {
+        return pointer;
+    }
+
+    public ArrayList<Value> getIdxList() {
+        return idxList;
+    }
+
     @Override
     public String toString() {
         String ret = name + " = getelementptr inbounds " + pointer.getType().getBasicType() + ", " + pointer.getType() + " "

@@ -4,10 +4,7 @@ import com.sun.jdi.FloatType;
 import frontend.semantic.OpTree;
 import ir.*;
 import ir.instruction.*;
-import ir.type.ArrayType;
-import ir.type.Int32Type;
-import ir.type.PointerType;
-import ir.type.Type;
+import ir.type.*;
 import lir.McBlock;
 import lir.McFunction;
 import lir.Operand;
@@ -36,6 +33,10 @@ public class CodeGen {
     private HashMap<OpTree.Operator, Cond> icmpOp2cond = new HashMap<>();
     private HashMap<Value, Cond> value2cond = new HashMap<>();
 
+    // 整数数传参可使用最大个数
+    public static final int rParamCnt = 4;
+    // 浮点数传参可使用最大个数
+    public static final int sParamCnt = 16;
 
 
     private CodeGen(){
@@ -115,7 +116,7 @@ public class CodeGen {
                 new McBinary(McBinary.BinaryType.Add, addr, Operand.PhyReg.getPhyReg("sp"), offset, curMcBlock);
             }
             else if(instr instanceof Call) {
-                System.out.println("call 还没写");
+                genCall((Call) instr);
             }
             else if(instr instanceof Fptosi) {
                 Operand src = getOperand(instr.getUse(0));
@@ -125,16 +126,81 @@ public class CodeGen {
                 new McMove(dst, tmp, curMcBlock);
             }
             else if(instr instanceof GetElementPtr) {
-                System.out.println("GetElementPtr 还没写");
+                Value pointer = ((GetElementPtr) instr).getPointer();
+                ArrayList<Value> idxList = ((GetElementPtr) instr).getIdxList();
+                Type curBasicType = pointer.getType().getBasicType();
+                Operand addrOpd = getOperand(pointer);
+                Operand dst = getOperand(instr);
+                Operand tmpAddr = null;
+                int allOff = 0;
+                for(int i = 0; i < idxList.size(); i++) {
+                    Value idx = idxList.get(i);
+                    int offset = 4;
+                    if(curBasicType instanceof ArrayType) {
+                        offset = offset * ((ArrayType) curBasicType).getFattenSize();
+                    }
+                    if(idx instanceof Variable.ConstInt) {
+                        int sum = ((Variable.ConstInt) idx).getIntVal() * offset;
+                        allOff += sum;
+                    } else {
+                        Operand tmp = getOperand(idx);
+                        Operand mulAns = new Operand.VirtualReg(false, curMcFunc);
+                        new McBinary(McBinary.BinaryType.Mul, mulAns, tmp,
+                                getOperand(new Variable.ConstInt(offset)), curMcBlock);
+                        if(tmpAddr == null) {
+                            tmpAddr = new Operand.VirtualReg(false, curMcFunc);
+                            new McBinary(McBinary.BinaryType.Add, tmpAddr, addrOpd, tmp, curMcBlock);
+                        } else {
+                            new McBinary(McBinary.BinaryType.Add, tmpAddr, tmpAddr, tmp, curMcBlock);
+                        }
+                    }
+
+                    if(i == idxList.size() - 1) {
+                        if(allOff == 0) {
+                            if(tmpAddr == null)
+                                new McMove(dst, addrOpd, curMcBlock);
+                            else
+                                new McMove(dst, tmpAddr, curMcBlock);
+                        } else {
+                            if(tmpAddr == null)
+                                new McBinary(McBinary.BinaryType.Add, dst, addrOpd,
+                                        getOperand(new Variable.ConstInt(allOff)), curMcBlock);
+                            else
+                                new McBinary(McBinary.BinaryType.Add, dst, tmpAddr,
+                                        getOperand(new Variable.ConstInt(allOff)), curMcBlock);
+                        }
+                    }
+                }
             }
             else if(instr instanceof Store){
-                System.out.println("Store 还没写");
+                Value data = ((Store) instr).getValue();
+                Value addr = ((Store) instr).getAddress();
+                Operand dtOpd = getOperand(data);
+                Operand addrOpd = getOperand(addr);
+                new McStore(dtOpd, addrOpd, curMcBlock);
             }
             else if(instr instanceof Load) {
-                System.out.println("Load 还没写");
+                Value addr = ((Load) instr).getPointer();
+                Operand dtOpd = getOperand(instr);
+                Operand addrOpd = getOperand(addr);
+                new McLdr(dtOpd, addrOpd, curMcBlock);
             }
             else if(instr instanceof Return) {
-                System.out.println("Return 还没写");
+                Value ret = ((Return) instr).getReturnValue();
+                if(ret != null) {
+                    Operand retOpd;
+                    if(ret.getType() instanceof Int32Type) {
+                        retOpd = getOperand(ret);
+                        new McMove(Operand.PhyReg.getPhyReg("r0"), retOpd, curMcBlock);
+                    }else{
+                        assert ret.getType() instanceof ir.type.FloatType;
+                        retOpd = getOperand(ret);
+                        new McMove(Operand.PhyReg.getPhyReg("s0"), retOpd, curMcBlock);
+                    }
+                    new McReturn(retOpd, curMcBlock);
+                } else {
+                    new McReturn(curMcBlock);
+                }
             }
             else if(instr instanceof Sitofp) {
                 Operand src = getOperand(instr.getUse(0));
@@ -144,7 +210,18 @@ public class CodeGen {
                 new McVcvt(McVcvt.VcvtType.i2f, tmp, dst, curMcBlock);
             }
             else if(instr instanceof Unary) {
-                System.out.println("Unary 还没写");
+                OpTree.Operator op = ((Unary) instr).getOp();
+                if(op.equals(OpTree.Operator.Neg)) {
+                    Operand dst = getOperand(instr);
+                    Operand src = getOperand(((Unary) instr).getVal());
+                    if(instr.type instanceof ir.type.FloatType) {
+                        new McNeg( dst, src, curMcBlock);
+                    } else {
+                        new McBinary(McBinary.BinaryType.Rsb, dst, src, new Operand.Imm(0), curMcBlock);
+                    }
+                } else {
+                    System.err.println("unary中的not直接生成了fcmp和icmp");
+                }
             }
             else if(instr instanceof Zext) {
                 Operand dst = getOperand(instr.getUse(0));
@@ -153,6 +230,66 @@ public class CodeGen {
             else {
                 System.err.println("存在ir类型" + instr.getClass() + "未被解析为lir");
             }
+        }
+    }
+
+    public void genCall(Call call) {
+        ArrayList<Value> params = call.getParams();
+        Function callFunc = call.getFunction();
+        int sRegIdx = 0;    //  当前用到的浮点数寄存器下标
+        int rRegIdx = 0;    //  当前用到的整数寄存器下标
+        int regStack = 0;   //  溢出到栈上的寄存器数量
+        for(Value param: params) {
+            if(param.getType() instanceof ir.type.FloatType) {
+                Operand src = getOperand(param);
+                //  可以存放入寄存器中
+                if(sRegIdx < sParamCnt) {
+                    new McMove( Operand.FPhyReg.getFPhyReg("s" + sRegIdx), src, curMcBlock);
+                    sRegIdx ++;
+                }
+                else {
+                    int offset = - (regStack + 1) * 4;
+                    if(canImmOffset(offset)){
+                        new McStore(src, Operand.PhyReg.getPhyReg("sp"), new Operand.Imm(offset), curMcBlock);
+                    } else {
+                        Operand addr = new Operand.VirtualReg(false, curMcFunc);
+                        Operand imm = getOperand( new Variable.ConstInt(-offset));
+                        new McBinary(McBinary.BinaryType.Sub, addr, Operand.PhyReg.getPhyReg("sp"), imm, curMcBlock);
+                        new McStore(src, addr, curMcBlock);
+                    }
+                    regStack ++;
+                }
+            }
+            else {
+                Operand src = getOperand(param);
+                if(rRegIdx < rParamCnt) {
+                    new McMove(Operand.PhyReg.getPhyReg("r" + rRegIdx), src, curMcBlock);
+                    rRegIdx ++;
+                }
+                else {
+                    int offset = - (regStack + 1) * 4;
+                    if(canImmOffset(offset)){
+                        new McStore(src, Operand.PhyReg.getPhyReg("sp"), new Operand.Imm(offset), curMcBlock);
+                    } else {
+                        Operand addr = new Operand.VirtualReg(false, curMcFunc);
+                        Operand imm = getOperand( new Variable.ConstInt(-offset));
+                        new McBinary(McBinary.BinaryType.Sub, addr, Operand.PhyReg.getPhyReg("sp"), imm, curMcBlock);
+                        new McStore(src, addr, curMcBlock);
+                    }
+                    regStack ++;
+                }
+            }
+        }
+
+        McFunction callMcFunc = funcMap.get(callFunc);
+        new McCall(callMcFunc, curMcBlock);
+
+        if(call.type instanceof Int32Type) {
+            Operand dst = getOperand(call);
+            new McMove(dst, Operand.PhyReg.getPhyReg("r0"), curMcBlock);
+        } else if(call.type instanceof ir.type.FloatType) {
+            Operand dst = getOperand(call);
+            new McMove(dst, Operand.PhyReg.getPhyReg("s0"), curMcBlock);
         }
     }
 
@@ -471,6 +608,9 @@ public class CodeGen {
         return dst;
     }
 
+    public static boolean canImmOffset(int imm) {
+        return imm <= 1020 && imm >= -1020;
+    }
     // arm有一套神奇的Int的Imm是否能进行使用的机制
     public static boolean canImmSaved(int imm) {
         int n = imm;

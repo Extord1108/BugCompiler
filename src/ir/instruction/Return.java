@@ -6,7 +6,7 @@ import ir.type.Type;
 import ir.type.VoidType;
 
 public class Return extends Instr {
-    private Value returnValue;
+    private Value returnValue = null;
 
     public Return(BasicBlock basicBlock) {
         super(VoidType.getInstance(), basicBlock);
@@ -16,6 +16,10 @@ public class Return extends Instr {
         super(returnValue.getType(), basicBlock);
         this.returnValue = returnValue;
         this.addUse(returnValue);
+    }
+
+    public Value getReturnValue() {
+        return returnValue;
     }
 
     @Override

@@ -136,7 +136,13 @@ public class OpTreeHandler {
         OpTree child = it.next();
         Value val = evalExp(child, basicBlock);
         if(op ==OpTree.Operator.Not) {
-            val = new Unary(Int1Type.getInstance(), op, val, basicBlock);
+            if(val.getType() instanceof FloatType) {
+                val = new Fcmp(val, Visitor.Instance.getCONST_0f(), OpTree.Operator.Eq, basicBlock);
+            } else {
+                val = Visitor.Instance.turnTo(val, Int32Type.getInstance());
+                val = new Icmp(val, Visitor.Instance.getCONST_0(), OpTree.Operator.Eq, basicBlock);
+            }
+//            val = new Unary(Int1Type.getInstance(), op, val, basicBlock);
         }
         else{
             if(val.getType() instanceof Int1Type)

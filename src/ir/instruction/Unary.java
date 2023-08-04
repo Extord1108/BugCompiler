@@ -18,6 +18,10 @@ public class Unary extends Instr {
         this.addUse(val);
     }
 
+    public OpTree.Operator getOp() {
+        return op;
+    }
+
     @Override
     public String toString() {
 

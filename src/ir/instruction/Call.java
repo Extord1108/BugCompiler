@@ -23,6 +23,10 @@ public class Call extends Instr{
         }
     }
 
+    public ArrayList<Value> getParams() {
+        return params;
+    }
+
     @Override
     public String toString() {
         String prefix = "";

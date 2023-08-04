@@ -18,6 +18,14 @@ public class Store extends Instr {
         this.addUse(address);
     }
 
+    public Value getValue() {
+        return value;
+    }
+
+    public Value getAddress() {
+        return address;
+    }
+
     @Override
     public String toString() {
         return "store " + value.getType().toString() + " " + value.getName() + ", " + address.getType().toString()
