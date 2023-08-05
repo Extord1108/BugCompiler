@@ -17,6 +17,7 @@ public class Instr extends Value {
         this.basicBlock = basicBlock;
         this.name = "%r" + count++;
         this.uses = new ArrayList<>();
+        if(!basicBlock.isTerminated())
         basicBlock.addInstr(this);
     }
 

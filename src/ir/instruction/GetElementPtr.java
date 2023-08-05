@@ -10,13 +10,9 @@ import java.util.ArrayList;
 
 public class GetElementPtr extends Instr{
 
-    Value pointer;
-    ArrayList<Value> idxList;
 
     public GetElementPtr(Type type, Value pointer, ArrayList<Value> idxList, BasicBlock basicBlock) {
         super(new PointerType(type.getContentType()), basicBlock);
-        this.pointer = pointer;
-        this.idxList = idxList;
         this.addUse(pointer);
         for(Value idx: idxList){
             this.addUse(idx);
@@ -24,20 +20,24 @@ public class GetElementPtr extends Instr{
     }
 
     public Value getPointer() {
-        return pointer;
+        return getUse(0);
     }
 
     public ArrayList<Value> getIdxList() {
-        return idxList;
+        ArrayList<Value> ret = new ArrayList<>();
+        for(int i = 1; i < getUses().size(); i++){
+            ret.add(getUse(i));
+        }
+        return ret;
     }
 
     @Override
     public String toString() {
-        String ret = name + " = getelementptr inbounds " + pointer.getType().getBasicType() + ", " + pointer.getType() + " "
-                + pointer.getName() + ", ";
-        for(int i = 0; i < idxList.size(); i++){
-            ret += idxList.get(i).getType() + " " + idxList.get(i).getName();
-            if(i != idxList.size() - 1)
+        String ret = name + " = getelementptr inbounds " + getPointer().getType().getBasicType() + ", " + getPointer().getType() + " "
+                + getPointer().getName() + ", ";
+        for(int i = 0; i < getIdxList().size(); i++){
+            ret += getIdxList().get(i).getType() + " " + getIdxList().get(i).getName();
+            if(i != getIdxList().size() - 1)
                 ret += ", ";
         }
         return  ret;

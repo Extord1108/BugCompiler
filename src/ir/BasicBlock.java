@@ -1,9 +1,6 @@
 package ir;
 
-import ir.instruction.Call;
-import ir.instruction.Instr;
-import ir.instruction.Jump;
-import ir.instruction.Return;
+import ir.instruction.*;
 import util.MyList;
 
 import java.util.ArrayList;
@@ -55,7 +52,7 @@ public class BasicBlock extends Value {
     public boolean isTerminated() {
         if(instrs.size() == 0)
             return false;
-        return getLast() instanceof Return;
+        return getLast() instanceof Return || getLast() instanceof Jump || getLast() instanceof Branch;
     }
 
     public Instr getLast() {

@@ -92,7 +92,6 @@ public class MyList<E extends MyNode> implements Iterable<E> {
     public void remove(E node){
         node.remove();
         size --;
-        System.out.println(this);
     }
 
     @Override

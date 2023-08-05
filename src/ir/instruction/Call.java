@@ -10,13 +10,8 @@ import java.util.ArrayList;
 
 public class Call extends Instr{
 
-    Function function;
-    ArrayList<Value> params;
-
     public Call(Function function, ArrayList<Value> params, BasicBlock basicBlock) {
         super(function.getType(), basicBlock);
-        this.function = function;
-        this.params = params;
         this.addUse(function);
         for(Value param: params){
             this.addUse(param);
@@ -24,6 +19,10 @@ public class Call extends Instr{
     }
 
     public ArrayList<Value> getParams() {
+        ArrayList<Value> params = new ArrayList<>();
+        for(int i = 1; i < this.getUses().size(); i++){
+            params.add(this.getUse(i));
+        }
         return params;
     }
 
@@ -36,15 +35,15 @@ public class Call extends Instr{
             returnType = type.toString();
         }
         String params = "";
-        for(int i = 0; i < this.params.size(); i++){
-            params += this.params.get(i).getType() + " " + this.params.get(i).getName();
-            if(i != this.params.size() - 1)
+        for(int i = 0; i < this.getParams().size(); i++){
+            params += this.getParams().get(i).getType() + " " + this.getParams().get(i).getName();
+            if(i != this.getParams().size() - 1)
                 params += ", ";
         }
-        return prefix + "call " + returnType + " @" + function.getName() + "(" + params + ")";
+        return prefix + "call " + returnType + " @" + getFunction().getName() + "(" + params + ")";
     }
 
     public Function getFunction() {
-        return function;
+        return (Function) getUse(0);
     }
 }

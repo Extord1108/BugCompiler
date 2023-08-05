@@ -6,24 +6,21 @@ import ir.BasicBlock;
 import ir.type.Int1Type;
 
 public class Fcmp extends Instr {
-    Value lhs, rhs;
     OpTree.Operator op;
 
     public Fcmp(Value lhs, Value rhs, OpTree.Operator op, BasicBlock basicBlock) {
         super(Int1Type.getInstance(), basicBlock);
-        this.lhs = lhs;
-        this.rhs = rhs;
         this.op = op;
         this.addUse(lhs);
         this.addUse(rhs);
     }
 
     public Value getLhs() {
-        return lhs;
+        return getUse(0);
     }
 
     public Value getRhs() {
-        return rhs;
+        return getUse(1);
     }
 
     public OpTree.Operator getOp() {
@@ -32,7 +29,7 @@ public class Fcmp extends Instr {
 
     @Override
     public String toString() {
-        return this.getName() + " = fcmp " + op.getfName() + " " + lhs.getType() + " " + lhs.getName() + ", "
-                + rhs.getName();
+        return this.getName() + " = fcmp " + op.getfName() + " " + getLhs().getType() + " " + getLhs().getName() + ", "
+                + getRhs().getName();
     }
 }

@@ -8,34 +8,28 @@ import ir.type.VoidType;
 
 public class Branch extends Instr {
 
-    private Value cond;
-    private BasicBlock thenBlock;
-    private BasicBlock elseBlock;
 
     public Branch(Value cond, BasicBlock thenBlock, BasicBlock elseBlock, BasicBlock basicBlock) {
         super(Int1Type.getInstance(), basicBlock);
-        this.cond = cond;
-        this.thenBlock = thenBlock;
-        this.elseBlock = elseBlock;
         this.addUse(cond);
         this.addUse(thenBlock);
         this.addUse(elseBlock);
     }
 
     public Value getCond() {
-        return cond;
+        return getUse(0);
     }
 
     public BasicBlock getThenBlock() {
-        return thenBlock;
+        return (BasicBlock) getUse(1);
     }
 
     public BasicBlock getElseBlock() {
-        return elseBlock;
+        return (BasicBlock)getUse(2);
     }
 
     @Override
     public String toString() {
-        return "br i1 " + cond.getName() + ", label %" + thenBlock.getName() + ", label %" + elseBlock.getName();
+        return "br i1 " + getCond().getName() + ", label %" + getThenBlock().getName() + ", label %" + getElseBlock().getName();
     }
 }

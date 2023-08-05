@@ -6,20 +6,17 @@ import ir.type.VoidType;
 
 public class Jump extends Instr {
 
-    private BasicBlock targetBlock;
-
     public Jump(BasicBlock targetBlock, BasicBlock basicBlock) {
         super(VoidType.getInstance(), basicBlock);
-        this.targetBlock = targetBlock;
         this.addUse(targetBlock);
     }
 
     public BasicBlock getTargetBlock() {
-        return targetBlock;
+        return (BasicBlock) getUse(0);
     }
 
     @Override
     public String toString() {
-        return "br label %" + targetBlock.getName();
+        return "br label %" + getTargetBlock().getName();
     }
 }

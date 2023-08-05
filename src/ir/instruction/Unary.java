@@ -9,12 +9,10 @@ import frontend.semantic.OpTree;
 public class Unary extends Instr {
 
     private OpTree.Operator op;
-    private Value val;
 
     public Unary(Type type, OpTree.Operator op, Value val, BasicBlock basicBlock) {
         super(type, basicBlock);
         this.op = op;
-        this.val = val;
         this.addUse(val);
     }
 
@@ -28,23 +26,23 @@ public class Unary extends Instr {
         if(op == OpTree.Operator.Neg)
         {
             if(type instanceof ir.type.FloatType)
-            return this.getName() + " = fneg " + this.getType() + " " + this.val.getName();
+            return this.getName() + " = fneg " + this.getType() + " " + getVal().getName();
             else
-            return this.getName() + " = sub " + this.getType() + " 0, " + this.val.getName();
+            return this.getName() + " = sub " + this.getType() + " 0, " + getVal().getName();
         }
         else if (op == OpTree.Operator.Not)
         {
-            if(this.val.getType() instanceof FloatType)
-                return this.getName() + " = fcmp oeq " + this.val.getType() + " " + this.val.getName() + ", 0x0";
+            if(getVal().getType() instanceof FloatType)
+                return this.getName() + " = fcmp oeq " + getVal().getType() + " " + getVal().getName() + ", 0x0";
             else
-            return this.getName() + " = icmp eq " + this.val.getType() + " " + this.val.getName() + ", 0";
+            return this.getName() + " = icmp eq " + getVal().getType() + " " + getVal().getName() + ", 0";
         }
         else
-        return this.getName() + " = " + op + " " + this.getType() + " 0, " + this.val.getName();
+        return this.getName() + " = " + op + " " + this.getType() + " 0, " + getVal().getName();
     }
 
     public Value getVal() {
-        return val;
+        return getUse(0);
     }
 
 }

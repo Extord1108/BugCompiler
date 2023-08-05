@@ -28,12 +28,18 @@ public class Compiler {
             var visitor = Visitor.Instance;
             visitor.visit(tree);
 
+            if (!arg.llvmFile.isEmpty()) {
+                FileOutputStream llvmOut = OutputHandler.getOutputFile(arg.llvmFile);
+                Manager.getManager().outputLLVM(llvmOut);
+                OutputHandler.closeOutputFile(llvmOut);
+            }
+
             var midEndRunner = new MidEndRunner(Manager.getFunctions(), Manager.getGlobals(), arg.opt);
             midEndRunner.run();
 
             // 输出 LLVM
             if (!arg.llvmFile.isEmpty()) {
-                FileOutputStream llvmOut = OutputHandler.getOutputFile(arg.llvmFile);
+                FileOutputStream llvmOut = OutputHandler.getOutputFile("mid-"+arg.llvmFile);
                 Manager.getManager().outputLLVM(llvmOut);
                 OutputHandler.closeOutputFile(llvmOut);
             }

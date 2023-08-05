@@ -23,55 +23,40 @@ b14:
 define dso_local i32 @ifElseIf() 
 {
 b1:
-	%r2 = alloca i32
-	%r0 = alloca i32
-	store i32 5, i32* %r0
-	store i32 10, i32* %r2
-	%r4 = load i32, i32* %r0
-	%r5 = icmp eq i32 %r4, 6
+	%r5 = icmp eq i32 5, 6
 	br i1 %r5, label %b2, label %b5
 b2:
-	%r10 = load i32, i32* %r0
-	ret i32 %r10
+	ret i32 5
 b3:
-	%r13 = load i32, i32* %r2
-	%r14 = icmp eq i32 %r13, 10
+	%r14 = icmp eq i32 10, 10
 	br i1 %r14, label %b9, label %b7
 b4:
-	%r38 = load i32, i32* %r0
-	ret i32 %r38
+	ret i32 %r43
 b5:
-	%r7 = load i32, i32* %r2
-	%r8 = icmp eq i32 %r7, 11
+	%r8 = icmp eq i32 10, 11
 	br i1 %r8, label %b2, label %b3
 b6:
-	store i32 25, i32* %r0
 	br label %b8
 b7:
-	%r21 = load i32, i32* %r2
-	%r22 = icmp eq i32 %r21, 10
+	%r22 = icmp eq i32 10, 10
 	br i1 %r22, label %b13, label %b11
 b8:
+	%r43 = phi i32 [ 25 , %b6 ], [ %r44 , %b12 ]
 	br label %b4
 b9:
-	%r16 = load i32, i32* %r0
-	%r17 = icmp eq i32 %r16, 1
+	%r17 = icmp eq i32 5, 1
 	br i1 %r17, label %b6, label %b7
 b10:
-	%r28 = load i32, i32* %r0
-	%r29 = add i32 %r28, 15
-	store i32 %r29, i32* %r0
+	%r29 = add i32 5, 15
 	br label %b12
 b11:
-	%r32 = load i32, i32* %r0
-	%r33 = sub i32 0, %r32
-	store i32 %r33, i32* %r0
+	%r33 = sub i32 0, 5
 	br label %b12
 b12:
+	%r44 = phi i32 [ %r29 , %b10 ], [ %r33 , %b11 ]
 	br label %b8
 b13:
-	%r24 = load i32, i32* %r0
 	%r25 = sub i32 0, 5
-	%r26 = icmp eq i32 %r24, %r25
+	%r26 = icmp eq i32 5, %r25
 	br i1 %r26, label %b10, label %b11
 }

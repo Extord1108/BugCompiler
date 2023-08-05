@@ -7,15 +7,16 @@ import ir.type.Type;
 
 public class Zext extends Instr{
 
-    Value value;
-
     public Zext(Value value, BasicBlock basicBlock) {
         super(Int32Type.getInstance(), basicBlock);
-        this.value =value;
         this.addUse(value);
     }
 
+    public Value getValue() {
+        return this.getUse(0);
+    }
+
     public String toString() {
-        return this.getName() + " = zext " + value.getType() + " "+ value.getName() + " to " + this.type;
+        return this.getName() + " = zext " + getValue().getType() + " "+ getValue().getName() + " to " + this.type;
     }
 }

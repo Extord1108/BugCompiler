@@ -1,25 +1,25 @@
-float sb = 123;
-int ab[1244] = {1,2,3};
+// test if-else-if
+int ifElseIf() {
+  int a;
+  a = 5;
+  int b;
+  b = 10;
+  if(a == 6 || b == 0xb) {
+    return a;
+  }
+  else {
+    if (b == 10 && a == 1)
+      a = 25;
+    else if (b == 10 && a == -5)
+      a = a + 15;
+    else
+      a = -+a;
+  }
 
-int c(float a, float b, float c,float d, float e, float f,float g, float h, float i,float j, float k, float l,float m, float n,
-float o,float p, float q, float r ){
-    return a+b+c+d+r+f+g+h+i+j+k+l+m+n+o+p+q+r + sb;
+  return a;
 }
 
-int main() {
-    int b = getint();
-    int i = 3;
-    while(i < 1000) {
-        ab[i] = getint();
-        i = i + 1;
-    }
-    int a = 1 + b;
-    i = 0;
-    while(i < 1000) {
-        a  = a + ab[i];
-        i = i + 1;
-    }
-
-    a = c(a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,b,b,b);
-	return a + sb;
+int main(){
+  putint(ifElseIf());
+  return 0;
 }

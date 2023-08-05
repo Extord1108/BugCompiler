@@ -27,7 +27,10 @@ public class Phi extends Instr {
         StringBuffer stringBuffer = new StringBuffer();
         stringBuffer.append(this.getName()+" = phi "+this.getType().toString()+" ");
         for(int i=0;i<this.getUses().size();i++) {
-            stringBuffer.append("[ "+this.getUse(i).getName()+" , "+this.getBasicBlock().getPredecessors().get(i).getName()+" ]");
+            stringBuffer.append("[ "+this.getUse(i).getName()+" , %"+this.getBasicBlock().getPredecessors().get(i).getName()+" ]");
+            if(i!=this.getUses().size()-1) {
+                stringBuffer.append(", ");
+            }
         }
         return stringBuffer.toString();
     }
