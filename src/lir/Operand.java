@@ -2,23 +2,32 @@ package lir;
 
 import ir.Function;
 import ir.GlobalValue;
+import lir.mcInstr.McMove;
 import manager.Manager;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Operand {
-
-    public enum OperandType{
-        imm,    //  立即数
-        virtual,    //  虚拟寄存器
-    }
 
     String pre;
     boolean isFloat = false;
 
+    public HashSet<McMove> moveList = new HashSet<>();
+
     public boolean isImm(){
         return this instanceof Imm;
+    }
+
+    public boolean needColor(String type) {
+        if(type == "Integer") {
+            return !isFloat;
+        } else {
+            assert type == "Float";
+            return isFloat;
+        }
     }
 
     public static class VirtualReg extends Operand{
@@ -76,6 +85,7 @@ public class Operand {
         private PhyReg(int idx, String name){
             this.idx = idx;
             this.name = name;
+            this.isFloat = false;
         }
 
         public static PhyReg getPhyReg(String name){
@@ -128,6 +138,7 @@ public class Operand {
         private FPhyReg(int idx, String name){
             this.idx = idx;
             this.name = name;
+            this.isFloat = true;
         }
 
         public static FPhyReg getFPhyReg(String name){

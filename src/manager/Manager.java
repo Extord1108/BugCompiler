@@ -102,6 +102,10 @@ public class Manager {
         return functions;
     }
 
+    public static ArrayList<McFunction> getMcFunclist() {
+        return mcFunclist;
+    }
+
     static int outputLLVMCnt = 0;
 
     public void outputLLVM(OutputStream out) {

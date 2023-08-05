@@ -3,17 +3,23 @@ package lir;
 import ir.BasicBlock;
 import lir.mcInstr.McInstr;
 import util.MyList;
+import util.MyNode;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public class McBlock {
+public class McBlock extends MyNode {
     private MyList<McInstr> mcInstrs = new MyList<>();
     private BasicBlock basicBlock;
     private McFunction mcFunction;
     private String name;
     private Set<McBlock> predMcBlocks = new HashSet<>();
     private Set<McBlock> succMcBlocks = new HashSet<>();
+
+    public Set<Operand> liveUseSet;
+    public Set<Operand> liveDefSet;
+    public Set<Operand> liveInSet;
+    public Set<Operand> liveOutSet;
 
     public McBlock(BasicBlock basicBlock){
         this.basicBlock = basicBlock;

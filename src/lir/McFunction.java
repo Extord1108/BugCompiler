@@ -2,6 +2,7 @@ package lir;
 
 import ir.Function;
 import lir.mcInstr.McInstr;
+import util.MyList;
 
 import java.util.ArrayList;
 
@@ -10,7 +11,7 @@ public class McFunction {
     private String name;
     private int stackSize;
     public boolean isMain;
-    private ArrayList<McBlock> mcBlocks = new ArrayList<>();
+    private MyList<McBlock> mcBlocks = new MyList<McBlock>();
 
 
     public ArrayList<Operand> vrList = new ArrayList<>();
@@ -25,11 +26,27 @@ public class McFunction {
     }
 
     public void addMcBlock(McBlock mcBlock){
-        mcBlocks.add(mcBlock);
+        mcBlocks.insertTail(mcBlock);
+    }
+
+    public MyList<McBlock> getMcBlocks() {
+        return mcBlocks;
+    }
+
+    public McBlock getMcLastBlock() {
+        return mcBlocks.getLast();
     }
 
     public String getName() {
         return name;
+    }
+
+    public ArrayList<Operand> getSvrList() {
+        return svrList;
+    }
+
+    public ArrayList<Operand> getVrList() {
+        return vrList;
     }
 
     public int getStackSize() {

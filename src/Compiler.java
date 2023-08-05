@@ -41,7 +41,7 @@ public class Compiler {
             var codeGen = CodeGen.Instance;
             codeGen.gen();
 
-            var regAllocate = RegAllocate.Instance;
+            var regAllocate = new RegAllocate(Manager.getMcFunclist());
             regAllocate.alloc();
 
             // 输出 机器代码arm
