@@ -39,10 +39,10 @@ public class Compiler {
             }
 
             var codeGen = CodeGen.Instance;
-            //codeGen.gen();
+            codeGen.gen();
 
             var regAllocate = RegAllocate.Instance;
-            //regAllocate.alloc();
+            regAllocate.alloc();
 
             // 输出 机器代码arm
             if (!arg.targetFile.isEmpty()) {

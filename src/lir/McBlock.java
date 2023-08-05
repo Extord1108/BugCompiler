@@ -11,11 +11,17 @@ public class McBlock {
     private MyList<McInstr> mcInstrs = new MyList<>();
     private BasicBlock basicBlock;
     private McFunction mcFunction;
+    private String name;
     private Set<McBlock> predMcBlocks = new HashSet<>();
     private Set<McBlock> succMcBlocks = new HashSet<>();
 
     public McBlock(BasicBlock basicBlock){
         this.basicBlock = basicBlock;
+        this.name = basicBlock.getName();
+    }
+
+    public String getName() {
+        return name;
     }
 
     public MyList<McInstr> getMcInstrs() {
