@@ -16,6 +16,7 @@ public class Function extends Value {
     private HashMap<BasicBlock, ArrayList<BasicBlock>> predMap = new HashMap<>();
     private HashMap<BasicBlock, ArrayList<BasicBlock>> succMap = new HashMap<>();
     private HashMap<BasicBlock,BasicBlock> domTree = new HashMap<>();
+    private HashMap<BasicBlock,ArrayList<BasicBlock>> domFrontier = new HashMap<>();
 
     public Function(String name, ArrayList<Param> params, Type type) {
         this.name = name;
@@ -100,6 +101,14 @@ public class Function extends Value {
 
     public void setDomTree(HashMap<BasicBlock, BasicBlock> domTree) {
         this.domTree = domTree;
+    }
+
+    public HashMap<BasicBlock, ArrayList<BasicBlock>> getDomFrontier() {
+        return domFrontier;
+    }
+
+    public void setDomFrontier(HashMap<BasicBlock, ArrayList<BasicBlock>> domFrontier) {
+        this.domFrontier = domFrontier;
     }
 
     @Override

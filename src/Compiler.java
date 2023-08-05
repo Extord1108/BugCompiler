@@ -28,6 +28,9 @@ public class Compiler {
             var visitor = Visitor.Instance;
             visitor.visit(tree);
 
+            var midEndRunner = new MidEndRunner(Manager.getFunctions(), Manager.getGlobals(), arg.opt);
+            midEndRunner.run();
+
             // 输出 LLVM
             if (!arg.llvmFile.isEmpty()) {
                 FileOutputStream llvmOut = OutputHandler.getOutputFile(arg.llvmFile);
@@ -35,14 +38,11 @@ public class Compiler {
                 OutputHandler.closeOutputFile(llvmOut);
             }
 
-            var midEndRunner = new MidEndRunner(Manager.getFunctions(), Manager.getGlobals(), arg.opt);
-            midEndRunner.run();
-
             var codeGen = CodeGen.Instance;
-            codeGen.gen();
+            //codeGen.gen();
 
             var regAllocate = RegAllocate.Instance;
-            regAllocate.alloc();
+            //regAllocate.alloc();
 
             // 输出 机器代码arm
             if (!arg.targetFile.isEmpty()){

@@ -89,6 +89,24 @@ public class MyList<E extends MyNode> implements Iterable<E> {
         return new MyIterator();
     }
 
+    public void remove(E node){
+        node.remove();
+        size --;
+        System.out.println(this);
+    }
+
+    @Override
+    public String toString(){
+        StringBuilder sb = new StringBuilder();
+        sb.append("MyList: ");
+        MyNode cur = head;
+        while(cur.getNext() != tail){
+            cur = cur.getNext();
+            sb.append(cur.toString()).append(" ");
+        }
+        return sb.toString();
+    }
+
     class MyIterator implements Iterator<E>{
 
         MyNode cur = head;

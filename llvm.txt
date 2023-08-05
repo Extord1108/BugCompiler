@@ -15,40 +15,20 @@ declare float @getfloat()
 declare void @parallel_end(i32 )
 define dso_local i32 @main() 
 {
-b2:
-	%r21 = alloca i32
-	%r12 = alloca i32
-	%r7 = alloca [3 x [3 x [3 x i32]]]
-	%r8 = getelementptr inbounds [3 x [3 x [3 x i32]]], [3 x [3 x [3 x i32]]]* %r7, i32 0, i32 0, i32 0, i32 0
-	call void @memset(i32* %r8, i32 0, i32 108)
-	store i32 0, i32* %r8
-	%r11 = call i32 @getint()
-	store i32 %r11, i32* %r12
-	%r14 = load i32, i32* %r12
-	%r15 = sitofp i32 %r14 to float
-	%r16 = fcmp ogt float 0x0, %r15
-	br i1 %r16, label %b3, label %b4
-b3:
-	%r18 = load i32, i32* %r12
-	%r19 = sitofp i32 %r18 to float
-	%r20 = fmul float %r19, 0x40d5b4c5c0000000
-	%r22 = fptosi float %r20 to i32
-	store i32 %r22, i32* %r21
-	%r24 = load i32, i32* %r21
-	call void @putint(i32 %r24)
-	br label %b4
-b4:
-	%r27 = getelementptr inbounds [3 x [3 x [3 x i32]]], [3 x [3 x [3 x i32]]]* %r7, i32 0, i32 0, i32 0, i32 0
-	%r28 = load i32, i32* %r27
-	ret i32 %r28
+b5:
+	%r11 = call i32 @func()
+	ret i32 0
 }
-define dso_local i32 @sb([3 x i32]* %f0) 
+define dso_local i32 @func()
 {
 b1:
-	%r1 = alloca [3 x i32]*
-	store [3 x i32]* %f0, [3 x i32]** %r1
-	%r3 = load [3 x i32]*, [3 x i32]** %r1
-	%r4 = getelementptr inbounds [3 x i32], [3 x i32]* %r3, i32 1, i32 1
-	%r5 = load i32, i32* %r4
-	ret i32 %r5
+	%r3 = icmp eq i32 %r2, 0
+	br i1 %r3, label %b2, label %b3
+b2:
+	br label %b4
+b3:
+	br label %b4
+b4:
+	%r13 = phi i32 [ 1 , b2 ][ 0 , b3 ]
+	ret i32 %r13
 }

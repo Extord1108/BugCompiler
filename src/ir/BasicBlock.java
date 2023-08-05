@@ -16,6 +16,7 @@ public class BasicBlock extends Value {
     private ArrayList<BasicBlock> precBBlocks = new ArrayList<>();
     private ArrayList<BasicBlock> succBBlocks = new ArrayList<>();
     private int domTreeDepth = 0;
+    private ArrayList<BasicBlock> iDoms = new ArrayList<>();//该节点直接支配的节点
 
 
 
@@ -87,12 +88,18 @@ public class BasicBlock extends Value {
         this.domTreeDepth = domTreeDepth;
     }
 
-
+    public void addIDoms(BasicBlock iDom) {
+        iDoms.add(iDom);
+    }
+    public ArrayList<BasicBlock> getIDoms() {
+        return iDoms;
+    }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(name).append(":\n");
+        //System.out.println(instrs);
         for (Instr instr : instrs) {
             sb.append("\t" + instr.toString() + "\n");
         }

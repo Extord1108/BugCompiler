@@ -6,7 +6,6 @@ import ir.type.Type;
 import ir.type.VoidType;
 
 public class Return extends Instr {
-    private Value returnValue = null;
 
     public Return(BasicBlock basicBlock) {
         super(VoidType.getInstance(), basicBlock);
@@ -14,20 +13,19 @@ public class Return extends Instr {
 
     public Return(Value returnValue, BasicBlock basicBlock) {
         super(returnValue.getType(), basicBlock);
-        this.returnValue = returnValue;
         this.addUse(returnValue);
     }
 
     public Value getReturnValue() {
-        return returnValue;
+        return this.getUse(0);
     }
 
     @Override
     public String toString() {
-        if (returnValue == null) {
+        if (this.getUses().isEmpty()) {
             return "ret void";
         } else {
-            return "ret " + returnValue.getType() + " " + returnValue.getName();
+            return "ret " + this.getUse(0).getType() + " " + this.getUse(0).getName();
         }
     }
 }

@@ -20,7 +20,9 @@ public class MidEndRunner {
     public void run(){
 
         if(opt){
-                new DeadCodeElimination(functions, globals).run();
+                new DomainAnalysis(functions, globals).run();
+                new Mem2Reg(functions, globals).run();
+                //new DeadCodeElimination(functions, globals).run();
         }
         return;
     }

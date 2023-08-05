@@ -21,9 +21,8 @@ public class DomainAnalysis extends Pass {
             }
             new ControlFlowGraph(function).run();
             new DominatorTree(function).run();
-            // new PostDominatorTree(function).run();
-            // new DominanceFrontier(function).run();
-            // new LoopAnalysis(function).run();
+            new DominanceFrontier(function).run();
+            //new LoopAnalysis(function).run();
         }
     }
 
@@ -69,6 +68,8 @@ public class DomainAnalysis extends Pass {
                 bb.setPredecessors(predecessors.get(bb));
                 bb.setSuccessors(successors.get(bb));
             }
+            //System.out.println("pred"+predecessors);
+            //System.out.println("succ"+successors);
         }
     }
 
@@ -113,7 +114,8 @@ public class DomainAnalysis extends Pass {
                     }
                     if(dominatorTree.get(bb) != newIDom) {
                         dominatorTree.put(bb, newIDom);
-                        bb.setDomTreeDepth(0);
+                        newIDom.addIDoms(bb);
+                        bb.setDomTreeDepth(newIDom.getDomTreeDepth() + 1);
                         changed = true;
                     }
                 }
@@ -136,11 +138,63 @@ public class DomainAnalysis extends Pass {
                 while(finger2.getDomTreeDepth() < finger1.getDomTreeDepth()) {
                     finger2 = dominatorTree.get(finger2);
                 }
+                if(finger1.getDomTreeDepth() == finger2.getDomTreeDepth()){
+                    finger1 = dominatorTree.get(finger1);
+                    finger2 = dominatorTree.get(finger2);
+                }
             }
             return finger1;
         }
     }
 
-    //构造后支配树
+    //构造支配边界
+    private class DominanceFrontier {
+        private Function function;
+        private DominanceFrontier(Function function) {
+            this.function = function;
+        }
+        private void run() {
+            //定义支配边界
+            HashMap<BasicBlock, ArrayList<BasicBlock>> dominanceFrontier = new HashMap<>();
+            //初始化支配边界
+            for(BasicBlock bb : function.getBasicBlocks()) {
+                dominanceFrontier.put(bb, new ArrayList<>());
+            }
+            //构造支配边界
+            for(BasicBlock bb : function.getBasicBlocks()) {
+                if(bb.getPredecessors().size() >= 2) {
+                    for(BasicBlock predecessor : bb.getPredecessors()) {
+                        BasicBlock runner = predecessor;
+                        while(runner != function.getDomTree().get(bb)) {
+                            dominanceFrontier.get(runner).add(bb);
+                            runner = function.getDomTree().get(runner);
+                        }
+                    }
+                }
+            }
+            //将支配边界加入到function中
+            function.setDomFrontier(dominanceFrontier);
+        }
+    }
+    
+    ////构造循环
+    // private class LoopAnalysis {
+    //     private Function function;
+    //     private LoopAnalysis(Function function) {
+    //         this.function = function;
+    //     }
+    //     private void run() {
+    //         //定义循环
+    //         ArrayList<Loop> loops = new ArrayList<>();
+    //         //构造循环
+    //         for(BasicBlock bb : function.getBasicBlocks()) {
+    //             if(bb.getLoop() != null) {
+    //                 loops.add(bb.getLoop());
+    //             }
+    //         }
+    //         //将循环加入到function中
+    //         function.setLoops(loops);
+    //     }
+    // }
     
 }

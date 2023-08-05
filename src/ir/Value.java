@@ -38,4 +38,5 @@ public class Value extends MyNode {
     public void addUsed(Used used){
         usedInfo.insertTail(used);
     }
+
 }
