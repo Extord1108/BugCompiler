@@ -82,6 +82,8 @@ public class Operand {
         private static HashMap<String, PhyReg> name2reg = new HashMap<>();
         private static HashMap<Integer, PhyReg> idx2reg = new HashMap<>();
 
+        public int degree = 0;
+
         private PhyReg(int idx, String name){
             this.idx = idx;
             this.name = name;
@@ -132,6 +134,7 @@ public class Operand {
     public static class FPhyReg extends Operand{
         int idx;
         String name;
+        public int degree = 0;
         private static HashMap<String, FPhyReg> name2reg = new HashMap<>();
         private static HashMap<Integer, FPhyReg> idx2reg = new HashMap<>();
 
@@ -143,6 +146,10 @@ public class Operand {
 
         public static FPhyReg getFPhyReg(String name){
             return name2reg.get(name);
+        }
+
+        public static FPhyReg getFPhyReg(int idx) {
+            return idx2reg.get(idx);
         }
 
         public static class FPhyRegs{

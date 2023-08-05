@@ -46,6 +46,14 @@ public class McBlock extends MyNode {
         succMcBlocks.add(block);
     }
 
+    public Set<McBlock> getPredMcBlocks() {
+        return predMcBlocks;
+    }
+
+    public Set<McBlock> getSuccMcBlocks() {
+        return succMcBlocks;
+    }
+
     public BasicBlock getBasicBlock() {
         return basicBlock;
     }
