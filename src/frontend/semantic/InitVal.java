@@ -1,5 +1,6 @@
 package frontend.semantic;
 
+import com.sun.jdi.FloatType;
 import ir.Value;
 import ir.Variable;
 import ir.type.ArrayType;
@@ -29,6 +30,53 @@ public class InitVal {
     public ArrayList<Value> flatten(){
         assert type instanceof ArrayType;
         return  ((Variable.VarArray) value).flatten();
+    }
+
+    public String armOut() {
+        if(value instanceof Variable.ConstInt)
+            return "\t.word\t" + ((Variable.ConstInt) value).getIntVal() + "\n";
+        else if(value instanceof Variable.ConstFloat)
+            return "\t.word\t" + Float.floatToIntBits(((Variable.ConstFloat) value).getFloatVal()) + "\n";
+        else if(value instanceof Variable.ZeroInit)
+            return "\t.zero\t" + ((ArrayType)value.getType()).getFattenSize() + "\n";
+        else{
+            assert value instanceof Variable.VarArray;
+            StringBuilder stb = new StringBuilder();
+            int zeroSize = 0;
+            ArrayList<Value> flatten = ((Variable.VarArray) value).flatten();
+            for(int i = 0; i < flatten.size(); i++) {
+                Value  st = flatten.get(i);
+                if(st instanceof Variable.ConstInt) {
+                    if(((Variable.ConstInt) st).getIntVal() == 0) {
+                        zeroSize += 4;
+                    } else {
+                        if(zeroSize != 0) {
+                            stb.append("\t.zero\t" + zeroSize).append("\n");
+                            zeroSize = 0;
+                        }
+                        stb.append("\t.word\t").append(((Variable.ConstInt) st).getIntVal()).append("\n");
+                    }
+                } else if(st instanceof Variable.ConstFloat) {
+                    if(((Variable.ConstFloat) st).getFloatVal() == 0.0) {
+                        zeroSize += 4;
+                    } else {
+                        if(zeroSize != 0) {
+                            stb.append("\t.zero\t" + zeroSize).append("\n");
+                            zeroSize = 0;
+                        }
+                        stb.append("\t.word\t").append(Float.floatToIntBits(((Variable.ConstFloat) st).getFloatVal())).append("\n");
+                    }
+                } else {
+                    assert st instanceof Variable.Undef;
+                    zeroSize += 4;
+                }
+            }
+            if(zeroSize != 0) {
+                stb.append("\t.zero\t" + zeroSize).append("\n");
+                zeroSize = 0;
+            }
+            return stb.toString();
+        }
     }
 
     @Override

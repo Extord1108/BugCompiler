@@ -9,6 +9,7 @@ public class OutputHandler {
     private static final OutputHandler outputHandler = new OutputHandler();
     private static ArrayList<String> riscvStringList = new ArrayList<>();
     private static ArrayList<String> llvmStringList = new ArrayList<>();
+    private static ArrayList<String> armStringList = new ArrayList<>();
 
     private OutputHandler() {
     }
@@ -55,6 +56,10 @@ public class OutputHandler {
         riscvStringList.add(str);
     }
 
+    public static void addArmString(String str) {
+        armStringList.add(str);
+    }
+
     public static void addLlvmString(String str) {
         llvmStringList.add(str);
     }
@@ -71,12 +76,22 @@ public class OutputHandler {
         }
     }
 
+    public static void outputArmString(OutputStream outputStream) {
+        for(String str : armStringList) {
+            output2Stream(str, outputStream);
+        }
+    }
+
     public static void clearRiscvString() {
         riscvStringList.clear();
     }
 
     public static void clearLlvmString() {
         llvmStringList.clear();
+    }
+
+    public static void clearArmString() {
+        armStringList.clear();
     }
 
     public static void main(String[] args) {

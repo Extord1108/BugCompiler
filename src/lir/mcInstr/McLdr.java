@@ -9,4 +9,11 @@ public class McLdr extends McInstr{
         defOperands.add(dt);
         useOperands.add(addr);
     }
+
+    public McLdr(Operand dt, Operand addr, Operand offset, McBlock mcBlock) {
+        super(mcBlock);
+        defOperands.add(dt);
+        useOperands.add(addr);
+        useOperands.add(offset);
+    }
 }

@@ -82,6 +82,10 @@ public class Operand {
             return name2reg.get(name);
         }
 
+        public static PhyReg getPhyReg(int idx) {
+            return  idx2reg.get(idx);
+        }
+
         public static class PhyRegs{
             public static final PhyReg R0 = new PhyReg(0, "r0");
             public static final PhyReg R1 = new PhyReg(1, "r1");

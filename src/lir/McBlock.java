@@ -18,6 +18,10 @@ public class McBlock {
         this.basicBlock = basicBlock;
     }
 
+    public MyList<McInstr> getMcInstrs() {
+        return mcInstrs;
+    }
+
     public void addInstr(McInstr mcInstr){
         mcInstrs.insertTail(mcInstr);
     }
@@ -30,6 +34,9 @@ public class McBlock {
         succMcBlocks.add(block);
     }
 
+    public BasicBlock getBasicBlock() {
+        return basicBlock;
+    }
 
     public void setMcFunction(McFunction mcFunction) {
         this.mcFunction = mcFunction;

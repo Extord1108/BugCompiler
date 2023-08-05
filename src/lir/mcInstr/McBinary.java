@@ -7,6 +7,7 @@ import lir.Operand;
 public class McBinary extends McInstr{
 
     public BinaryType type;
+    public boolean needFix = false;
     public McBinary(BinaryType binaryType, Operand dst, Operand src1, Operand src2, McBlock mcBlock) {
         super(mcBlock);
         this.type = binaryType;
@@ -21,6 +22,10 @@ public class McBinary extends McInstr{
         defOperands.add(dst);
         useOperands.add(src1);
         useOperands.add(src2);
+    }
+
+    public void setNeedFix(boolean needFix) {
+        this.needFix = needFix;
     }
 
     public enum BinaryType {

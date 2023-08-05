@@ -11,11 +11,13 @@ import ir.type.FloatType;
 import ir.type.Int32Type;
 import ir.type.PointerType;
 import ir.type.VoidType;
+import lir.McFunction;
 import util.OutputHandler;
 
 public class Manager {
     private static final HashMap<String, Function> functions = new HashMap<>();
     private static final HashMap<String, Function> externalFunctions = new HashMap<>();
+    private static final ArrayList<McFunction> mcFunclist = new ArrayList<>();
     private static final ArrayList<GlobalValue> globals = new ArrayList<>();
     private static final Manager manager = new Manager();
 
@@ -55,6 +57,10 @@ public class Manager {
 
     public void addFunction(Function function) {
         functions.put(function.getName(), function);
+    }
+
+    public static void addMcFunc(McFunction function) {
+        mcFunclist.add(function);
     }
 
     private void addExternalFunctions() {
@@ -121,6 +127,30 @@ public class Manager {
     }
 
     public void outputArm(OutputStream out){
-
+        OutputHandler.clearArmString();
+        StringBuilder stb = new StringBuilder();
+        stb.append(".arch armv7ve\n.arm\n");
+        stb.append(".section .text\n");
+        OutputHandler.addArmString(stb.toString());
+        for(McFunction mcFunction: mcFunclist) {
+            OutputHandler.addArmString(mcFunction.toString());
+        }
+        stb= new StringBuilder();
+        stb.append("\n\n");
+        stb.append(".section .bss\n");
+        stb.append(".align 2\n");
+        stb.append("\n.section .data\n");
+        stb.append(".align 2\n");
+        for(GlobalValue globalValue: globals) {
+            stb.append("\n.global\t").append(globalValue.getName().substring(1)).append("\n");
+            stb.append(globalValue.getName().substring(1)).append(":\n");
+            stb.append(globalValue.getInitVal().armOut());
+        }
+        OutputHandler.addArmString(stb.toString());
+        try {
+            OutputHandler.outputArmString(out);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

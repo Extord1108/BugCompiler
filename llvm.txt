@@ -1,3 +1,5 @@
+@sb = dso_local global float 0x405ec00000000000
+@ab = dso_local global [1244 x i32] [i32 1, i32 2, i32 3, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0, i32 0]
 declare i32 @getch()
 declare i32 @parallel_start()
 declare i32 @getfarray(float* )
@@ -13,22 +15,172 @@ declare void @putfloat(float )
 declare void @putch(i32 )
 declare float @getfloat()
 declare void @parallel_end(i32 )
-define dso_local i32 @main() 
-{
-b5:
-	%r11 = call i32 @func()
-	ret i32 0
-}
-define dso_local i32 @func()
+define dso_local i32 @c(float %f0, float %f1, float %f2, float %f3, float %f4, float %f5, float %f6, float %f7, float %f8, float %f9, float %f10, float %f11, float %f12, float %f13, float %f14, float %f15, float %f16, float %f17) 
 {
 b1:
-	%r3 = icmp eq i32 %r2, 0
-	br i1 %r3, label %b2, label %b3
+	%r52 = alloca float
+	%r50 = alloca float
+	%r48 = alloca float
+	%r46 = alloca float
+	%r44 = alloca float
+	%r42 = alloca float
+	%r40 = alloca float
+	%r38 = alloca float
+	%r36 = alloca float
+	%r34 = alloca float
+	%r32 = alloca float
+	%r30 = alloca float
+	%r28 = alloca float
+	%r26 = alloca float
+	%r24 = alloca float
+	%r22 = alloca float
+	%r20 = alloca float
+	%r18 = alloca float
+	store float %f0, float* %r18
+	store float %f1, float* %r20
+	store float %f2, float* %r22
+	store float %f3, float* %r24
+	store float %f4, float* %r26
+	store float %f5, float* %r28
+	store float %f6, float* %r30
+	store float %f7, float* %r32
+	store float %f8, float* %r34
+	store float %f9, float* %r36
+	store float %f10, float* %r38
+	store float %f11, float* %r40
+	store float %f12, float* %r42
+	store float %f13, float* %r44
+	store float %f14, float* %r46
+	store float %f15, float* %r48
+	store float %f16, float* %r50
+	store float %f17, float* %r52
+	%r54 = load float, float* %r18
+	%r55 = load float, float* %r20
+	%r56 = fadd float %r54, %r55
+	%r57 = load float, float* %r22
+	%r58 = fadd float %r56, %r57
+	%r59 = load float, float* %r24
+	%r60 = fadd float %r58, %r59
+	%r61 = load float, float* %r52
+	%r62 = fadd float %r60, %r61
+	%r63 = load float, float* %r28
+	%r64 = fadd float %r62, %r63
+	%r65 = load float, float* %r30
+	%r66 = fadd float %r64, %r65
+	%r67 = load float, float* %r32
+	%r68 = fadd float %r66, %r67
+	%r69 = load float, float* %r34
+	%r70 = fadd float %r68, %r69
+	%r71 = load float, float* %r36
+	%r72 = fadd float %r70, %r71
+	%r73 = load float, float* %r38
+	%r74 = fadd float %r72, %r73
+	%r75 = load float, float* %r40
+	%r76 = fadd float %r74, %r75
+	%r77 = load float, float* %r42
+	%r78 = fadd float %r76, %r77
+	%r79 = load float, float* %r44
+	%r80 = fadd float %r78, %r79
+	%r81 = load float, float* %r46
+	%r82 = fadd float %r80, %r81
+	%r83 = load float, float* %r48
+	%r84 = fadd float %r82, %r83
+	%r85 = load float, float* %r50
+	%r86 = fadd float %r84, %r85
+	%r87 = load float, float* %r52
+	%r88 = fadd float %r86, %r87
+	%r89 = load float, float* @sb
+	%r90 = fadd float %r88, %r89
+	%r91 = fptosi float %r90 to i32
+	ret i32 %r91
+}
+define dso_local i32 @main() 
+{
 b2:
-	br label %b4
+	%r112 = alloca i32
+	%r96 = alloca i32
+	%r94 = alloca i32
+	%r93 = call i32 @getint()
+	store i32 %r93, i32* %r94
+	store i32 3, i32* %r96
+	br label %b3
 b3:
-	br label %b4
+	%r99 = load i32, i32* %r96
+	%r100 = icmp slt i32 %r99, 1000
+	br i1 %r100, label %b4, label %b5
 b4:
-	%r13 = phi i32 [ 1 , b2 ][ 0 , b3 ]
-	ret i32 %r13
+	%r102 = load i32, i32* %r96
+	%r103 = getelementptr inbounds [1244 x i32], [1244 x i32]* @ab, i32 0, i32 %r102
+	%r104 = call i32 @getint()
+	store i32 %r104, i32* %r103
+	%r106 = load i32, i32* %r96
+	%r107 = add i32 %r106, 1
+	store i32 %r107, i32* %r96
+	br label %b3
+b5:
+	%r110 = load i32, i32* %r94
+	%r111 = add i32 1, %r110
+	store i32 %r111, i32* %r112
+	store i32 0, i32* %r96
+	br label %b6
+b6:
+	%r116 = load i32, i32* %r96
+	%r117 = icmp slt i32 %r116, 1000
+	br i1 %r117, label %b7, label %b8
+b7:
+	%r119 = load i32, i32* %r112
+	%r120 = load i32, i32* %r96
+	%r121 = getelementptr inbounds [1244 x i32], [1244 x i32]* @ab, i32 0, i32 %r120
+	%r122 = load i32, i32* %r121
+	%r123 = add i32 %r119, %r122
+	store i32 %r123, i32* %r112
+	%r125 = load i32, i32* %r96
+	%r126 = add i32 %r125, 1
+	store i32 %r126, i32* %r96
+	br label %b6
+b8:
+	%r129 = load i32, i32* %r112
+	%r130 = sitofp i32 %r129 to float
+	%r131 = load i32, i32* %r112
+	%r132 = sitofp i32 %r131 to float
+	%r133 = load i32, i32* %r112
+	%r134 = sitofp i32 %r133 to float
+	%r135 = load i32, i32* %r112
+	%r136 = sitofp i32 %r135 to float
+	%r137 = load i32, i32* %r112
+	%r138 = sitofp i32 %r137 to float
+	%r139 = load i32, i32* %r112
+	%r140 = sitofp i32 %r139 to float
+	%r141 = load i32, i32* %r112
+	%r142 = sitofp i32 %r141 to float
+	%r143 = load i32, i32* %r112
+	%r144 = sitofp i32 %r143 to float
+	%r145 = load i32, i32* %r112
+	%r146 = sitofp i32 %r145 to float
+	%r147 = load i32, i32* %r112
+	%r148 = sitofp i32 %r147 to float
+	%r149 = load i32, i32* %r112
+	%r150 = sitofp i32 %r149 to float
+	%r151 = load i32, i32* %r112
+	%r152 = sitofp i32 %r151 to float
+	%r153 = load i32, i32* %r112
+	%r154 = sitofp i32 %r153 to float
+	%r155 = load i32, i32* %r112
+	%r156 = sitofp i32 %r155 to float
+	%r157 = load i32, i32* %r112
+	%r158 = sitofp i32 %r157 to float
+	%r159 = load i32, i32* %r94
+	%r160 = sitofp i32 %r159 to float
+	%r161 = load i32, i32* %r94
+	%r162 = sitofp i32 %r161 to float
+	%r163 = load i32, i32* %r94
+	%r164 = sitofp i32 %r163 to float
+	%r165 = call i32 @c(float %r130, float %r132, float %r134, float %r136, float %r138, float %r140, float %r142, float %r144, float %r146, float %r148, float %r150, float %r152, float %r154, float %r156, float %r158, float %r160, float %r162, float %r164)
+	store i32 %r165, i32* %r112
+	%r167 = load i32, i32* %r112
+	%r168 = load float, float* @sb
+	%r169 = sitofp i32 %r167 to float
+	%r170 = fadd float %r169, %r168
+	%r171 = fptosi float %r170 to i32
+	ret i32 %r171
 }

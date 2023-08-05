@@ -12,9 +12,7 @@ import lir.mcInstr.*;
 import manager.Manager;
 import util.MyList;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.*;
 
 public class CodeGen {
     public static boolean isOptMulDiv = true;
@@ -24,7 +22,6 @@ public class CodeGen {
     public static final CodeGen Instance = new CodeGen();
     private static final HashMap<Function, McFunction> funcMap = new HashMap<>();
     private static final HashMap<BasicBlock, McBlock> blockMap = new HashMap<>();
-    private ArrayList<McFunction> mcFunctions = new ArrayList<>();
     private static Function curFunc;
     private static McFunction curMcFunc;
     private McBlock curMcBlock;
@@ -32,6 +29,9 @@ public class CodeGen {
     private HashMap<Value, Operand> value2opd = new HashMap<>();
     private HashMap<OpTree.Operator, Cond> icmpOp2cond = new HashMap<>();
     private HashMap<Value, Cond> value2cond = new HashMap<>();
+
+    HashSet<McBlock> visitBBset = new HashSet<>();
+    Stack<BasicBlock> nextBBList = new Stack<>();
 
     // 整数数传参可使用最大个数
     public static final int rParamCnt = 4;
@@ -53,11 +53,9 @@ public class CodeGen {
             if(function.isExternal())
                 continue;
             curMcFunc = funcMap.get(function);
-            mcFunctions.add(curMcFunc);
+            Manager.addMcFunc(curMcFunc);
             curFunc = function;
-            boolean isMain = false;
             if(curFunc.getName().equals("main")){
-                isMain = true;
                 curMcFunc.isMain = true;
             }
             MyList<BasicBlock> bList = curFunc.getBasicBlocks();
@@ -68,17 +66,62 @@ public class CodeGen {
                 McBlock mcBlock = new McBlock(basicBlock);
                 blockMap.put(basicBlock, mcBlock);
             }
-            iter = bList.iterator();
-            while (iter.hasNext()){
-                BasicBlock basicBlock = iter.next();
-                genBasicBlock(basicBlock);
+            // 不直接进行遍历而是写栈的主要原因是因为br的时候llvm可以写true和false，但是好像arm不能了，得处理处理块的顺序
+            BasicBlock basicBlock = curFunc.getEntryBlock();
+            curMcBlock = blockMap.get(basicBlock);
+            curMcBlock.setMcFunction(curMcFunc);
+            dealParam();
+            nextBBList.push(basicBlock);
+            while(nextBBList.size() > 0) {
+                BasicBlock visitBlock = nextBBList.pop();
+                genBasicBlock(visitBlock);
             }
         }
+    }
+
+    public void dealParam() {
+        int sRegIdx = 0;    //  当前用到的浮点数寄存器下标
+        int rRegIdx = 0;    //  当前用到的整数寄存器下标
+        int regStack = 0;   //  溢出到栈上的寄存器数量
+        for(Function.Param param: curFunc.getParams()) {
+            Operand dst = getOperand(param);
+            if(param.getType() instanceof ir.type.FloatType) {
+                if(sRegIdx < sParamCnt) {
+                    new McMove( dst, Operand.PhyReg.getPhyReg(sRegIdx), curMcBlock);
+                    sRegIdx ++;
+                } else {
+                    int offset = -(regStack + 1) * 4;
+                    Operand addr = new Operand.VirtualReg(false, curMcFunc);
+                    McBinary mcBinary =new McBinary(McBinary.BinaryType.Add, addr, Operand.PhyReg.getPhyReg("sp"),
+                            new Operand.Imm(offset), curMcBlock);
+                    mcBinary.setNeedFix(true);
+                    new McLdr(dst, addr, curMcBlock);
+                    curMcFunc.addStackSize(4);
+                    regStack ++;
+                }
+            } else {
+                if(rRegIdx < rParamCnt) {
+                    new McMove( dst, Operand.PhyReg.getPhyReg(rRegIdx), curMcBlock);
+                    rRegIdx ++;
+                } else {
+                    int offset = -(regStack + 1) * 4;
+                    Operand addr = new Operand.VirtualReg(false, curMcFunc);
+                    McBinary mcBinary =new McBinary(McBinary.BinaryType.Add, addr, Operand.PhyReg.getPhyReg("sp"),
+                            new Operand.Imm(offset), curMcBlock);
+                    mcBinary.setNeedFix(true);
+                    new McLdr(dst, addr, curMcBlock);
+                    curMcFunc.addStackSize(4);
+                    regStack ++;
+                }
+            }
+        }
+
     }
 
     public void genBasicBlock(BasicBlock basicBlock){
         curMcBlock = blockMap.get(basicBlock);
         curMcBlock.setMcFunction(curMcFunc);
+        curMcFunc.addMcBlock(curMcBlock);
         MyList<Instr> instrs = basicBlock.getInstrs();
         for(Instr instr:instrs){
             if(instr instanceof Binary){
@@ -90,15 +133,41 @@ public class CodeGen {
             else if(instr instanceof Branch) {
                 Value cond = ((Branch) instr).getCond();
                 McBlock thenBlock = blockMap.get(((Branch) instr).getThenBlock());
-                McBlock elseBlock = blockMap.get(((Branch) instr).getThenBlock());
+                McBlock elseBlock = blockMap.get(((Branch) instr).getElseBlock());
                 thenBlock.addPreMcBlock(curMcBlock);
                 elseBlock.addPreMcBlock(curMcBlock);
-                System.out.println("branch 还没写完");
+                boolean exchanged = false;
+                if(visitBBset.add(elseBlock)) {
+                    nextBBList.push(elseBlock.getBasicBlock());
+                }
+                if(visitBBset.add(thenBlock)) {
+                    nextBBList.push(thenBlock.getBasicBlock());
+                    exchanged = true;
+                }
+                Cond mcCond = value2cond.get(cond);
+                if(exchanged) {
+                    McBlock tmp = thenBlock;
+                    thenBlock = elseBlock;
+                    elseBlock = tmp;
+                    if(cond instanceof Fcmp) {
+                        mcCond = getFcmpOppoCond(mcCond);
+                    } else {
+                        mcCond = getIcmpOppoCond(mcCond);
+                    }
+                }
+                curMcBlock.addSuccMcBlock(thenBlock);
+                curMcBlock.addSuccMcBlock(elseBlock);
+                new McBranch( mcCond, thenBlock, curMcBlock);
+                new McJump( elseBlock, curMcBlock);
             }
             else if(instr instanceof Jump) {
-                McBlock targetBlock = blockMap.get(((Jump) instr).getTargetBlock());
+                BasicBlock block = ((Jump) instr).getTargetBlock();
+                McBlock targetBlock = blockMap.get(block);
                 curMcBlock.addSuccMcBlock(targetBlock);
                 targetBlock.addPreMcBlock(curMcBlock);
+                if(visitBBset.add(targetBlock)) {
+                    nextBBList.push(block);
+                }
                 new McJump(targetBlock, curMcBlock);
             }
             else if(instr instanceof BitCast) {
@@ -106,14 +175,14 @@ public class CodeGen {
                 value2opd.put(instr, opd);
             }
             else if(instr instanceof Alloc) {
-                Alloc alloc = (Alloc) instr;
-                Type type = alloc.getType().getBasicType();
-                // 其他的应该在mem2reg阶段已经被删除了
-                assert type instanceof ArrayType;
-                Operand addr = getOperand(alloc);
-                Operand offset = getOperand(new Variable.ConstInt(curMcFunc.getStackSize()));
-                curMcFunc.addStackSize(((ArrayType) type).getFattenSize());
-                new McBinary(McBinary.BinaryType.Add, addr, Operand.PhyReg.getPhyReg("sp"), offset, curMcBlock);
+//                Alloc alloc = (Alloc) instr;
+//                Type type = alloc.getType().getBasicType();
+//                // 其他的应该在mem2reg阶段已经被删除了
+//                assert type instanceof ArrayType;
+//                Operand addr = getOperand(alloc);
+//                Operand offset = getOperand(new Variable.ConstInt(curMcFunc.getStackSize()));
+//                curMcFunc.addStackSize(((ArrayType) type).getFattenSize());
+//                new McBinary(McBinary.BinaryType.Add, addr, Operand.PhyReg.getPhyReg("sp"), offset, curMcBlock);
             }
             else if(instr instanceof Call) {
                 genCall((Call) instr);

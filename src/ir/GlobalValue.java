@@ -13,6 +13,10 @@ public class GlobalValue extends Value {
         this.initVal = initVal;
     }
 
+    public InitVal getInitVal() {
+        return initVal;
+    }
+
     @Override
     public String toString() {
         return name + " = dso_local global " + initVal.toString() + "\n";
