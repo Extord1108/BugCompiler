@@ -135,7 +135,6 @@ public class Mem2Reg extends Pass {
                             while (!worklist.isEmpty()) {
                                 BasicBlock node = worklist.iterator().next();
                                 worklist.remove(node);
-                                System.out.println("df of node:"+node.getName()+function.getDomFrontier().get(node));
                                 for (BasicBlock df : function.getDomFrontier().get(node)) {
                                     if(inserted.get(df) != alloc){
                                         //TODO:计算活跃块，只在活跃块中插入phi
@@ -210,10 +209,8 @@ public class Mem2Reg extends Pass {
     // 用于phi的rename
     public void RenameDFS(Stack<Value> S, BasicBlock X,AllocInfo allocInfo,Function function) {
         int cnt = 0;
-        System.out.println("block:" + X.getName());
         for(Instr instr : X.getInstrs()){
             if (!(instr instanceof Phi) && allocInfo.useInstrs.contains(instr)) {
-                System.out.println("rename:" + instr);
                 instr.repalceUseofMeto(S.empty() ? Variable.getDefaultZero(null) : S.peek());
             }
             if (allocInfo.defInstrs.contains(instr)) {

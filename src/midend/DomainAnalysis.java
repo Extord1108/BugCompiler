@@ -125,7 +125,6 @@ public class DomainAnalysis extends Pass {
             }
             //将支配树加入到function中
             function.setDomTree(dominatorTree);
-            System.out.println("domTree"+dominatorTree);
         }
 
         private BasicBlock intersect(BasicBlock bb1, BasicBlock bb2,HashMap<BasicBlock, BasicBlock> dominatorTree) {
