@@ -1,25 +1,25 @@
-// test if-else-if
-int ifElseIf() {
+// test while-if
+int whileIf() {
   int a;
-  a = 5;
+  a = 0;
   int b;
-  b = 10;
-  if(a == 6 || b == 0xb) {
-    return a;
+  b = 0;
+  while (a < 100) {
+    if (a == 5) {
+      b = 25;
+    }
+    else if (a == 10) {
+      b = 42;
+    }
+    else {
+      b = a * 2;
+    }
+    a = a + 1;
   }
-  else {
-    if (b == 10 && a == 1)
-      a = 25;
-    else if (b == 10 && a == -5)
-      a = a + 15;
-    else
-      a = -+a;
-  }
-
-  return a;
+  return (b);
 }
 
+
 int main(){
-  putint(ifElseIf());
-  return 0;
+  return (whileIf());
 }
