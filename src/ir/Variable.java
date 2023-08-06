@@ -197,6 +197,11 @@ public class Variable extends Value {
     public static class Undef extends Variable {
         public Undef(Type type){
             super(type);
+            this.name = "undef";
+        }
+        @Override
+        public String toString(){
+            return "undef";
         }
     }
 

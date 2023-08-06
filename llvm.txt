@@ -1,3 +1,4 @@
+@ascii_0 = dso_local global i32 48
 declare i32 @getch()
 declare i32 @parallel_start()
 declare i32 @getfarray(float* )
@@ -13,51 +14,133 @@ declare void @putfloat(float )
 declare void @putch(i32 )
 declare float @getfloat()
 declare void @parallel_end(i32 )
-define dso_local i32 @main() 
-{
-b11:
-	%r29 = call i32 @whileIf()
-	ret i32 %r29
-}
-define dso_local i32 @whileIf() 
+define dso_local i32 @my_getint() 
 {
 b1:
 	%r2 = alloca i32
 	%r0 = alloca i32
 	store i32 0, i32* %r0
-	store i32 0, i32* %r2
 	br label %b2
 b2:
-	%r5 = load i32, i32* %r0
-	%r6 = icmp slt i32 %r5, 100
-	br i1 %r6, label %b3, label %b4
+	%r4 = icmp ne i32 1, 0
+	br i1 %r4, label %b3, label %b4
 b3:
-	%r8 = load i32, i32* %r0
-	%r9 = icmp eq i32 %r8, 5
-	br i1 %r9, label %b5, label %b6
+	%r6 = call i32 @getch()
+	%r7 = sub i32 %r6, 48
+	store i32 %r7, i32* %r2
+	%r9 = load i32, i32* %r2
+	%r10 = icmp slt i32 %r9, 0
+	br i1 %r10, label %b5, label %b8
 b4:
-	%r27 = load i32, i32* %r2
-	ret i32 %r27
+	%r20 = load i32, i32* %r2
+	store i32 %r20, i32* %r0
+	br label %b9
 b5:
-	store i32 25, i32* %r2
-	br label %b7
+	br label %b2
 b6:
-	%r13 = load i32, i32* %r0
-	%r14 = icmp eq i32 %r13, 10
-	br i1 %r14, label %b8, label %b9
+	br label %b4
 b7:
-	%r23 = load i32, i32* %r0
-	%r24 = add i32 %r23, 1
-	store i32 %r24, i32* %r0
 	br label %b2
 b8:
-	store i32 42, i32* %r2
-	br label %b10
+	%r12 = load i32, i32* %r2
+	%r13 = icmp sgt i32 %r12, 9
+	br i1 %r13, label %b5, label %b6
 b9:
-	%r18 = load i32, i32* %r0
-	%r19 = mul i32 %r18, 2
-	store i32 %r19, i32* %r2
-	br label %b10
+	%r23 = icmp ne i32 1, 0
+	br i1 %r23, label %b10, label %b11
 b10:
-	br label %b7
+	%r25 = call i32 @getch()
+	%r26 = sub i32 %r25, 48
+	store i32 %r26, i32* %r2
+	%r28 = load i32, i32* %r2
+	%r29 = icmp sge i32 %r28, 0
+	br i1 %r29, label %b15, label %b13
+b11:
+	%r43 = load i32, i32* %r0
+	ret i32 %r43
+b12:
+	%r34 = load i32, i32* %r0
+	%r35 = mul i32 %r34, 10
+	%r36 = load i32, i32* %r2
+	%r37 = add i32 %r35, %r36
+	store i32 %r37, i32* %r0
+	br label %b14
+b13:
+	br label %b11
+b14:
+	br label %b9
+b15:
+	%r31 = load i32, i32* %r2
+	%r32 = icmp sle i32 %r31, 9
+	br i1 %r32, label %b12, label %b13
+}
+define dso_local i32 @main() 
+{
+b23:
+	%r89 = alloca i32
+	%r82 = alloca i32
+	%r81 = call i32 @my_getint()
+	store i32 %r81, i32* %r82
+	br label %b24
+b24:
+	%r85 = load i32, i32* %r82
+	%r86 = icmp sgt i32 %r85, 0
+	br i1 %r86, label %b25, label %b26
+b25:
+	%r88 = call i32 @my_getint()
+	store i32 %r88, i32* %r89
+	%r91 = load i32, i32* %r89
+	call void @my_putint(i32 %r91)
+	call void @putch(i32 10)
+	%r94 = load i32, i32* %r82
+	%r95 = sub i32 %r94, 1
+	store i32 %r95, i32* %r82
+	br label %b24
+b26:
+	ret i32 0
+}
+define dso_local void @my_putint(i32 %f45) 
+{
+b16:
+	%r49 = alloca i32
+	%r48 = alloca [16 x i32]
+	%r46 = alloca i32
+	store i32 %f45, i32* %r46
+	store i32 0, i32* %r49
+	br label %b17
+b17:
+	%r52 = load i32, i32* %r46
+	%r53 = icmp sgt i32 %r52, 0
+	br i1 %r53, label %b18, label %b19
+b18:
+	%r55 = load i32, i32* %r49
+	%r56 = getelementptr inbounds [16 x i32], [16 x i32]* %r48, i32 0, i32 %r55
+	%r57 = load i32, i32* %r46
+	%r58 = srem i32 %r57, 10
+	%r59 = add i32 %r58, 48
+	store i32 %r59, i32* %r56
+	%r61 = load i32, i32* %r46
+	%r62 = sdiv i32 %r61, 10
+	store i32 %r62, i32* %r46
+	%r64 = load i32, i32* %r49
+	%r65 = add i32 %r64, 1
+	store i32 %r65, i32* %r49
+	br label %b17
+b19:
+	br label %b20
+b20:
+	%r69 = load i32, i32* %r49
+	%r70 = icmp sgt i32 %r69, 0
+	br i1 %r70, label %b21, label %b22
+b21:
+	%r72 = load i32, i32* %r49
+	%r73 = sub i32 %r72, 1
+	store i32 %r73, i32* %r49
+	%r75 = load i32, i32* %r49
+	%r76 = getelementptr inbounds [16 x i32], [16 x i32]* %r48, i32 0, i32 %r75
+	%r77 = load i32, i32* %r76
+	call void @putch(i32 %r77)
+	br label %b20
+b22:
+	ret void
 }

@@ -3,6 +3,7 @@ package midend;
 import ir.BasicBlock;
 import ir.Function;
 import ir.GlobalValue;
+import ir.Variable;
 import ir.instruction.Branch;
 import ir.instruction.Instr;
 import ir.instruction.Jump;
@@ -20,9 +21,89 @@ public class DomainAnalysis extends Pass {
                 continue;
             }
             new ControlFlowGraph(function).run();
+            new RemoveDeadBB(function).run();
             new DominatorTree(function).run();
             new DominanceFrontier(function).run();
             //new LoopAnalysis(function).run();
+        }
+    }
+
+    //逆后序遍历
+    private class ReversePostOrder {
+        private Function function;
+        private Integer dfsOrder = 0;
+        private ArrayList<BasicBlock> reversePostOrderBB = new ArrayList<>();
+        private ReversePostOrder(Function function) {
+            this.function = function;
+        }
+        public ArrayList<BasicBlock> get(){
+            MyList<BasicBlock> basicBlocks = function.getBasicBlocks();
+            //对CFG图进行逆后序遍历
+            HashMap<BasicBlock,Integer> visited = new HashMap<>();
+            dfsOrder = basicBlocks.size();
+            dfs(basicBlocks.get(0), visited);
+            //对visited按照value进行排序
+            ArrayList<Map.Entry<BasicBlock,Integer>> list = new ArrayList<>(visited.entrySet());
+            list.sort((o1, o2) -> (o1.getValue() - o2.getValue()));
+            for(Map.Entry<BasicBlock,Integer> entry : list){
+                reversePostOrderBB.add(entry.getKey());
+            }
+            return reversePostOrderBB;
+        }
+
+        private void dfs(BasicBlock bb, HashMap<BasicBlock,Integer> visited){
+            visited.put(bb, -1);
+            for(BasicBlock successor : bb.getSuccessors()){
+                if(visited.get(successor) == null){
+                    dfs(successor, visited);
+                }
+            }
+            visited.put(bb, dfsOrder--);
+        }
+    }
+
+    //删除不活跃的基本块
+    private class RemoveDeadBB{
+        private Function function;
+        private RemoveDeadBB(Function function) {
+            this.function = function;
+        }
+        public void run()
+        {
+            //逆后序遍历
+            ArrayList<BasicBlock> reversePostOrderBB = new ReversePostOrder(function).get();
+            //标记活跃的BB
+            HashMap<BasicBlock, Boolean> liveBB = new HashMap<>();
+            for(BasicBlock bb : function.getBasicBlocks()) {
+                liveBB.put(bb, false);
+            }
+            liveBB.put(function.getEntryBlock(), true);
+            //逆后序遍历，标记活跃的BB
+            for(int i = 0; i < reversePostOrderBB.size(); i++) {
+                BasicBlock bb = reversePostOrderBB.get(i);
+                if(liveBB.get(bb)) {
+                    for(BasicBlock successor : bb.getSuccessors()) {
+                        liveBB.put(successor, true);
+                    }
+                }
+            }
+            //删除死BB
+            for(int i = function.getBasicBlocks().size() - 1; i >= 0; i--) {
+                BasicBlock bb = function.getBasicBlocks().get(i);
+                if(!liveBB.get(bb)) {
+                    bb.remove();
+                    if(bb.getSuccessors().size()>0){
+                        for(BasicBlock successor : bb.getSuccessors()) {
+                            successor.getPredecessors().remove(bb);
+                        }
+                    }
+                    if(bb.getPredecessors().size()>0){
+                        for(BasicBlock predecessor : bb.getPredecessors()) {
+                            predecessor.getSuccessors().remove(bb);
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -76,11 +157,9 @@ public class DomainAnalysis extends Pass {
     //构造支配树
     private class DominatorTree {
         private Function function;
-        private Integer dfsOrder = 0;
-        private ArrayList<BasicBlock> reversePostOrderBB = new ArrayList<>();
+
         private DominatorTree(Function function) {
             this.function = function;
-            this.reversePostOrderBB = getReversePostOrderBB(function.getBasicBlocks());
         }
         private void run(){
             //定义支配树
@@ -96,7 +175,7 @@ public class DomainAnalysis extends Pass {
             boolean changed = true;
             while(changed) {
                 changed = false;
-                for(BasicBlock bb : reversePostOrderBB) {
+                for(BasicBlock bb : new ReversePostOrder(function).get()) {
                     if(bb == function.getEntryBlock()) {
                         continue;
                     }
@@ -148,30 +227,6 @@ public class DomainAnalysis extends Pass {
             }
             return finger1;
         }
-
-        private ArrayList<BasicBlock> getReversePostOrderBB(MyList<BasicBlock> basicBlocks){
-            //对CFG图进行逆后序遍历
-            HashMap<BasicBlock,Integer> visited = new HashMap<>();
-            dfsOrder = basicBlocks.size();
-            dfs(basicBlocks.get(0), visited);
-            //对visited按照value进行排序
-            ArrayList<Map.Entry<BasicBlock,Integer>> list = new ArrayList<>(visited.entrySet());
-            list.sort((o1, o2) -> (o1.getValue() - o2.getValue()));
-            for(Map.Entry<BasicBlock,Integer> entry : list){
-                reversePostOrderBB.add(entry.getKey());
-            }
-            return reversePostOrderBB;
-        }
-
-        private void dfs(BasicBlock bb, HashMap<BasicBlock,Integer> visited){
-            visited.put(bb, -1);
-            for(BasicBlock successor : bb.getSuccessors()){
-                if(visited.get(successor) == null){
-                    dfs(successor, visited);
-                }
-            }
-            visited.put(bb, dfsOrder--);
-        }
     }
 
     //构造支配边界
@@ -203,7 +258,7 @@ public class DomainAnalysis extends Pass {
             function.setDomFrontier(dominanceFrontier);
         }
     }
-    
+
     ////构造循环
     // private class LoopAnalysis {
     //     private Function function;
