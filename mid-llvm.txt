@@ -22,8 +22,8 @@ b11:
 define dso_local i32 @whileIf() 
 {
 b1:
-	move i32 0, %r34
-	move i32 0, %r32
+	%r34 = add i32 0, 0
+	%r33 = add i32 0, 0
 	br label %b2
 b2:
 	%r6 = icmp slt i32 %r34, 100
@@ -32,26 +32,26 @@ b3:
 	%r9 = icmp eq i32 %r34, 5
 	br i1 %r9, label %b5, label %b6
 b4:
-	ret i32 %r32
+	ret i32 %r33
 b5:
-	move i32 25, %r31
+	%r31 = add i32 25, 0
 	br label %b7
 b6:
 	%r14 = icmp eq i32 %r34, 10
 	br i1 %r14, label %b8, label %b9
 b7:
 	%r24 = add i32 %r34, 1
-	move i32 %r24, %r34
-	move i32 %r31, %r32
+	%r34 = add i32 %r24, 0
+	%r33 = add i32 %r31, 0
 	br label %b2
 b8:
-	move i32 42, %r33
+	%r32 = add i32 42, 0
 	br label %b10
 b9:
 	%r19 = mul i32 %r34, 2
-	move i32 %r19, %r33
+	%r32 = add i32 %r19, 0
 	br label %b10
 b10:
-	move i32 %r33, %r31
+	%r31 = add i32 %r32, 0
 	br label %b7
 }

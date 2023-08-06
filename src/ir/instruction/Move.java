@@ -3,6 +3,7 @@ package ir.instruction;
 import ir.BasicBlock;
 import ir.Value;
 import ir.Variable;
+import ir.type.Int32Type;
 import ir.type.Type;
 
 public class Move extends Instr{
@@ -16,6 +17,11 @@ public class Move extends Instr{
 
     @Override
     public String toString() {
-        return "move " + this.type + " " + this.from.getName() + ", " + this.to.getName();
+        //return "move " + this.type + " " + this.from.getName() + ", " + this.to.getName();
+        if(this.type instanceof Int32Type){
+            return this.to.getName() + " = " + "add " + this.type.toString() + " " + this.from.getName() + ", 0";
+        }else{
+            return this.to.getName() + " = " + "fadd " + this.type.toString() + " " + this.from.getName()+ ", 0x0";
+        }
     }
 }
