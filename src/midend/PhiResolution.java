@@ -31,7 +31,8 @@ public class PhiResolution extends Pass {
     {
         for(int i = 0; i < function.getBasicBlocks().size(); i++)
         {
-            var bb = function.getBasicBlocks().get(i);
+            System.out.println(function.getBasicBlocks().get(i));
+            BasicBlock bb = function.getBasicBlocks().get(i);
             ArrayList<BasicBlock> incomings = bb.getPredecessors();
             ArrayList<Pcopy> PCs = new ArrayList<>();
             for(int j = 0;j < incomings.size(); j++){

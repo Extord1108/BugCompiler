@@ -91,7 +91,7 @@ public class DomainAnalysis extends Pass {
             for(int i = function.getBasicBlocks().size() - 1; i >= 0; i--) {
                 BasicBlock bb = function.getBasicBlocks().get(i);
                 if(!liveBB.get(bb)) {
-                    bb.remove();
+                    bb.getFunction().getBasicBlocks().remove(bb);
                     if(bb.getSuccessors().size()>0){
                         for(BasicBlock successor : bb.getSuccessors()) {
                             successor.getPredecessors().remove(bb);
