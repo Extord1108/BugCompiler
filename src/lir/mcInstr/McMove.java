@@ -19,4 +19,22 @@ public class McMove extends McInstr{
         defOperands.add(dstOp);
         useOperands.add(srcOp);
     }
+
+    public Operand getDstOp() {
+        return defOperands.get(0);
+    }
+
+    public Operand getSrcOp() {
+        return useOperands.get(0);
+    }
+
+    @Override
+    public boolean isType(String type) {
+        if(type == "Integer") {
+            return (!getDstOp().isFloat()) && (!getSrcOp().isFloat());
+        }else {
+            assert type == "Float";
+            return getDstOp().isFloat() || getSrcOp().isFloat();
+        }
+    }
 }

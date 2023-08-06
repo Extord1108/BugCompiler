@@ -17,4 +17,8 @@ public class McInstr extends MyNode {
         this.mcBlock = mcBlock;
         mcBlock.addInstr(this);
     }
+
+    public boolean isType(String type) {
+        return false;
+    }
 }

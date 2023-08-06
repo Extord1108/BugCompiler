@@ -34,6 +34,10 @@ public class McBlock extends MyNode {
         return mcInstrs;
     }
 
+    public McInstr getMcLastInstr() {
+        return mcInstrs.getLast();
+    }
+
     public void addInstr(McInstr mcInstr){
         mcInstrs.insertTail(mcInstr);
     }

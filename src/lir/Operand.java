@@ -15,7 +15,15 @@ public class Operand {
     String pre;
     boolean isFloat = false;
 
-    public HashSet<McMove> moveList = new HashSet<>();
+    public HashSet<McMove> moveList;
+
+    public Set<Operand> adjOpdSet;
+
+    public int degree = 0;
+
+    public void addAdj(Operand adj) {
+        adjOpdSet.add(adj);
+    }
 
     public boolean isImm(){
         return this instanceof Imm;
@@ -28,6 +36,9 @@ public class Operand {
             assert type == "Float";
             return isFloat;
         }
+    }
+    public boolean isFloat(){
+        return isFloat;
     }
 
     public static class VirtualReg extends Operand{
@@ -81,8 +92,6 @@ public class Operand {
         String name;
         private static HashMap<String, PhyReg> name2reg = new HashMap<>();
         private static HashMap<Integer, PhyReg> idx2reg = new HashMap<>();
-
-        public int degree = 0;
 
         private PhyReg(int idx, String name){
             this.idx = idx;
