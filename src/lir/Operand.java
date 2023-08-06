@@ -21,6 +21,36 @@ public class Operand {
 
     public int degree = 0;
 
+    private Operand alias;
+
+    private boolean recentSpill = false;
+
+    double weight = 0.0;
+
+    public double getWeight() {
+        return weight;
+    }
+
+    public void addWeight(double weight) {
+        this.weight += weight;
+    }
+
+    public boolean isRecentSpill() {
+        return recentSpill;
+    }
+
+    public void setRecentSpill(boolean recentSpill) {
+        this.recentSpill = recentSpill;
+    }
+
+    public Operand getAlias() {
+        return alias;
+    }
+
+    public void setAlias(Operand alias) {
+        this.alias = alias;
+    }
+
     public void addAdj(Operand adj) {
         adjOpdSet.add(adj);
     }
