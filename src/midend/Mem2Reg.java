@@ -17,11 +17,7 @@ import util.MyList;
 import ir.instruction.Alloc;
 
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Stack;
+import java.util.*;
 
 public class Mem2Reg extends Pass {
     public Mem2Reg(HashMap<String, Function> functions, ArrayList<GlobalValue> globals) {
@@ -71,26 +67,8 @@ public class Mem2Reg extends Pass {
                             for (Instr store : allocInfo.defInstrs) {
                                 store.remove();
                             }
-                        } else if (allocInfo.defBBs.size() == 1) {
-                            // 只有一个defineblock，一般情况下它会支配所有的useblock,不用插入phi
-                            // 但是可能存在一种情况，就是这个alloc是在循环里面的
-                            // 所以我们要判断一下
+                        } else if (allocInfo.defBBs.size() == 1 && isDomAllUseBBs(allocInfo)) {
                             BasicBlock defBB = allocInfo.defBBs.iterator().next();
-                            boolean isDom = true;
-                            for (BasicBlock useBB : allocInfo.useBBs) {
-                                BasicBlock predBlock = useBB;
-                                while (predBlock != defBB) {
-                                    if (predBlock == null) {
-                                        isDom = false;
-                                        break;
-                                    }
-                                    predBlock = function.getDomTree().get(predBlock);
-                                }
-                                if (!isDom) {
-                                    break;
-                                }
-                            }
-                            if (isDom) {
                                 Iterator<Instr> iter = defBB.getInstrs().iterator();
 
                                 Instr tempDef = null;
@@ -113,9 +91,6 @@ public class Mem2Reg extends Pass {
                                         instrofUseBB.repalceUseofMeto(((Store) tempDef).getValue());
                                     }
                                 }
-                            } else {
-                                throw new RuntimeException("Mem2RegAnalysis: unexpected defBB");
-                            }
                         } else {// 其他所有情况
                             HashSet<BasicBlock> F = new HashSet<>();
                             HashSet<BasicBlock> worklist = new HashSet<>();
@@ -180,6 +155,23 @@ public class Mem2Reg extends Pass {
                     }
                 }
             }
+        }
+
+        private boolean isDomAllUseBBs(AllocInfo allocInfo) {
+            // 只有一个defineblock，一般情况下它会支配所有的useblock,不用插入phi
+            // 但是可能存在一种情况，就是def是在循环或者在一个分支里
+            // 所以我们要判断一下
+            BasicBlock defBB = allocInfo.defBBs.iterator().next();
+            for (BasicBlock useBB : allocInfo.useBBs) {
+                BasicBlock predBlock = useBB;
+                while (predBlock != defBB) {
+                    if (predBlock == function.getDomTree().get(predBlock)) {
+                        return false;
+                    }
+                    predBlock = function.getDomTree().get(predBlock);
+                }
+            }
+            return true;
         }
     }
 
