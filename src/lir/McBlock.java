@@ -34,6 +34,10 @@ public class McBlock extends MyNode {
         return mcInstrs;
     }
 
+    public void setMcInstrs(MyList<McInstr> mcInstrs) {
+        this.mcInstrs = mcInstrs;
+    }
+
     public McInstr getMcLastInstr() {
         return mcInstrs.getLast();
     }

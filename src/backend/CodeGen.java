@@ -351,7 +351,9 @@ public class CodeGen {
         }
 
         McFunction callMcFunc = funcMap.get(callFunc);
-        new McCall(callMcFunc, curMcBlock);
+        McCall mcCall = new McCall(callMcFunc, curMcBlock);
+        mcCall.setsRegIdx(sRegIdx);
+        mcCall.setrRegIdx(rRegIdx);
 
         if(call.type instanceof Int32Type) {
             Operand dst = getOperand(call);

@@ -17,4 +17,11 @@ public class McStore extends McInstr{
         useOperands.add(data);
         useOperands.add(addr);
     }
+
+    public McStore(Operand data, Operand addr, Operand offset, McBlock mcBlock, boolean insert) {
+        super(mcBlock, insert);
+        useOperands.add(data);
+        useOperands.add(addr);
+        useOperands.add(offset);
+    }
 }

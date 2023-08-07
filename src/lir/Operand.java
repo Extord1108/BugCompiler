@@ -6,9 +6,7 @@ import lir.mcInstr.McMove;
 import manager.Manager;
 
 import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class Operand {
 
@@ -26,6 +24,26 @@ public class Operand {
     private boolean recentSpill = false;
 
     double weight = 0.0;
+
+    public Operand phyReg = null;
+
+    private int stackPos = -1;
+
+    public void setStackPos(int stackPos) {
+        this.stackPos = stackPos;
+    }
+
+    public int getStackPos() {
+        return stackPos;
+    }
+
+    public boolean hasReg() {
+        return phyReg != null;
+    }
+
+    public Operand getPhyReg() {
+        return phyReg;
+    }
 
     public double getWeight() {
         return weight;
@@ -61,10 +79,10 @@ public class Operand {
 
     public boolean needColor(String type) {
         if(type == "Integer") {
-            return !isFloat;
+            return !isFloat && !(this instanceof Imm);
         } else {
             assert type == "Float";
-            return isFloat;
+            return isFloat && !(this instanceof Imm);
         }
     }
     public boolean isFloat(){
@@ -122,11 +140,13 @@ public class Operand {
         String name;
         private static HashMap<String, PhyReg> name2reg = new HashMap<>();
         private static HashMap<Integer, PhyReg> idx2reg = new HashMap<>();
+        private static ArrayList<Operand> colorList = new ArrayList<>();
 
         private PhyReg(int idx, String name){
             this.idx = idx;
             this.name = name;
             this.isFloat = false;
+            this.phyReg = this;
         }
 
         public static PhyReg getPhyReg(String name){
@@ -135,6 +155,19 @@ public class Operand {
 
         public static PhyReg getPhyReg(int idx) {
             return  idx2reg.get(idx);
+        }
+
+        public static TreeSet<Operand> getOkColorList() {
+            TreeSet<Operand> okColorList = new TreeSet<>(colorList);
+            okColorList.remove(name2reg.get("sp"));
+            okColorList.remove(name2reg.get("pc"));
+            okColorList.remove(name2reg.get("cspr"));
+            return okColorList;
+        }
+
+        @Override
+        public String toString() {
+            return name;
         }
 
         public static class PhyRegs{
@@ -163,6 +196,7 @@ public class Operand {
                     PhyReg phyReg= (PhyReg) field.get(Operand.PhyReg.PhyRegs.class);
                     name2reg.put(phyReg.name, phyReg);
                     idx2reg.put(phyReg.idx, phyReg);
+                    colorList.add(phyReg);
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 }
@@ -176,11 +210,13 @@ public class Operand {
         public int degree = 0;
         private static HashMap<String, FPhyReg> name2reg = new HashMap<>();
         private static HashMap<Integer, FPhyReg> idx2reg = new HashMap<>();
+        private static ArrayList<Operand> colorList = new ArrayList<>();
 
         private FPhyReg(int idx, String name){
             this.idx = idx;
             this.name = name;
             this.isFloat = true;
+            this.phyReg = this;
         }
 
         public static FPhyReg getFPhyReg(String name){
@@ -189,6 +225,16 @@ public class Operand {
 
         public static FPhyReg getFPhyReg(int idx) {
             return idx2reg.get(idx);
+        }
+
+        public static TreeSet<Operand> getOkColorList() {
+            TreeSet<Operand> okColorList = new TreeSet<>(colorList);
+            return okColorList;
+        }
+
+        @Override
+        public String toString() {
+            return name;
         }
 
         public static class FPhyRegs{
@@ -232,6 +278,7 @@ public class Operand {
                     FPhyReg fPhyReg = (FPhyReg) field.get(Operand.FPhyReg.FPhyRegs.class);
                     name2reg.put(fPhyReg.name, fPhyReg);
                     idx2reg.put(fPhyReg.idx, fPhyReg);
+                    colorList.add(fPhyReg);
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 }

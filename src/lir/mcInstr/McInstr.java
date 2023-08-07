@@ -18,6 +18,10 @@ public class McInstr extends MyNode {
         mcBlock.addInstr(this);
     }
 
+    public McInstr(McBlock mcBlock, boolean inSert){
+        this.mcBlock = mcBlock;
+    }
+
     public boolean isType(String type) {
         return false;
     }

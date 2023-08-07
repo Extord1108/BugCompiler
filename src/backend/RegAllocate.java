@@ -3,8 +3,8 @@ package backend;
 import lir.McBlock;
 import lir.McFunction;
 import lir.Operand;
-import lir.mcInstr.McInstr;
-import lir.mcInstr.McMove;
+import lir.mcInstr.*;
+import util.MyList;
 import util.MyNode;
 
 import java.util.*;
@@ -62,6 +62,8 @@ public class RegAllocate {
      */
     Set<Operand> spilledNodes;
 
+    int count;
+
 
 
     public RegAllocate(ArrayList<McFunction> mcFunctions){
@@ -100,6 +102,7 @@ public class RegAllocate {
                 }
             }
         }
+        count = 0;
     }
     private void turnInit(McFunction mcFunction) {
         workListMoves = new HashSet<>();
@@ -127,6 +130,8 @@ public class RegAllocate {
                 for(int i = 0; i < K; i++) {
                     Operand.PhyReg.getPhyReg(i).degree = MAX_DEGREE;
                     Operand.PhyReg.getPhyReg(i).setAlias(null);
+                    Operand.PhyReg.getPhyReg(i).adjOpdSet = new HashSet<>();
+                    Operand.PhyReg.getPhyReg(i).moveList = new HashSet<>();
                 }
                 for(Operand operand: curMcFunc.vrList) {
                     operand.degree = 0;
@@ -139,6 +144,8 @@ public class RegAllocate {
                 for(int i = 0; i < K; i++) {
                     Operand.FPhyReg.getFPhyReg(i).degree = MAX_DEGREE;
                     Operand.FPhyReg.getFPhyReg(i).setAlias(null);
+                    Operand.FPhyReg.getFPhyReg(i).adjOpdSet = new HashSet<>();
+                    Operand.FPhyReg.getFPhyReg(i).moveList = new HashSet<>();
                 }
                 for(Operand operand: curMcFunc.svrList) {
                     operand.degree = 0;
@@ -158,15 +165,151 @@ public class RegAllocate {
             if(spilledNodes.size() == 0) {
                 break;
             }
-
-            for(Operand operand: spilledNodes) {
-                dealSpillNode(operand);
-            }
+            dealSpillNode();
         }
     }
 
-    private void dealSpillNode(Operand opd) {
-        System.err.println("dealSpillNode尚未完成");
+
+
+    private void dealSpillNode() {
+        HashSet<Operand> newTemps = new HashSet<>();
+        for(McBlock mcBlock: curMcFunc.getMcBlocks()) {
+            ArrayList<McInstr> newInstrs = new ArrayList<>();
+            for(McInstr mcInstr: mcBlock.getMcInstrs()) {
+                if(mcInstr instanceof McCall) continue;
+                ArrayList<Operand> defs = mcInstr.defOperands;
+                ArrayList<Operand> uses = mcInstr.useOperands;
+                ArrayList<McInstr> stores = new ArrayList<>();
+                ArrayList<McInstr> loads = new ArrayList<>();
+                ArrayList<McInstr> storeMove = new ArrayList<>();
+                ArrayList<McInstr> loadMove = new ArrayList<>();
+                for(Operand opd: spilledNodes) {
+                    if(!defs.isEmpty()) {
+                        Operand def = defs.get(0);
+                        if(opd.equals(def)) {
+                            Operand temp = new Operand.VirtualReg( opd.isFloat(),curMcFunc);
+                            temp.setRecentSpill(true);
+                            newTemps.add(temp);
+                            count++;
+                            if(opd.getStackPos() != -1) {
+                                int stackSize = opd.getStackPos();
+                                Operand offset = null;
+                                if(stackSize > 4095) {
+                                    Operand offTemp = new Operand.VirtualReg( false,curMcFunc);
+                                    offTemp.setRecentSpill(true);
+                                    if(type == "Integer") {
+                                        newTemps.add(offTemp);
+                                    }
+                                    count ++;
+                                    offset = new Operand.Imm(stackSize);
+                                    McInstr mcMove = new McMove(offTemp, offset, mcBlock, false);
+                                    offset = offTemp;
+                                    storeMove.add(mcMove);
+                                } else {
+                                    offset = new Operand.Imm(stackSize);
+                                }
+                                McStore mcStore = new McStore(temp, Operand.PhyReg.getPhyReg("sp"),
+                                        offset, mcBlock, false);
+                                mcInstr.defOperands.set(0, temp);
+                                stores.add(mcStore);
+                            } else {
+                                Operand offset = null;
+                                if(curMcFunc.getStackSize() > 4095) {
+                                    Operand offTemp = new Operand.VirtualReg( false,curMcFunc);
+                                    offTemp.setRecentSpill(true);
+                                    if(type == "Integer") {
+                                        newTemps.add(offTemp);
+                                    }
+                                    count ++;
+                                    offset = new Operand.Imm(curMcFunc.getStackSize());
+                                    McInstr mcMove = new McMove(offTemp, offset, mcBlock, false);
+                                    offset = offTemp;
+                                    storeMove.add(mcMove);
+                                } else {
+                                    offset = new Operand.Imm(curMcFunc.getStackSize());
+                                }
+                                McStore mcStore = new McStore(temp, Operand.PhyReg.getPhyReg("sp"),
+                                        offset, mcBlock, false);
+                                opd.setStackPos(curMcFunc.getStackSize());
+                                curMcFunc.addStackSize(4);
+                                mcInstr.defOperands.set(0, temp);
+                                stores.add(mcStore);
+
+                            }
+                        }
+                    }
+//                    uses = (ArrayList<Operand>) uses.stream().distinct().collect(Collectors.toList());
+                    for(int i = 0; i < uses.size(); i++) {
+                        Operand use = uses.get(i);
+                        if(opd.equals(use)) {
+                            Operand temp = new Operand.VirtualReg(opd.isFloat(),curMcFunc);
+                            temp.setRecentSpill(true);
+                            newTemps.add(temp);
+                            Operand offset = null;
+                            if(opd.getStackPos() > 4095) {
+                                Operand offTemp = new Operand.VirtualReg( false,curMcFunc);
+                                offTemp.setRecentSpill(true);
+                                if(type == "Integer") {
+                                    newTemps.add(offTemp);
+                                }
+                                count ++;
+                                offset = new Operand.Imm(opd.getStackPos());
+                                McInstr move = new McMove(offTemp, offset, mcBlock, false);
+                                loadMove.add(move);
+                                offset = offTemp;
+                            } else {
+                                if(opd.getStackPos() == -1) {
+                                    int stackPos = curMcFunc.getStackSize();
+                                    curMcFunc.addStackSize(4);
+                                    if (stackPos > 4095) {
+                                        Operand offTemp = new Operand.VirtualReg( false,curMcFunc);
+                                        offTemp.setRecentSpill(true);
+                                        if(type == "Integer") {
+                                            newTemps.add(offTemp);
+                                        }
+                                        count ++;
+                                        offset = new Operand.Imm(opd.getStackPos());
+                                        McInstr move = new McMove(offTemp, offset, mcBlock, false);
+                                        loadMove.add(move);
+                                        offset = offTemp;
+                                    } else {
+                                        offset = new Operand.Imm(stackPos);
+                                    }
+                                    opd.setStackPos(stackPos);
+                                } else {
+                                    offset = new Operand.Imm(opd.getStackPos());
+                                }
+                            }
+                            McInstr mcLoad = new McLdr(temp, Operand.PhyReg.getPhyReg("sp"),
+                                    offset, mcBlock, false);
+                            mcInstr.useOperands.set(i, temp);
+                            loads.add(mcLoad);
+                        }
+                    }
+                }
+                if(mcInstr instanceof McMove && mcInstr.useOperands.get(0).equals(mcInstr.defOperands.get(0))) {
+                    continue;
+                }
+                for(McInstr move: loadMove) {
+                    newInstrs.add(move);
+                }
+                for(McInstr load: loads) {
+                    newInstrs.add(load);
+                }
+                newInstrs.add(mcInstr);
+                for(McInstr move: storeMove) {
+                    newInstrs.add(move);
+                }
+                for(McInstr store: stores) {
+                    newInstrs.add(store);
+                }
+            }
+            MyList<McInstr> mcInstrs = new MyList<>();
+            for(McInstr mcInstr: newInstrs) {
+                mcInstrs.insertTail(mcInstr);
+            }
+            mcBlock.setMcInstrs(mcInstrs);
+        }
     }
 
     private void regAllocIteration() {
@@ -358,11 +501,123 @@ public class RegAllocate {
 
     private void assignColors() {
         preAssignColors();
+        if(spilledNodes.size() > 0){
+            return;
+        }
+
+        for(Operand v : coalescedNodes) {
+            Operand a = getAlias(v);
+            if(a.needColor(type)) {
+                if(preColored.contains(a)) {
+                    colorMap.put(v, a.getPhyReg());
+                } else {
+                    colorMap.put(v, colorMap.get(a));
+                }
+            }
+        }
+
+        ArrayList<McBinary> needFixed = new ArrayList<>();
+        for(McBlock mcBlock: curMcFunc.getMcBlocks()) {
+            for(McInstr mcInstr: mcBlock.getMcInstrs()) {
+                if(mcInstr instanceof McBinary && ((McBinary) mcInstr).needFix){
+                    needFixed.add((McBinary) mcInstr);
+                }
+                if(mcInstr instanceof McCall) {
+                    curMcFunc.setUseLr();
+                    // 感觉没必要写，都是一堆物理寄存器
+                    ArrayList<Operand> defs = mcInstr.defOperands;
+                    int i = 0;
+                    for(Operand def: defs) {
+                        defs.set(i ++, def.getPhyReg());
+                    }
+                    i = 0;
+                    ArrayList<Operand> uses = mcInstr.useOperands;
+                    for(Operand use: uses){
+                        uses.set(i ++, use.getPhyReg());
+                    }
+                    continue;
+                }
+                ArrayList<Operand> defs = mcInstr.defOperands;
+                ArrayList<Operand> uses = mcInstr.useOperands;
+                if(!defs.isEmpty()) {
+                    Operand def = defs.get(0);
+                    if(preColored.contains(def) && def.needColor(type)) {
+                        defs.set(0, def.getPhyReg());
+                    } else {
+                        Operand set = colorMap.get(def);
+                        if(set != null) {
+                            if(set instanceof Operand.FPhyReg) {
+                                curMcFunc.usedFPhyRegs.add((Operand.FPhyReg) set);
+                                defs.set(0, set);
+                            } else {
+                                assert set instanceof Operand.PhyReg;
+                                curMcFunc.usedPhyRegs.add((Operand.PhyReg) set);
+                                defs.set(0, set);
+                            }
+                        }
+                    }
+                }
+
+                for(int i = 0; i < uses.size(); i++) {
+                    Operand use = uses.get(i);
+                    if(preColored.contains(use) && use.needColor(type)) {
+                        uses.set(i, use.getPhyReg());
+                    } else {
+                        Operand set = colorMap.get(use);
+                        if(set != null) {
+                            if(set instanceof Operand.FPhyReg) {
+                                curMcFunc.usedFPhyRegs.add((Operand.FPhyReg) set);
+                                uses.set(0, set);
+                            } else {
+                                assert set instanceof Operand.PhyReg;
+                                curMcFunc.usedPhyRegs.add((Operand.PhyReg) set);
+                                uses.set(0, set);
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
+
+        fixStack(needFixed);
+    }
+
+    private void fixStack(ArrayList<McBinary> needFixed) {
+        System.err.println("等能输出了再来修栈吧");
     }
 
     private void preAssignColors() {
         colorMap = new HashMap<>();
+        while(selectStack.size() > 0) {
+            Operand toBeColored = selectStack.pop();
+            TreeSet<Operand> okColorSet;
+            if(type == "Integer") {
+                okColorSet = Operand.PhyReg.getOkColorList();
+            } else {
+                assert type == "Float";
+                okColorSet = Operand.FPhyReg.getOkColorList();
+            }
 
+            // 待分配节点的邻近节点的颜色不能选
+            for(Operand adj: toBeColored.adjOpdSet) {
+                Operand opd = adj.getAlias();
+                if(opd.needColor(type) && (opd.hasReg() || preColored.contains(opd))) {
+                    okColorSet.remove(opd.getPhyReg());
+                } else {
+                    Operand r = colorMap.get(opd);
+                    if(r != null) {
+                        okColorSet.remove(r.getPhyReg());
+                    }
+                }
+            }
+            if(okColorSet.isEmpty()) {
+                spilledNodes.add(toBeColored);
+            } else {
+                Operand color = okColorSet.pollFirst();
+                colorMap.put(toBeColored, color);
+            }
+        }
     }
 
     private void decrementDegree(Operand opd) {
@@ -488,7 +743,7 @@ public class RegAllocate {
                     }
                 }
             }
-            mcBlock.liveInSet.addAll(mcBlock.liveUseSet);
+            mcBlock.liveInSet = new HashSet<>(mcBlock.liveUseSet);
             mcBlock.liveOutSet = new HashSet<>();
         }
         liveInOutAnalysis();

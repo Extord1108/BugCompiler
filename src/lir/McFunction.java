@@ -5,20 +5,22 @@ import lir.mcInstr.McInstr;
 import util.MyList;
 
 import java.util.ArrayList;
+import java.util.TreeSet;
 
 public class McFunction {
     private Function irFunction;
     private String name;
     private int stackSize;
     public boolean isMain;
+    public boolean useLr = false;
     private MyList<McBlock> mcBlocks = new MyList<McBlock>();
 
 
     public ArrayList<Operand> vrList = new ArrayList<>();
     public ArrayList<Operand> svrList = new ArrayList<>();
 
-    public ArrayList<Operand.PhyReg> usedPhyRegs = new ArrayList<>();
-    public ArrayList<Operand.FPhyReg> usedFPhyRegs = new ArrayList<>();
+    public TreeSet<Operand.PhyReg> usedPhyRegs = new TreeSet<>();
+    public TreeSet<Operand.FPhyReg> usedFPhyRegs = new TreeSet<>();
 
     public McFunction(Function irFunction){
         this.irFunction = irFunction;
@@ -33,6 +35,10 @@ public class McFunction {
         return mcBlocks;
     }
 
+    public void setUseLr() {
+        useLr = true;
+        usedPhyRegs.add(Operand.PhyReg.getPhyReg("lr"));
+    }
     public McBlock getMcLastBlock() {
         return mcBlocks.getLast();
     }

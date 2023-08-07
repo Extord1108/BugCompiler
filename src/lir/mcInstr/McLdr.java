@@ -16,4 +16,11 @@ public class McLdr extends McInstr{
         useOperands.add(addr);
         useOperands.add(offset);
     }
+
+    public McLdr(Operand dt, Operand addr, Operand offset, McBlock mcBlock, boolean insert) {
+        super(mcBlock, insert);
+        defOperands.add(dt);
+        useOperands.add(addr);
+        useOperands.add(offset);
+    }
 }

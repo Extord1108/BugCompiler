@@ -13,6 +13,12 @@ public class McMove extends McInstr{
         useOperands.add(srcOp);
     }
 
+    public McMove(Operand dstOp, Operand srcOp, McBlock mcBlock, boolean insert) {
+        super(mcBlock, insert);
+        defOperands.add(dstOp);
+        useOperands.add(srcOp);
+    }
+
     public McMove(Cond cond,Operand dstOp, Operand srcOp, McBlock mcBlock) {
         super(mcBlock);
         this.cond = cond;
