@@ -90,7 +90,8 @@ public class MyList<E extends MyNode> implements Iterable<E> {
     }
 
     public void remove(E node){
-        node.remove();
+        if(node.getPrev()!=null)node.getPrev().setNext(node.getNext());
+        if(node.getNext()!=null)node.getNext().setPrev(node.getPrev());
         size --;
     }
 

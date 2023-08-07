@@ -76,7 +76,7 @@ public class Instr extends Value {
     }
 
     public void remove(){
-        super.remove();
+        this.basicBlock.getInstrs().remove(this);
     }
 
     public static int getCount() {

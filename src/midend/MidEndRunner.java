@@ -21,9 +21,7 @@ public class MidEndRunner {
         new DomainAnalysis(functions, globals).run();
         new Mem2Reg(functions, globals).run();
         if(opt){
-
-                //new DeadCodeElimination(functions, globals).run();
-
+                new DeadCodeElimination(functions, globals).run();
         }
         new PhiResolution(functions, globals).run();
         return;

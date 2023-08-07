@@ -8,6 +8,7 @@ import ir.instruction.Branch;
 import ir.instruction.Instr;
 import ir.instruction.Jump;
 import util.MyList;
+import midend.ReversePostOrder;
 
 import java.util.*;
 
@@ -25,40 +26,6 @@ public class DomainAnalysis extends Pass {
             new DominatorTree(function).run();
             new DominanceFrontier(function).run();
             //new LoopAnalysis(function).run();
-        }
-    }
-
-    //逆后序遍历
-    private class ReversePostOrder {
-        private Function function;
-        private Integer dfsOrder = 0;
-        private ArrayList<BasicBlock> reversePostOrderBB = new ArrayList<>();
-        private ReversePostOrder(Function function) {
-            this.function = function;
-        }
-        public ArrayList<BasicBlock> get(){
-            MyList<BasicBlock> basicBlocks = function.getBasicBlocks();
-            //对CFG图进行逆后序遍历
-            HashMap<BasicBlock,Integer> visited = new HashMap<>();
-            dfsOrder = basicBlocks.size();
-            dfs(basicBlocks.get(0), visited);
-            //对visited按照value进行排序
-            ArrayList<Map.Entry<BasicBlock,Integer>> list = new ArrayList<>(visited.entrySet());
-            list.sort((o1, o2) -> (o1.getValue() - o2.getValue()));
-            for(Map.Entry<BasicBlock,Integer> entry : list){
-                reversePostOrderBB.add(entry.getKey());
-            }
-            return reversePostOrderBB;
-        }
-
-        private void dfs(BasicBlock bb, HashMap<BasicBlock,Integer> visited){
-            visited.put(bb, -1);
-            for(BasicBlock successor : bb.getSuccessors()){
-                if(visited.get(successor) == null){
-                    dfs(successor, visited);
-                }
-            }
-            visited.put(bb, dfsOrder--);
         }
     }
 

@@ -63,6 +63,10 @@ public class BasicBlock extends Value {
         return function;
     }
 
+    public void remove(){
+        this.function.getBasicBlocks().remove(this);
+    }
+
     public void setSuccessors(ArrayList<BasicBlock> succBBlocks) {
         this.succBBlocks = succBBlocks;
     }
