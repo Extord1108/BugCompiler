@@ -73,10 +73,7 @@ public class McFunction {
             stb.append(mcBlock.getName()).append(":\n");
 
             if(i == 0) {
-                stb.append("\t").append("push\t{");
-                stb.append("}\n");
-                stb.append("\t").append("vpush\t{");
-                stb.append("}\n");
+                genPush(stb);
                 if(stackSize != 0)
                     stb.append("\t").append("sub\tsp,\tsp,\t#").append(stackSize).append("\n");
             }
@@ -90,15 +87,39 @@ public class McFunction {
             if(i == mcBlocks.size() - 1) {
                 if(stackSize != 0)
                     stb.append("\t").append("add\tsp,\tsp,\t#").append(stackSize).append("\n");
-                stb.append("\t").append("vpop\t{");
-                stb.append("}\n");
-                stb.append("\t").append("pop\t{");
-                stb.append("}\n");
-
             }
-
-            stb.append("\n");
         }
         return stb.toString();
+    }
+
+    private void genPush(StringBuilder stb) {
+        StringBuilder popRegs = new StringBuilder();
+        StringBuilder popFRegs = new StringBuilder();
+        int idx = 0;
+        for(Operand reg: usedPhyRegs) {
+            idx ++;
+            if(((Operand.PhyReg)reg).getIdx() > 3 && !reg.equals(Operand.PhyReg.getPhyReg("sp"))){
+                popRegs.append(reg);
+                if(idx < usedPhyRegs.size()) {
+                    popRegs.append(", ");
+                }
+            }
+        }
+        idx = 0;
+        for(Operand reg: usedFPhyRegs) {
+            idx ++;
+            if(((Operand.FPhyReg)reg).getIdx() > 15) {
+                popFRegs.append(reg);
+                if(idx < usedFPhyRegs.size()) {
+                    popFRegs.append(", ");
+                }
+            }
+        }
+        if(!popFRegs.toString().equals("")) {
+            stb.append("\tvpop\t{"+ popFRegs.toString()+"}\n");
+        }
+        if(!popRegs.toString().equals("")) {
+            stb.append("\tpop\t{"+ popRegs.toString()+ "}\n");
+        }
     }
 }

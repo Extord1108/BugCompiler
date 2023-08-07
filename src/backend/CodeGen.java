@@ -70,6 +70,9 @@ public class CodeGen {
             BasicBlock basicBlock = curFunc.getEntryBlock();
             curMcBlock = blockMap.get(basicBlock);
             curMcBlock.setMcFunction(curMcFunc);
+            McBinary mcBinary = new McBinary(McBinary.BinaryType.Sub, Operand.PhyReg.getPhyReg("sp"),
+                    Operand.PhyReg.getPhyReg("sp"), new Operand.Imm(0), curMcBlock);
+            mcBinary.setNeedFix(true);
             dealParam();
             nextBBList.push(basicBlock);
             while(nextBBList.size() > 0) {

@@ -174,6 +174,10 @@ public class Operand {
             this.phyReg = this;
         }
 
+        public int getIdx() {
+            return idx;
+        }
+
         public static PhyReg getPhyReg(String name){
             return name2reg.get(name);
         }
@@ -242,6 +246,10 @@ public class Operand {
             this.name = name;
             this.isFloat = true;
             this.phyReg = this;
+        }
+
+        public int getIdx() {
+            return idx;
         }
 
         public static FPhyReg getFPhyReg(String name){

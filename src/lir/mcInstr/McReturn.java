@@ -24,12 +24,42 @@ public class McReturn extends McInstr{
         StringBuilder stb = new StringBuilder();
         StringBuilder popRegs = new StringBuilder();
         StringBuilder popFRegs = new StringBuilder();
-//        for(Operand reg: mcBlock.getMcFunction().usedPhyRegs) {
-//
-//        }
-        stb.append("vpop\t{}\n");
-        stb.append("\tpop\t{}\n");
-        stb.append("\tbx\tlr\n");
+        int idx = 0;
+        for(Operand reg: mcBlock.getMcFunction().usedPhyRegs) {
+            idx ++;
+            if(((Operand.PhyReg)reg).getIdx() > 3 && !reg.equals(Operand.PhyReg.getPhyReg("sp"))){
+                popRegs.append(reg);
+                if(idx < mcBlock.getMcFunction().usedPhyRegs.size()) {
+                    popRegs.append(", ");
+                }
+            }
+
+        }
+        idx = 0;
+        for(Operand reg: mcBlock.getMcFunction().usedFPhyRegs) {
+            idx ++;
+            if(((Operand.FPhyReg)reg).getIdx() > 15) {
+                popFRegs.append(reg);
+                if(idx < mcBlock.getMcFunction().usedFPhyRegs.size()) {
+                    popFRegs.append(", ");
+                }
+            }
+        }
+        boolean needT = false;
+        if(!popFRegs.toString().equals("")) {
+            stb.append("vpop\t{"+ popFRegs.toString()+"}\n");
+            needT = true;
+        }
+        if(!popRegs.toString().equals("")) {
+            if(needT) {
+                stb.append("\t");
+            }
+            stb.append("pop\t{"+ popRegs.toString()+ "}\n");
+        }
+        if(needT) {
+            stb.append("\t");
+        }
+        stb.append("bx\tlr\n");
         return stb.toString();
     }
 }
