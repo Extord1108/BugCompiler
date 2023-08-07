@@ -24,4 +24,22 @@ public class McStore extends McInstr{
         useOperands.add(addr);
         useOperands.add(offset);
     }
+
+
+    public boolean useVFP(){
+        return useOperands.get(0).isFloat();
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder stb = new StringBuilder();
+        if(useVFP()) {
+            stb.append("v");
+        }
+        stb.append("str " + useOperands.get(0) +", [" + useOperands.get(1));
+        if(useOperands.size() > 2)
+            stb.append(", " + useOperands.get(2));
+        stb.append("]");
+        return stb.toString();
+    }
 }

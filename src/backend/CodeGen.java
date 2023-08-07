@@ -296,6 +296,11 @@ public class CodeGen {
                 Operand dst = getOperand(instr.getUse(0));
                 value2opd.put(instr, dst);
             }
+            else if(instr instanceof Move) {
+                Operand dst = getOperand(((Move) instr).getTo());
+                Operand src = getOperand(((Move) instr).getFrom());
+                new McMove(dst, src, curMcBlock);
+            }
             else {
                 System.err.println("存在ir类型" + instr.getClass() + "未被解析为lir");
             }

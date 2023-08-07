@@ -8,4 +8,9 @@ public class McJump extends McInstr{
         super(mcBlock);
         this.target = target;
     }
+
+    @Override
+    public String toString() {
+        return "b " + target.getName();
+    }
 }

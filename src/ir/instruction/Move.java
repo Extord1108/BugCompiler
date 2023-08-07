@@ -15,6 +15,14 @@ public class Move extends Instr{
         this.to = to;
     }
 
+    public Value getFrom() {
+        return from;
+    }
+
+    public Value getTo() {
+        return to;
+    }
+
     @Override
     public String toString() {
         //return "move " + this.type + " " + this.from.getName() + ", " + this.to.getName();
