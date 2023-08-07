@@ -23,7 +23,7 @@ public class MidEndRunner {
         if(opt){
                 new DeadCodeElimination(functions, globals).run();
         }
-        new PhiResolution(functions, globals).run();
+        //new PhiResolution(functions, globals).run();
         return;
     }
 }

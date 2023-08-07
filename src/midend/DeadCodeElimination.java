@@ -44,6 +44,7 @@ public class DeadCodeElimination extends Pass {
                     for(BasicBlock bb:function.getBasicBlocks()){
                         for(Instr instr:bb.getInstrs()){
                             if(instr instanceof Return){
+                                if(instr.getUses().size()>0)
                                 instr.replaceUse(instr.getUse(0),Variable.getDefaultZero(function.getType()));
                             }
                         }
@@ -229,7 +230,7 @@ public class DeadCodeElimination extends Pass {
                         for(BasicBlock bb: function.getBasicBlocks()) {
                             for(Instr instr: bb.getInstrs()) {
                                 if(instr instanceof Return && instr.equals(bb.getLast())) {
-                                    if(instr.getUse(0) instanceof  Call){
+                                    if(instr.getUses().size()>0 && instr.getUse(0) instanceof  Call){
                                         Call call = (Call) instr.getUse(0);
                                         if(uselessFunctions.contains(call.getFunction()) && call.getUsedInfo().size()==1){
                                             MyList<Used> usedInfo = call.getUsedInfo();
