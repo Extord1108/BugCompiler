@@ -44,8 +44,8 @@ public class Compiler {
                 OutputHandler.closeOutputFile(llvmOut);
             }
             System.out.println("CodeGen begin");
-            //var codeGen = CodeGen.Instance;
-            //codeGen.gen();
+            var codeGen = CodeGen.Instance;
+            codeGen.gen();
             System.out.println("CodeGen end");
 
             System.out.println("Alloc begin");
