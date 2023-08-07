@@ -70,7 +70,7 @@ public class McFunction {
         for(int i = 0; i < mcBlocks.size(); i++) {
 
             McBlock mcBlock = mcBlocks.get(i);
-            stb.append(this.getName()).append("_").append(mcBlock.getName()).append(":\n");
+            stb.append(mcBlock.getName()).append(":\n");
 
             if(i == 0) {
                 stb.append("\t").append("push\t{");

@@ -28,6 +28,18 @@ public class McBinary extends McInstr{
         this.needFix = needFix;
     }
 
+    public boolean useVFP() {
+        return defOperands.get(0).isFloat() || useOperands.get(0).isFloat() || useOperands.get(1).isFloat();
+    }
+
+    @Override
+    public String toString() {
+        if(useVFP()) {
+            return "v" + type + ".F32\t" + defOperands.get(0) + ",\t" + useOperands.get(0) + ",\t" + useOperands.get(1);
+        }
+        return type + "\t" + defOperands.get(0) + ",\t" + useOperands.get(0) + ",\t" + useOperands.get(1);
+    }
+
     public enum BinaryType {
         Neg("neg"),
         Not("not"),

@@ -11,6 +11,6 @@ public class McJump extends McInstr{
 
     @Override
     public String toString() {
-        return "b " + target.getName();
+        return "b\t" + target.getName();
     }
 }

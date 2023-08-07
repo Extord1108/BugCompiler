@@ -11,7 +11,7 @@ public class McInstr extends MyNode {
     public ArrayList<Operand> useOperands = new ArrayList<>();
     public Cond cond = Cond.Any;
 
-    private McBlock mcBlock;
+    public McBlock mcBlock;
 
     public McInstr(McBlock mcBlock){
         this.mcBlock = mcBlock;
