@@ -27,7 +27,7 @@ public class McBlock extends MyNode {
     }
 
     public String getName() {
-        return name;
+        return mcFunction.getName() + "_" + name;
     }
 
     public MyList<McInstr> getMcInstrs() {
@@ -64,6 +64,10 @@ public class McBlock extends MyNode {
 
     public BasicBlock getBasicBlock() {
         return basicBlock;
+    }
+
+    public McFunction getMcFunction() {
+        return mcFunction;
     }
 
     public void setMcFunction(McFunction mcFunction) {

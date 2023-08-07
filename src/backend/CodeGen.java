@@ -70,6 +70,9 @@ public class CodeGen {
             BasicBlock basicBlock = curFunc.getEntryBlock();
             curMcBlock = blockMap.get(basicBlock);
             curMcBlock.setMcFunction(curMcFunc);
+            McBinary mcBinary = new McBinary(McBinary.BinaryType.Sub, Operand.PhyReg.getPhyReg("sp"),
+                    Operand.PhyReg.getPhyReg("sp"), new Operand.Imm(0), curMcBlock);
+            mcBinary.setNeedFix(true);
             dealParam();
             nextBBList.push(basicBlock);
             while(nextBBList.size() > 0) {
@@ -175,14 +178,14 @@ public class CodeGen {
                 value2opd.put(instr, opd);
             }
             else if(instr instanceof Alloc) {
-//                Alloc alloc = (Alloc) instr;
-//                Type type = alloc.getType().getBasicType();
-//                // 其他的应该在mem2reg阶段已经被删除了
-//                assert type instanceof ArrayType;
-//                Operand addr = getOperand(alloc);
-//                Operand offset = getOperand(new Variable.ConstInt(curMcFunc.getStackSize()));
-//                curMcFunc.addStackSize(((ArrayType) type).getFattenSize());
-//                new McBinary(McBinary.BinaryType.Add, addr, Operand.PhyReg.getPhyReg("sp"), offset, curMcBlock);
+                Alloc alloc = (Alloc) instr;
+                Type type = alloc.getType().getBasicType();
+                // 其他的应该在mem2reg阶段已经被删除了
+                assert type instanceof ArrayType;
+                Operand addr = getOperand(alloc);
+                Operand offset = getOperand(new Variable.ConstInt(curMcFunc.getStackSize()));
+                curMcFunc.addStackSize(((ArrayType) type).getFattenSize());
+                new McBinary(McBinary.BinaryType.Add, addr, Operand.PhyReg.getPhyReg("sp"), offset, curMcBlock);
             }
             else if(instr instanceof Call) {
                 genCall((Call) instr);
@@ -246,12 +249,22 @@ public class CodeGen {
                 Value addr = ((Store) instr).getAddress();
                 Operand dtOpd = getOperand(data);
                 Operand addrOpd = getOperand(addr);
+                if(addrOpd instanceof Operand.Global) {
+                    Operand temp = new Operand.VirtualReg(false, curMcFunc);
+                    new McMove(temp, addrOpd, curMcBlock);
+                    addrOpd = temp;
+                }
                 new McStore(dtOpd, addrOpd, curMcBlock);
             }
             else if(instr instanceof Load) {
                 Value addr = ((Load) instr).getPointer();
                 Operand dtOpd = getOperand(instr);
                 Operand addrOpd = getOperand(addr);
+                if(addrOpd instanceof Operand.Global) {
+                    Operand temp = new Operand.VirtualReg(false, curMcFunc);
+                    new McMove(temp, addrOpd, curMcBlock);
+                    addrOpd = temp;
+                }
                 new McLdr(dtOpd, addrOpd, curMcBlock);
             }
             else if(instr instanceof Return) {
@@ -266,8 +279,14 @@ public class CodeGen {
                         retOpd = getOperand(ret);
                         new McMove(Operand.PhyReg.getPhyReg("s0"), retOpd, curMcBlock);
                     }
+                    McBinary mcBinary = new McBinary(McBinary.BinaryType.Add, Operand.PhyReg.getPhyReg("sp"),
+                            Operand.PhyReg.getPhyReg("sp"), new Operand.Imm(0), curMcBlock);
+                    mcBinary.setNeedFix(true);
                     new McReturn(retOpd, curMcBlock);
                 } else {
+                    McBinary mcBinary = new McBinary(McBinary.BinaryType.Add, Operand.PhyReg.getPhyReg("sp"),
+                            Operand.PhyReg.getPhyReg("sp"), new Operand.Imm(0), curMcBlock);
+                    mcBinary.setNeedFix(true);
                     new McReturn(curMcBlock);
                 }
             }
@@ -626,6 +645,7 @@ public class CodeGen {
         for(GlobalValue globalValue: globals){
             assert globalValue.getType() instanceof PointerType;
             Operand opd = new Operand.Global(globalValue);
+            Manager.addGlobalOpds((Operand.Global) opd);
             value2opd.put(globalValue, opd);
         }
     }

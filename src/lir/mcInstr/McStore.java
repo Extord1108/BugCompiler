@@ -34,12 +34,16 @@ public class McStore extends McInstr{
     public String toString() {
         StringBuilder stb = new StringBuilder();
         if(useVFP()) {
-            stb.append("v");
+            stb.append("str" + "\t" + useOperands.get(0) + ",\t" + "[" + useOperands.get(1));
+            if(useOperands.size() > 2)
+                stb.append(",\t" + useOperands.get(2));
+            stb.append("]\n");
+        } else {
+            stb.append("vstr.F32" + "\t" + useOperands.get(0) + ",\t" + "[" + useOperands.get(1));
+            if(useOperands.size() > 2)
+                stb.append(",\t" + useOperands.get(2));
+            stb.append("]\n");
         }
-        stb.append("str " + useOperands.get(0) +", [" + useOperands.get(1));
-        if(useOperands.size() > 2)
-            stb.append(", " + useOperands.get(2));
-        stb.append("]");
         return stb.toString();
     }
 }

@@ -9,4 +9,9 @@ public class McNeg extends McInstr{
         defOperands.add(dst);
         useOperands.add(src);
     }
+
+    @Override
+    public String toString() {
+        return "vneg.F32\t" + defOperands.get(0) + ",\t" + useOperands.get(0);
+    }
 }

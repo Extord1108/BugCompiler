@@ -17,4 +17,18 @@ public class McVcvt extends McInstr{
         defOperands.add(dst);
         useOperands.add(src);
     }
+
+    @Override
+    public String toString() {
+        StringBuilder stb = new StringBuilder();
+        stb.append("\tvcvt.");
+        if (vcvtType.equals(VcvtType.f2i)) {
+            stb.append("S32.F32\t");
+        } else {
+            assert vcvtType.equals(vcvtType.i2f);
+            stb.append("F32.S32\t");
+        }
+        stb.append(defOperands.get(0)+ ",\t" + useOperands.get(0) + "\n");
+        return stb.toString();
+    }
 }

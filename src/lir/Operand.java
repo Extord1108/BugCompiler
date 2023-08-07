@@ -100,12 +100,28 @@ public class Operand {
             else
                 mcFunction.vrList.add(this);
         }
+
+        @Override
+        public String toString() {
+            return "v" + value;
+        }
     }
 
     public static class Global extends Operand {
         private GlobalValue globalValue;
+        private String name;
         public Global(GlobalValue globalValue){
             this.globalValue = globalValue;
+            this.name = "global_" + globalValue.name.substring(1);
+        }
+
+        public GlobalValue getGlobalValue() {
+            return globalValue;
+        }
+
+        @Override
+        public String toString() {
+            return name;
         }
     }
 
@@ -133,6 +149,15 @@ public class Operand {
         public float getFloatNumber() {
             return floatNumber;
         }
+
+        @Override
+        public String toString() {
+            if(isFloat) {
+                return "#" + Float.floatToRawIntBits(floatNumber);
+            }
+            return "#" + intNumber;
+
+        }
     }
 
     public static class PhyReg extends Operand{
@@ -147,6 +172,10 @@ public class Operand {
             this.name = name;
             this.isFloat = false;
             this.phyReg = this;
+        }
+
+        public int getIdx() {
+            return idx;
         }
 
         public static PhyReg getPhyReg(String name){
@@ -217,6 +246,10 @@ public class Operand {
             this.name = name;
             this.isFloat = true;
             this.phyReg = this;
+        }
+
+        public int getIdx() {
+            return idx;
         }
 
         public static FPhyReg getFPhyReg(String name){

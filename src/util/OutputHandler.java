@@ -94,29 +94,5 @@ public class OutputHandler {
         armStringList.clear();
     }
 
-    public static void main(String[] args) {
-        FileOutputStream fileOutputStream = OutputHandler.getOutputFile("test2.txt");
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("hello world");
-        String str = "hello world";
-        OutputHandler.output2Stream(str, fileOutputStream);
-
-        OutputHandler.addLlvmString(str);
-        OutputHandler.addLlvmString(str);
-        OutputHandler.addLlvmString(str);
-
-        OutputHandler.outputLlvmString(fileOutputStream);
-        OutputHandler.clearLlvmString();
-        OutputHandler.outputLlvmString(fileOutputStream);
-
-        OutputHandler.addRiscvString(str);
-        OutputHandler.addRiscvString(str);
-        OutputHandler.addRiscvString(str);
-
-        OutputHandler.outputRiscvString(fileOutputStream);
-        OutputHandler.clearRiscvString();
-        OutputHandler.outputRiscvString(fileOutputStream);
-
-        OutputHandler.closeOutputFile(fileOutputStream);
-    }
 }
+

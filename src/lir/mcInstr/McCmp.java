@@ -11,6 +11,11 @@ public class McCmp extends McInstr {
         useOperands.add(lOpd);
         useOperands.add(rOpd);
     }
+
+    @Override
+    public String toString() {
+        return "cmp\t" + useOperands.get(0) + ",\t" + useOperands.get(1);
+    }
 }
 
 

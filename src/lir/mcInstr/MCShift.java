@@ -22,10 +22,23 @@ public class MCShift extends McInstr{
         useOperands.add(srcOp2);
     }
 
-    Operand imm;
+    Operand imm = null;
+
     public MCShift(ShiftType shiftType, Operand imm) {
         super(null);
         this.type = shiftType;
         this.imm = imm;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder stb = new StringBuilder();
+        if(imm == null) {
+            stb.append(type.name()).append("\t").append(defOperands.get(0) + "\t" + useOperands.get(0) + ",\t")
+                    .append(useOperands.get(1));
+        } else {
+            stb.append(type.name()).append("\t").append(imm);
+        }
+        return stb.toString();
     }
 }

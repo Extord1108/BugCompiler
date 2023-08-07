@@ -12,6 +12,7 @@ import ir.type.Int32Type;
 import ir.type.PointerType;
 import ir.type.VoidType;
 import lir.McFunction;
+import lir.Operand;
 import util.OutputHandler;
 
 public class Manager {
@@ -19,6 +20,7 @@ public class Manager {
     private static final HashMap<String, Function> externalFunctions = new HashMap<>();
     private static final ArrayList<McFunction> mcFunclist = new ArrayList<>();
     private static final ArrayList<GlobalValue> globals = new ArrayList<>();
+    private static final ArrayList<Operand.Global> globalOpds = new ArrayList<>();
     private static final Manager manager = new Manager();
 
     public static class ExternFunction {
@@ -63,6 +65,9 @@ public class Manager {
         mcFunclist.add(function);
     }
 
+    public static void addGlobalOpds(Operand.Global global) {
+        globalOpds.add(global);
+    }
     private void addExternalFunctions() {
         for (Field field : ExternFunction.class.getDeclaredFields()) {
             try {
@@ -145,10 +150,10 @@ public class Manager {
         stb.append(".align 2\n");
         stb.append("\n.section .data\n");
         stb.append(".align 2\n");
-        for(GlobalValue globalValue: globals) {
-            stb.append("\n.global\t").append(globalValue.getName().substring(1)).append("\n");
-            stb.append(globalValue.getName().substring(1)).append(":\n");
-            stb.append(globalValue.getInitVal().armOut());
+        for(Operand.Global global: globalOpds) {
+            stb.append("\n.global\t").append(global).append("\n");
+            stb.append(global).append(":\n");
+            stb.append(global.getGlobalValue().getInitVal().armOut());
         }
         OutputHandler.addArmString(stb.toString());
         try {

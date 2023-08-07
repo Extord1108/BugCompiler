@@ -12,4 +12,11 @@ public class McBranch extends McInstr{
         this.cond = cond;
         this.target = target;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder stb = new StringBuilder();
+        stb.append("b").append(cond).append("\t" + target.getName());
+        return stb.toString();
+    }
 }

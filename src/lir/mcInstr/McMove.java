@@ -43,4 +43,23 @@ public class McMove extends McInstr{
             return getDstOp().isFloat() || getSrcOp().isFloat();
         }
     }
+
+    @Override
+    public String toString() {
+        StringBuilder stb = new StringBuilder();
+        //  对出现全局变量的情况特殊处理
+        if(useOperands.get(0) instanceof Operand.Global){
+            stb.append("movw\t").append(defOperands.get(0) + ",\t").append(":lower16:").append(useOperands.get(0)).append("\n");
+            stb.append("\tmovw\t").append(defOperands.get(0) + ",\t").append(":upper16:").append(useOperands.get(0));
+            return stb.toString();
+        }
+
+        if(isType("Float")) {
+            stb.append("vmov.F32\t").append(defOperands.get(0) + ",\t" + useOperands.get(0));
+        } else {
+            assert isType("Integer");
+            stb.append("mov\t" + defOperands.get(0) + ",\t" + useOperands.get(0));
+        }
+        return stb.toString();
+    }
 }

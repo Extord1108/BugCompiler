@@ -38,4 +38,9 @@ public class McCall extends McInstr{
             useOperands.add(Operand.FPhyReg.getFPhyReg(i));
         }
     }
+
+    @Override
+    public String toString() {
+        return "bl\t" + mcFunction.getName();
+    }
 }
