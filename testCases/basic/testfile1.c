@@ -1,145 +1,85 @@
-const int TOKEN_NUM = 0, TOKEN_OTHER = 1;
-int last_char = 32, num, other;
-int cur_token;
-
-int next_char() {
-  last_char = getch();
-  return last_char;
-}
-
-int is_space(int c) {
-  if (c == 32 || c == 10) {
-    return 1;
-  }
-  else {
-    return 0;
-  }
-}
-
-int is_num(int c) {
-  if (c >= 48 && c <= 57) {
-    return 1;
-  }
-  else {
-    return 0;
-  }
-}
-
-int next_token() {
-  while (is_space(last_char)) next_char();
-  if (is_num(last_char)) {
-    num = last_char - 48;
-    while (is_num(next_char())) {
-      num = num * 10 + last_char - 48;
-    }
-    cur_token = TOKEN_NUM;
-  }
-  else {
-    other = last_char;
-    next_char();
-    cur_token = TOKEN_OTHER;
-  }
-  return cur_token;
-}
-
-int panic() {
-  putch(112);
-  putch(97);
-  putch(110);
-  putch(105);
-  putch(99);
-  putch(33);
-  putch(10);
-  return -1;
-}
-
-int get_op_prec(int op) {
-  // +, -
-  if (op == 43 || op == 45) return 10;
-  // *, /, %
-  if (op == 42 || op == 47 || op == 37) return 20;
-  // other
-  return 0;
-}
-
-void stack_push(int s[], int v) {
-  s[0] = s[0] + 1;
-  s[s[0]] = v;
-}
-
-int stack_pop(int s[]) {
-  int last = s[s[0]];
-  s[0] = s[0] - 1;
-  return last;
-}
-
-int stack_peek(int s[]) {
-  return s[s[0]];
-}
-
-int stack_size(int s[]) {
-  return s[0];
-}
-
-int eval_op(int op, int lhs, int rhs) {
-  // +
-  if (op == 43) return lhs + rhs;
-  // -
-  if (op == 45) return lhs - rhs;
-  // *
-  if (op == 42) return lhs * rhs;
-  // /
-  if (op == 47) return lhs / rhs;
-  // %
-  if (op == 37) return lhs % rhs;
-  // other
-  return 0;
-}
-
-int eval() {
-  int oprs[256] = {}, ops[256] = {};
-  // get the first value
-  if (cur_token != TOKEN_NUM) return panic();
-  stack_push(oprs, num);
-  next_token();
-  // evaluate
-  while (cur_token == TOKEN_OTHER) {
-    // get operator
-    int op = other;
-    if (!get_op_prec(op)) break;
-    next_token();
-    // handle operator
-    while (stack_size(ops) && get_op_prec(stack_peek(ops)) >= get_op_prec(op)) {
-      // evaluate the current operation
-      int cur_op = stack_pop(ops);
-      int rhs = stack_pop(oprs), lhs = stack_pop(oprs);
-      stack_push(oprs, eval_op(cur_op, lhs, rhs));
-    }
-    stack_push(ops, op);
-    // get next expression
-    if (cur_token != TOKEN_NUM) return panic();
-    stack_push(oprs, num);
-    next_token();
-  }
-  // eat ';'
-  next_token();
-  // clear the operator stack
-  while (stack_size(ops)) {
-    int cur_op = stack_pop(ops);
-    int rhs = stack_pop(oprs), lhs = stack_pop(oprs);
-    stack_push(oprs, eval_op(cur_op, lhs, rhs));
-  }
-  return stack_peek(oprs);
-}
-
-int main() {
-  int count = getint();
-  getch();
-  next_token();
-  while (count) {
-    putint(eval());
-    putch(10);
-    count = count - 1;
-  }
-  return 0;
-}
+//sample:input n number, sort them and print them;
+   int n;
+   int main()
+   {
+      int a0;
+      int a1;
+      int a2;
+      int a3;
+      int a4;
+      int a5;
+      int a6;
+      int a7;
+      int a8;
+      int a9;
+      int a10;
+      int a11;
+      int a12;
+      int a13;
+      int a14;
+      int a15;
+      int a16;
+      int a17;
+      int a18;
+      int a19;
+      int a20;
+      int a21;
+      int a22;
+      int a23;
+      int a24;
+      int a25;
+      int a26;
+      int a27;
+      int a28;
+      int a29;
+      int b;
+      b = getint();
+      while(b == 5){
+          b = b + 1;
+      }
+      a0=0;
+      a1=a0+1;
+      a2=a1+1;
+      a3=a2+1;
+      a4=a3+1;
+      a5=a4+1;
+      a6=a5+1;
+      a7=a6+1;
+      a8=a7+1;
+      a9=a8+1;
+      a10=a9+1;
+      a11=a10+1;
+      a12=a11+1;
+      a13=a12+1;
+      a14=a13+1;
+      a15=a14+1;
+      a16=a15+1;
+      a17=a16+1;
+      a18=a17+1;
+      a19=a18+1;
+      a20=a19+1;
+      a21=a20+1;
+      a22=a21+1;
+      a23=a22+1;
+      a24=a23+1;
+      a25=a24+1;
+      a26=a25+1;
+      a27=a26+1;
+      a28=a27+1;
+      a29=a28+1;
+      int t;
+      putint(a0);putint(a1);putint(a2);putint(a3);
+      putint(a4);putint(a5);putint(a6);putint(a7);
+      putint(a8);putint(a9);putint(a10);putint(a11);
+      putint(a12);putint(a13);putint(a14);putint(a15);
+      putint(a16);putint(a17);putint(a18);putint(a19);
+      putint(a20);putint(a21);putint(a22);putint(a23);
+      putint(a24);putint(a25);putint(a26);putint(a27);
+      putint(a28);putint(a29);
+      int newline;
+      newline = 10;
+      putch(newline);
+      putint(b);
+      putch(newline);
+      return a25;
+   }

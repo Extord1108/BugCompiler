@@ -149,6 +149,7 @@ public class CodeGen {
                     nextBBList.push(thenBlock.getBasicBlock());
                     exchanged = true;
                 }
+//                System.out.println(instr);
                 Operand opd = value2Imm.get(cond);
                 if(opd != null) {
                     if(((Operand.Imm) opd).getIntNumber() == 1) {
@@ -159,7 +160,7 @@ public class CodeGen {
                     }
                     continue;
                 }
-//                System.out.println(instr);
+
                 Cond mcCond = value2cond.get(cond);
                 if(exchanged) {
                     McBlock tmp = thenBlock;
@@ -448,7 +449,6 @@ public class CodeGen {
         Operand dst = getOperand(instr);
         Operand dstVr = getOperand(instr);
         if(instr instanceof Icmp){
-//            System.out.println(instr);
             Icmp icmp = (Icmp) instr;
             OpTree.Operator op = icmp.getOp();
             Value left = icmp.getLhs();
@@ -471,7 +471,7 @@ public class CodeGen {
                 }else {
                     imm = new Operand.Imm(0);
                 }
-                if(icmp.getNext() instanceof Branch && icmp.getUsedSize() == 1
+                if(icmp.getNext() instanceof Branch
                         && icmp.getUser(0).equals(icmp.getNext())) {
                     value2Imm.put(instr, imm);
                 } else {
@@ -480,6 +480,8 @@ public class CodeGen {
 
             }
             else {
+//                System.out.println("---------------");
+//                System.out.println(instr);
                 Cond cond = icmpOp2cond.get(op);
                 if(lopd.isImm()) {
                     Operand temp = lopd;
@@ -493,8 +495,7 @@ public class CodeGen {
                     }
                 }
                 McCmp mcCmp = new McCmp(cond, lopd, ropd, curMcBlock);
-                if(icmp.getNext() instanceof Branch && icmp.getUsedSize() == 1
-                        && icmp.getUser(0).equals(icmp.getNext())) {
+                if(icmp.getNext() instanceof Branch && icmp.getUser(0).equals(icmp.getNext())) {
                     value2cond.put(instr, cond);
                 } else {
                     new McMove( cond, dstVr, new Operand.Imm(1),curMcBlock);
