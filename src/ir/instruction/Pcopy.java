@@ -79,6 +79,8 @@ public class Pcopy extends Instr{
         if(basicBlock.isTerminated()){
             Instr lastInstr = basicBlock.getInstrs().getLast();
             basicBlock.getInstrs().insertBefore(lastInstr, this);
+        }else{
+            basicBlock.addInstr(this);
         }
     }
 }

@@ -28,6 +28,14 @@ public class Branch extends Instr {
         return (BasicBlock)getUse(2);
     }
 
+    public void setThenBlock(BasicBlock basicBlock) {
+        replaceUse(getThenBlock(), basicBlock);
+    }
+
+    public void setElseBlock(BasicBlock basicBlock) {
+        replaceUse(getElseBlock(), basicBlock);
+    }
+
     @Override
     public String toString() {
         return "br i1 " + getCond().getName() + ", label %" + getThenBlock().getName() + ", label %" + getElseBlock().getName();
