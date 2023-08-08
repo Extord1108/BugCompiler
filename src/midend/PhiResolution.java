@@ -74,9 +74,22 @@ public class PhiResolution extends Pass {
         for (BasicBlock bb : function.getBasicBlocks()) {
             for (Instr instr: bb.getInstrs()) {
                 if (instr instanceof Pcopy) {
+                    Pcopy pcopy = (Pcopy) instr;
                     ArrayList<Instr> seq = new ArrayList<>();
-                    while(!checkFromEqualTo(instr)){
-                        Pcopy pcopy = (Pcopy) instr;
+                    //删除undef的pcopy
+                    ArrayList<Value> tempFrom = new ArrayList<>();
+                    ArrayList<Value> tempTo = new ArrayList<>();
+                    for(int i=0;i<pcopy.getSize();i++)
+                    {
+                        if(pcopy.getFrom(i).getType()==null) continue;
+                        else{
+                            tempFrom.add(pcopy.getFrom(i));
+                            tempTo.add(pcopy.getTo(i));
+                        }
+                    }
+                    pcopy.setFrom(tempFrom);
+                    pcopy.setTo(tempTo);
+                    while(!checkFromEqualTo(pcopy)){
                         boolean flag = false;
                         Value from = null;
                         Value to = null;

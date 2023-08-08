@@ -23,6 +23,14 @@ public class Pcopy extends Instr{
         return from.get(i);
     }
 
+    public void setFrom(ArrayList<Value> from) {
+        this.from = from;
+    }
+
+    public void setTo(ArrayList<Value> to) {
+        this.to = to;
+    }
+
     public Value getTo(int i){
         return to.get(i);
     }

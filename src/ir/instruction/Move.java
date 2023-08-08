@@ -25,11 +25,11 @@ public class Move extends Instr{
 
     @Override
     public String toString() {
-        //return "move " + this.type + " " + this.from.getName() + ", " + this.to.getName();
-        if(this.type instanceof Int32Type){
-            return this.to.getName() + " = " + "add " + this.type.toString() + " " + this.from.getName() + ", 0";
-        }else{
-            return this.to.getName() + " = " + "fadd " + this.type.toString() + " " + this.from.getName()+ ", 0x0";
-        }
+        return "move " + this.type + " " + this.from.getName() + ", " + this.to.getName();
+//        if(this.type instanceof Int32Type){
+//            return this.to.getName() + " = " + "add " + this.type.toString() + " " + this.from.getName() + ", 0";
+//        }else{
+//            return this.to.getName() + " = " + "fadd " + this.type.toString() + " " + this.from.getName()+ ", 0x0";
+//        }
     }
 }
