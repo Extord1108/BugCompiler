@@ -18,6 +18,9 @@ public class Function extends Value {
     private HashMap<BasicBlock,BasicBlock> domTree = new HashMap<>();
     private HashMap<BasicBlock,ArrayList<BasicBlock>> domFrontier = new HashMap<>();
 
+    //GVN/GCM相关
+    private boolean canGVN = false;
+
     public Function(String name, ArrayList<Param> params, Type type) {
         this.name = name;
         this.params = params;
@@ -110,6 +113,14 @@ public class Function extends Value {
 
     public void setDomFrontier(HashMap<BasicBlock, ArrayList<BasicBlock>> domFrontier) {
         this.domFrontier = domFrontier;
+    }
+
+    public void setCanGVN(boolean canGVN) {
+        this.canGVN = canGVN;
+    }
+
+    public boolean canGVN() {
+        return canGVN;
     }
 
     @Override

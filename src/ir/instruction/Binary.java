@@ -1,6 +1,7 @@
 package ir.instruction;
 
 import ir.BasicBlock;
+import ir.Variable;
 import ir.type.FloatType;
 import ir.type.Type;
 import ir.Value;
@@ -36,5 +37,13 @@ public class Binary extends Instr {
 
     public Value getRight() {
         return this.getUse(1);
+    }
+
+    public boolean isLeftConst() {
+        return this.getLeft() instanceof Variable.ConstInt || this.getLeft() instanceof Variable.ConstFloat;
+    }
+
+    public boolean isRightConst() {
+        return this.getRight() instanceof Variable.ConstInt || this.getRight() instanceof Variable.ConstFloat;
     }
 }

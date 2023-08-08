@@ -16,4 +16,8 @@ public class Fptosi extends Instr {
     public String toString() {
         return this.getName() + " = fptosi " + getUse(0).getType() + " " + getUse(0).getName() + " to " + this.getType();
     }
+
+    public Value getValue() {
+        return this.getUse(0);
+    }
 }

@@ -22,6 +22,7 @@ public class MidEndRunner {
         new Mem2Reg(functions, globals).run();
         if(opt){
                 new DeadCodeElimination(functions, globals).run();
+                new FunctionAnalysis(functions, globals).run();
         }
         //new PhiResolution(functions, globals).run();
         return;

@@ -25,7 +25,7 @@ public class DomainAnalysis extends Pass {
             new RemoveDeadBB(function).run();
             new DominatorTree(function).run();
             new DominanceFrontier(function).run();
-            //new LoopAnalysis(function).run();
+            new LoopAnalysis(function).run();
         }
     }
 
@@ -226,24 +226,16 @@ public class DomainAnalysis extends Pass {
         }
     }
 
-    ////构造循环
-    // private class LoopAnalysis {
-    //     private Function function;
-    //     private LoopAnalysis(Function function) {
-    //         this.function = function;
-    //     }
-    //     private void run() {
-    //         //定义循环
-    //         ArrayList<Loop> loops = new ArrayList<>();
-    //         //构造循环
-    //         for(BasicBlock bb : function.getBasicBlocks()) {
-    //             if(bb.getLoop() != null) {
-    //                 loops.add(bb.getLoop());
-    //             }
-    //         }
-    //         //将循环加入到function中
-    //         function.setLoops(loops);
-    //     }
-    // }
+    //构造循环树
+     private class LoopAnalysis {
+         private Function function;
+         private LoopAnalysis(Function function) {
+             this.function = function;
+         }
+        //循环分析，构造循环树
+         private void run() {
+
+         }
+     }
     
 }
