@@ -1,4 +1,9 @@
-@ascii_0 = dso_local global i32 48
+@TOKEN_NUM = dso_local global i32 0
+@TOKEN_OTHER = dso_local global i32 1
+@last_char = dso_local global i32 32
+@num = dso_local global i32 0
+@other = dso_local global i32 0
+@cur_token = dso_local global i32 0
 declare i32 @getch()
 declare i32 @parallel_start()
 declare i32 @getfarray(float* )
@@ -14,114 +19,319 @@ declare void @putfloat(float )
 declare void @putch(i32 )
 declare float @getfloat()
 declare void @parallel_end(i32 )
-define dso_local i32 @my_getint() 
-{
-b1:
-	br label %b2
-b2:
-	%r4 = icmp ne i32 1, 0
-	br i1 %r4, label %b3, label %b27
-b3:
-	%r6 = call i32 @getch()
-	%r7 = sub i32 %r6, 48
-	%r10 = icmp slt i32 %r7, 0
-	br i1 %r10, label %b5, label %b8
-b4:
-	move i32 %r100, %r103
-	move i32 %r100, %r101
-	br label %b9
-b5:
-	move i32 %r7, %r99
-	br label %b2
-b6:
-	move i32 %r7, %r100
-	br label %b4
-b8:
-	%r13 = icmp sgt i32 %r7, 9
-	br i1 %r13, label %b5, label %b6
-b9:
-	%r23 = icmp ne i32 1, 0
-	br i1 %r23, label %b10, label %b28
-b10:
-	%r25 = call i32 @getch()
-	%r26 = sub i32 %r25, 48
-	%r29 = icmp sge i32 %r26, 0
-	br i1 %r29, label %b15, label %b13
-b11:
-	ret i32 %r103
-b12:
-	%r35 = mul i32 %r103, 10
-	%r37 = add i32 %r35, %r26
-	br label %b14
-b13:
-	move i32 %r26, %r102
-	br label %b11
-b14:
-	move i32 %r37, %r103
-	move i32 %r26, %r101
-	br label %b9
-b15:
-	%r32 = icmp sle i32 %r26, 9
-	br i1 %r32, label %b12, label %b13
-b27:
-	move i32 %r99, %r100
-	br label %b4
-b28:
-	move i32 %r101, %r102
-	br label %b11
-}
 define dso_local i32 @main() 
 {
-b23:
-	%r81 = call i32 @my_getint()
-	move i32 %r81, %r104
-	br label %b24
-b24:
-	%r86 = icmp sgt i32 %r104, 0
-	br i1 %r86, label %b25, label %b26
-b25:
-	%r88 = call i32 @my_getint()
-	call void @my_putint(i32 %r88)
+b63:
+	%r310 = call i32 @getint()
+	%r313 = call i32 @getch()
+	%r314 = call i32 @next_token()
+	move i32 %r310, %r327
+	br label %b64
+b64:
+	%r317 = icmp ne i32 %r327, 0
+	br i1 %r317, label %b65, label %b66
+b65:
+	%r319 = call i32 @eval()
+	call void @putint(i32 %r319)
 	call void @putch(i32 10)
-	%r95 = sub i32 %r104, 1
-	move i32 %r95, %r104
-	br label %b24
-b26:
+	%r323 = sub i32 %r327, 1
+	move i32 %r323, %r327
+	br label %b64
+b66:
 	ret i32 0
 }
-define dso_local void @my_putint(i32 %f45) 
+define dso_local i32 @next_token() 
 {
+b12:
+	br label %b13
+b13:
+	%r33 = load i32, i32* @last_char
+	%r34 = call i32 @is_space(i32 %r33)
+	%r35 = icmp ne i32 %r34, 0
+	br i1 %r35, label %b14, label %b15
+b14:
+	%r37 = call i32 @next_char()
+	br label %b13
+b15:
+	%r39 = load i32, i32* @last_char
+	%r40 = call i32 @is_num(i32 %r39)
+	%r41 = icmp ne i32 %r40, 0
+	br i1 %r41, label %b16, label %b17
 b16:
-	%r48 = alloca [16 x i32]
-	move i32 %f45, %r107
-	move i32 0, %r105
-	br label %b17
+	%r43 = load i32, i32* @last_char
+	%r44 = sub i32 %r43, 48
+	store i32 %r44, i32* @num
+	br label %b19
 b17:
-	%r53 = icmp sgt i32 %r107, 0
-	br i1 %r53, label %b18, label %b19
+	%r60 = load i32, i32* @last_char
+	store i32 %r60, i32* @other
+	%r62 = call i32 @next_char()
+	store i32 1, i32* @cur_token
+	br label %b18
 b18:
-	%r56 = getelementptr inbounds [16 x i32], [16 x i32]* %r48, i32 0, i32 %r105
-	%r58 = srem i32 %r107, 10
-	%r59 = add i32 %r58, 48
-	store i32 %r59, i32* %r56
-	%r62 = sdiv i32 %r107, 10
-	%r65 = add i32 %r105, 1
-	move i32 %r62, %r107
-	move i32 %r65, %r105
-	br label %b17
+	%r65 = load i32, i32* @cur_token
+	ret i32 %r65
 b19:
-	move i32 %r105, %r106
-	br label %b20
+	%r47 = call i32 @next_char()
+	%r48 = call i32 @is_num(i32 %r47)
+	%r49 = icmp ne i32 %r48, 0
+	br i1 %r49, label %b20, label %b21
 b20:
-	%r70 = icmp sgt i32 %r106, 0
-	br i1 %r70, label %b21, label %b22
+	%r51 = load i32, i32* @num
+	%r52 = mul i32 %r51, 10
+	%r53 = load i32, i32* @last_char
+	%r54 = add i32 %r52, %r53
+	%r55 = sub i32 %r54, 48
+	store i32 %r55, i32* @num
+	br label %b19
 b21:
-	%r73 = sub i32 %r106, 1
-	%r76 = getelementptr inbounds [16 x i32], [16 x i32]* %r48, i32 0, i32 %r73
-	%r77 = load i32, i32* %r76
-	call void @putch(i32 %r77)
-	move i32 %r73, %r106
-	br label %b20
-b22:
+	store i32 0, i32* @cur_token
+	br label %b18
+}
+define dso_local void @stack_push(i32* %f99, i32 %f100) 
+{
+b31:
+	%r106 = getelementptr inbounds i32, i32* %f99, i32 0
+	%r108 = getelementptr inbounds i32, i32* %f99, i32 0
+	%r109 = load i32, i32* %r108
+	%r110 = add i32 %r109, 1
+	store i32 %r110, i32* %r106
+	%r113 = getelementptr inbounds i32, i32* %f99, i32 0
+	%r114 = load i32, i32* %r113
+	%r116 = getelementptr inbounds i32, i32* %f99, i32 %r114
+	store i32 %f100, i32* %r116
 	ret void
+}
+define dso_local i32 @stack_peek(i32* %f140) 
+{
+b33:
+	%r144 = getelementptr inbounds i32, i32* %f140, i32 0
+	%r145 = load i32, i32* %r144
+	%r147 = getelementptr inbounds i32, i32* %f140, i32 %r145
+	%r148 = load i32, i32* %r147
+	ret i32 %r148
+}
+define dso_local i32 @stack_pop(i32* %f120) 
+{
+b32:
+	%r124 = getelementptr inbounds i32, i32* %f120, i32 0
+	%r125 = load i32, i32* %r124
+	%r127 = getelementptr inbounds i32, i32* %f120, i32 %r125
+	%r128 = load i32, i32* %r127
+	%r132 = getelementptr inbounds i32, i32* %f120, i32 0
+	%r134 = getelementptr inbounds i32, i32* %f120, i32 0
+	%r135 = load i32, i32* %r134
+	%r136 = sub i32 %r135, 1
+	store i32 %r136, i32* %r132
+	ret i32 %r128
+}
+define dso_local i32 @is_space(i32 %f4) 
+{
+b2:
+	%r8 = icmp eq i32 %f4, 32
+	br i1 %r8, label %b3, label %b6
+b3:
+	ret i32 1
+b4:
+	ret i32 0
+b6:
+	%r11 = icmp eq i32 %f4, 10
+	br i1 %r11, label %b3, label %b4
+}
+define dso_local i32 @eval_op(i32 %f157, i32 %f158, i32 %f159) 
+{
+b35:
+	%r167 = icmp eq i32 %f157, 43
+	br i1 %r167, label %b36, label %b37
+b36:
+	%r171 = add i32 %f158, %f159
+	ret i32 %r171
+b37:
+	%r175 = icmp eq i32 %f157, 45
+	br i1 %r175, label %b38, label %b39
+b38:
+	%r179 = sub i32 %f158, %f159
+	ret i32 %r179
+b39:
+	%r183 = icmp eq i32 %f157, 42
+	br i1 %r183, label %b40, label %b41
+b40:
+	%r187 = mul i32 %f158, %f159
+	ret i32 %r187
+b41:
+	%r191 = icmp eq i32 %f157, 47
+	br i1 %r191, label %b42, label %b43
+b42:
+	%r195 = sdiv i32 %f158, %f159
+	ret i32 %r195
+b43:
+	%r199 = icmp eq i32 %f157, 37
+	br i1 %r199, label %b44, label %b45
+b44:
+	%r203 = srem i32 %f158, %f159
+	ret i32 %r203
+b45:
+	ret i32 0
+}
+define dso_local i32 @is_num(i32 %f18) 
+{
+b7:
+	%r22 = icmp sge i32 %f18, 48
+	br i1 %r22, label %b11, label %b9
+b8:
+	ret i32 1
+b9:
+	ret i32 0
+b11:
+	%r25 = icmp sle i32 %f18, 57
+	br i1 %r25, label %b8, label %b9
+}
+define dso_local i32 @get_op_prec(i32 %f76) 
+{
+b23:
+	%r80 = icmp eq i32 %f76, 43
+	br i1 %r80, label %b24, label %b26
+b24:
+	ret i32 10
+b25:
+	%r88 = icmp eq i32 %f76, 42
+	br i1 %r88, label %b27, label %b29
+b26:
+	%r83 = icmp eq i32 %f76, 45
+	br i1 %r83, label %b24, label %b25
+b27:
+	ret i32 20
+b28:
+	ret i32 0
+b29:
+	%r91 = icmp eq i32 %f76, 47
+	br i1 %r91, label %b27, label %b30
+b30:
+	%r94 = icmp eq i32 %f76, 37
+	br i1 %r94, label %b27, label %b28
+}
+define dso_local i32 @next_char() 
+{
+b1:
+	%r0 = call i32 @getch()
+	store i32 %r0, i32* @last_char
+	%r2 = load i32, i32* @last_char
+	ret i32 %r2
+}
+define dso_local i32 @panic() 
+{
+b22:
+	call void @putch(i32 112)
+	call void @putch(i32 97)
+	call void @putch(i32 110)
+	call void @putch(i32 105)
+	call void @putch(i32 99)
+	call void @putch(i32 33)
+	call void @putch(i32 10)
+	%r74 = sub i32 0, 1
+	ret i32 %r74
+}
+define dso_local i32 @eval() 
+{
+b46:
+	%r210 = alloca [256 x i32]
+	%r207 = alloca [256 x i32]
+	%r208 = getelementptr inbounds [256 x i32], [256 x i32]* %r207, i32 0, i32 0
+	call void @memset(i32* %r208, i32 0, i32 1024)
+	%r211 = getelementptr inbounds [256 x i32], [256 x i32]* %r210, i32 0, i32 0
+	call void @memset(i32* %r211, i32 0, i32 1024)
+	%r213 = load i32, i32* @cur_token
+	%r214 = icmp ne i32 %r213, 0
+	br i1 %r214, label %b47, label %b48
+b47:
+	%r216 = call i32 @panic()
+	ret i32 %r216
+b48:
+	%r219 = getelementptr inbounds [256 x i32], [256 x i32]* %r207, i32 0, i32 0
+	%r220 = load i32, i32* @num
+	call void @stack_push(i32* %r219, i32 %r220)
+	%r222 = call i32 @next_token()
+	br label %b49
+b49:
+	%r224 = load i32, i32* @cur_token
+	%r225 = icmp eq i32 %r224, 1
+	br i1 %r225, label %b50, label %b51
+b50:
+	%r227 = load i32, i32* @other
+	%r231 = call i32 @get_op_prec(i32 %r227)
+	%r232 = icmp eq i32 %r231, 0
+	br i1 %r232, label %b52, label %b53
+b51:
+	%r282 = call i32 @next_token()
+	br label %b60
+b52:
+	br label %b51
+b53:
+	%r236 = call i32 @next_token()
+	br label %b54
+b54:
+	%r238 = getelementptr inbounds [256 x i32], [256 x i32]* %r210, i32 0, i32 0
+	%r239 = call i32 @stack_size(i32* %r238)
+	%r240 = icmp ne i32 %r239, 0
+	br i1 %r240, label %b57, label %b56
+b55:
+	%r249 = getelementptr inbounds [256 x i32], [256 x i32]* %r210, i32 0, i32 0
+	%r250 = call i32 @stack_pop(i32* %r249)
+	%r253 = getelementptr inbounds [256 x i32], [256 x i32]* %r207, i32 0, i32 0
+	%r254 = call i32 @stack_pop(i32* %r253)
+	%r257 = getelementptr inbounds [256 x i32], [256 x i32]* %r207, i32 0, i32 0
+	%r258 = call i32 @stack_pop(i32* %r257)
+	%r261 = getelementptr inbounds [256 x i32], [256 x i32]* %r207, i32 0, i32 0
+	%r265 = call i32 @eval_op(i32 %r250, i32 %r258, i32 %r254)
+	call void @stack_push(i32* %r261, i32 %r265)
+	br label %b54
+b56:
+	%r268 = getelementptr inbounds [256 x i32], [256 x i32]* %r210, i32 0, i32 0
+	call void @stack_push(i32* %r268, i32 %r227)
+	%r271 = load i32, i32* @cur_token
+	%r272 = icmp ne i32 %r271, 0
+	br i1 %r272, label %b58, label %b59
+b57:
+	%r242 = getelementptr inbounds [256 x i32], [256 x i32]* %r210, i32 0, i32 0
+	%r243 = call i32 @stack_peek(i32* %r242)
+	%r244 = call i32 @get_op_prec(i32 %r243)
+	%r246 = call i32 @get_op_prec(i32 %r227)
+	%r247 = icmp sge i32 %r244, %r246
+	br i1 %r247, label %b55, label %b56
+b58:
+	%r274 = call i32 @panic()
+	ret i32 %r274
+b59:
+	%r277 = getelementptr inbounds [256 x i32], [256 x i32]* %r207, i32 0, i32 0
+	%r278 = load i32, i32* @num
+	call void @stack_push(i32* %r277, i32 %r278)
+	%r280 = call i32 @next_token()
+	br label %b49
+b60:
+	%r284 = getelementptr inbounds [256 x i32], [256 x i32]* %r210, i32 0, i32 0
+	%r285 = call i32 @stack_size(i32* %r284)
+	%r286 = icmp ne i32 %r285, 0
+	br i1 %r286, label %b61, label %b62
+b61:
+	%r288 = getelementptr inbounds [256 x i32], [256 x i32]* %r210, i32 0, i32 0
+	%r289 = call i32 @stack_pop(i32* %r288)
+	%r292 = getelementptr inbounds [256 x i32], [256 x i32]* %r207, i32 0, i32 0
+	%r293 = call i32 @stack_pop(i32* %r292)
+	%r296 = getelementptr inbounds [256 x i32], [256 x i32]* %r207, i32 0, i32 0
+	%r297 = call i32 @stack_pop(i32* %r296)
+	%r300 = getelementptr inbounds [256 x i32], [256 x i32]* %r207, i32 0, i32 0
+	%r304 = call i32 @eval_op(i32 %r289, i32 %r297, i32 %r293)
+	call void @stack_push(i32* %r300, i32 %r304)
+	br label %b60
+b62:
+	%r307 = getelementptr inbounds [256 x i32], [256 x i32]* %r207, i32 0, i32 0
+	%r308 = call i32 @stack_peek(i32* %r307)
+	ret i32 %r308
+}
+define dso_local i32 @stack_size(i32* %f150) 
+{
+b34:
+	%r154 = getelementptr inbounds i32, i32* %f150, i32 0
+	%r155 = load i32, i32* %r154
+	ret i32 %r155
 }
