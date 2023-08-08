@@ -239,8 +239,14 @@ public class CodeGen {
                     } else {
                         Operand tmp = getOperand(idx);
                         Operand mulAns = new Operand.VirtualReg(false, curMcFunc);
+                        Operand mulOff = getOperand(new Variable.ConstInt(offset));
+                        if(mulOff instanceof Operand.Imm) {
+                            Operand temp = new Operand.VirtualReg(mulOff.isFloat(), curMcFunc);
+                            new McMove(temp, mulOff, curMcBlock);
+                            mulOff = temp;
+                        }
                         new McBinary(McBinary.BinaryType.Mul, mulAns, tmp,
-                                getOperand(new Variable.ConstInt(offset)), curMcBlock);
+                                mulOff, curMcBlock);
                         if(tmpAddr == null) {
                             tmpAddr = new Operand.VirtualReg(false, curMcFunc);
                             new McBinary(McBinary.BinaryType.Add, tmpAddr, addrOpd, tmp, curMcBlock);
