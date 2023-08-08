@@ -25,7 +25,7 @@ public class MCShift extends McInstr{
     Operand imm = null;
 
     public MCShift(ShiftType shiftType, Operand imm) {
-        super(null);
+        super(null, false);
         this.type = shiftType;
         this.imm = imm;
     }
