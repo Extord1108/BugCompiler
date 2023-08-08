@@ -89,7 +89,7 @@ public class RegAllocate {
         }
     }
     private void init(McFunction mcFunction){
-        preColored = new HashSet<>();
+        preColored = new LinkedHashSet<>();
         for(McBlock mcBlock: mcFunction.getMcBlocks()) {
             int succSize = mcBlock.getSuccMcBlocks().size();
             int predSize = mcBlock.getPredMcBlocks().size();
@@ -120,17 +120,17 @@ public class RegAllocate {
         count = 0;
     }
     private void turnInit(McFunction mcFunction) {
-        workListMoves = new HashSet<>();
-        activeMoves = new HashSet<>();
-        spillWorkList = new HashSet<>();
-        freezeWorkList = new HashSet<>();
-        simplifyWorkList = new HashSet<>();
+        workListMoves = new LinkedHashSet<>();
+        activeMoves = new LinkedHashSet<>();
+        spillWorkList = new LinkedHashSet<>();
+        freezeWorkList = new LinkedHashSet<>();
+        simplifyWorkList = new LinkedHashSet<>();
         selectStack = new Stack<>();
-        coalescedNodes =  new HashSet<>();
-        coalescedMoves = new HashSet<>();
-        constrainedMoves = new HashSet<>();
-        frozenMoves = new HashSet<>();
-        spilledNodes = new HashSet<>();
+        coalescedNodes =  new LinkedHashSet<>();
+        coalescedMoves = new LinkedHashSet<>();
+        constrainedMoves = new LinkedHashSet<>();
+        frozenMoves = new LinkedHashSet<>();
+        spilledNodes = new LinkedHashSet<>();
     }
 
     private void allocate(McFunction mcFunction) {
@@ -139,33 +139,33 @@ public class RegAllocate {
             // 生存周期分析
             livenessAnalysis();
             turnInit(curMcFunc);
-            adjSet = new HashSet<>();
+            adjSet = new LinkedHashSet<>();
             if(type == "Integer") {
                 for(int i = 0; i < K; i++) {
                     Operand.PhyReg.getPhyReg(i).degree = MAX_DEGREE;
                     Operand.PhyReg.getPhyReg(i).setAlias(null);
-                    Operand.PhyReg.getPhyReg(i).adjOpdSet = new HashSet<>();
-                    Operand.PhyReg.getPhyReg(i).moveList = new HashSet<>();
+                    Operand.PhyReg.getPhyReg(i).adjOpdSet = new LinkedHashSet<>();
+                    Operand.PhyReg.getPhyReg(i).moveList = new LinkedHashSet<>();
                 }
                 for(Operand operand: curMcFunc.vrList) {
                     operand.degree = 0;
                     operand.setAlias(null);
-                    operand.adjOpdSet = new HashSet<>();
-                    operand.moveList = new HashSet<>();
+                    operand.adjOpdSet = new LinkedHashSet<>();
+                    operand.moveList = new LinkedHashSet<>();
                 }
             } else {
                 assert type == "Float";
                 for(int i = 0; i < K; i++) {
                     Operand.FPhyReg.getFPhyReg(i).degree = MAX_DEGREE;
                     Operand.FPhyReg.getFPhyReg(i).setAlias(null);
-                    Operand.FPhyReg.getFPhyReg(i).adjOpdSet = new HashSet<>();
-                    Operand.FPhyReg.getFPhyReg(i).moveList = new HashSet<>();
+                    Operand.FPhyReg.getFPhyReg(i).adjOpdSet = new LinkedHashSet<>();
+                    Operand.FPhyReg.getFPhyReg(i).moveList = new LinkedHashSet<>();
                 }
                 for(Operand operand: curMcFunc.svrList) {
                     operand.degree = 0;
                     operand.setAlias(null);
-                    operand.adjOpdSet = new HashSet<>();
-                    operand.moveList = new HashSet<>();
+                    operand.adjOpdSet = new LinkedHashSet<>();
+                    operand.moveList = new LinkedHashSet<>();
                 }
             }
 
@@ -184,7 +184,7 @@ public class RegAllocate {
 
 
     private void dealSpillNode() {
-        HashSet<Operand> newTemps = new HashSet<>();
+        HashSet<Operand> newTemps = new LinkedHashSet<>();
         for(McBlock mcBlock: curMcFunc.getMcBlocks()) {
             ArrayList<McInstr> newInstrs = new ArrayList<>();
             for(McInstr mcInstr: mcBlock.getMcInstrs()) {
@@ -436,7 +436,7 @@ public class RegAllocate {
     }
 
     private Set<Operand> getAdjacent(Operand opd) {
-        Set<Operand> adjSet = new HashSet<>(opd.adjOpdSet);
+        Set<Operand> adjSet = new LinkedHashSet<>(opd.adjOpdSet);
         adjSet.removeAll(selectStack);
         adjSet.removeAll(coalescedNodes);
         return adjSet;
@@ -708,7 +708,7 @@ public class RegAllocate {
         for(MyNode iter = curMcFunc.getMcLastBlock(); iter !=
                 curMcFunc.getMcBlocks().head; iter = iter.getPrev()){
             McBlock mcBlock = (McBlock) iter;
-            HashSet<Operand> live = new HashSet<>(mcBlock.liveOutSet);
+            HashSet<Operand> live = new LinkedHashSet<>(mcBlock.liveOutSet);
 //            System.out.println(mcBlock.getName());
             for(MyNode myNode = mcBlock.getMcLastInstr(); myNode !=
                     mcBlock.getMcInstrs().head; myNode = myNode.getPrev()) {
@@ -760,8 +760,8 @@ public class RegAllocate {
     private void livenessAnalysis() {
 
         for(McBlock mcBlock: curMcFunc.getMcBlocks()){
-            mcBlock.liveUseSet = new HashSet<>();
-            mcBlock.liveDefSet = new HashSet<>();
+            mcBlock.liveUseSet = new LinkedHashSet<>();
+            mcBlock.liveDefSet = new LinkedHashSet<>();
             for(McInstr mcInstr : mcBlock.getMcInstrs()) {
                 // 在这个block中先被use
                 for(Operand use: mcInstr.useOperands) {
@@ -780,8 +780,8 @@ public class RegAllocate {
                     }
                 }
             }
-            mcBlock.liveInSet = new HashSet<>(mcBlock.liveUseSet);
-            mcBlock.liveOutSet = new HashSet<>();
+            mcBlock.liveInSet = new LinkedHashSet<>(mcBlock.liveUseSet);
+            mcBlock.liveOutSet = new LinkedHashSet<>();
         }
         liveInOutAnalysis();
     }
@@ -793,7 +793,7 @@ public class RegAllocate {
             for(MyNode iter = curMcFunc.getMcLastBlock(); iter !=
                     curMcFunc.getMcBlocks().head; iter = iter.getPrev()){
                 McBlock mcBlock = (McBlock) iter;
-                HashSet<Operand> newLiveOut = new HashSet<>();
+                HashSet<Operand> newLiveOut = new LinkedHashSet<>();
                 for(McBlock succMcBlock: mcBlock.getSuccMcBlocks()) {
                     for(Operand liveIn : succMcBlock.liveInSet) {
                         if(!mcBlock.liveOutSet.contains(liveIn)) {

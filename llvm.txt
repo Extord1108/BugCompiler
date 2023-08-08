@@ -1,18 +1,3 @@
-@RADIUS = dso_local global float 0x4016000000000000
-@PI = dso_local global float 0x400921fb60000000
-@EPS = dso_local global float 0x3eb0c6f7a0000000
-@PI_HEX = dso_local global float 0x400921fb60000000
-@HEX2 = dso_local global float 0x3fb4000000000000
-@FACT = dso_local global float 0xc0e01d0000000000
-@EVAL1 = dso_local global float 0x4057c21fc0000000
-@EVAL2 = dso_local global float 0x4041475ce0000000
-@EVAL3 = dso_local global float 0x4041475ce0000000
-@CONV1 = dso_local global float 0x406d200000000000
-@CONV2 = dso_local global float 0x40affe0000000000
-@MAX = dso_local global i32 1000000000
-@TWO = dso_local global i32 2
-@THREE = dso_local global i32 3
-@FIVE = dso_local global i32 5
 declare i32 @getch()
 declare i32 @parallel_start()
 declare i32 @getfarray(float* )
@@ -28,184 +13,72 @@ declare void @putfloat(float )
 declare void @putch(i32 )
 declare float @getfloat()
 declare void @parallel_end(i32 )
-define dso_local i32 @float_eq(float %f31, float %f32) 
-{
-b5:
-	%r39 = fsub float %f31, %f32
-	%r40 = call float @float_abs(float %r39)
-	%r41 = fcmp olt float %r40, 0x3eb0c6f7a0000000
-	br i1 %r41, label %b6, label %b7
-b6:
-	%r43 = sitofp i32 1 to float
-	%r44 = fmul float %r43, 0x4000000000000000
-	%r45 = sitofp i32 2 to float
-	%r46 = fdiv float %r44, %r45
-	%r47 = fptosi float %r46 to i32
-	ret i32 %r47
-b7:
-	ret i32 0
-}
-define dso_local float @float_abs(float %f0) 
-{
-b1:
-	%r4 = sitofp i32 0 to float
-	%r5 = fcmp olt float %f0, %r4
-	br i1 %r5, label %b2, label %b3
-b2:
-	%r8 = fneg float %f0
-	ret float %r8
-b3:
-	ret float %f0
-}
 define dso_local i32 @main() 
 {
-b19:
-	%r123 = alloca [10 x float]
-	%r86 = call i32 @float_eq(float 0x3fb4000000000000, float 0xc0e01d0000000000)
-	call void @assert_not(i32 %r86)
-	%r88 = call i32 @float_eq(float 0x4057c21fc0000000, float 0x4041475ce0000000)
-	call void @assert_not(i32 %r88)
-	%r90 = call i32 @float_eq(float 0x4041475ce0000000, float 0x4041475ce0000000)
-	call void @assert(i32 %r90)
-	%r92 = fptosi float 0x4016000000000000 to i32
-	%r93 = call float @circle_area(i32 %r92)
-	%r94 = call float @circle_area(i32 5)
-	%r95 = call i32 @float_eq(float %r93, float %r94)
-	call void @assert(i32 %r95)
-	%r97 = call i32 @float_eq(float 0x406d200000000000, float 0x40affe0000000000)
-	call void @assert_not(i32 %r97)
-	%r99 = fcmp one float 0x3ff8000000000000, 0x0
-	br i1 %r99, label %b20, label %b21
-b20:
-	call void @ok()
-	br label %b21
-b21:
-	%r103 = fcmp one float 0x400a666660000000, 0x0
-	br i1 %r103, label %b22, label %b23
-b22:
-	call void @ok()
-	br label %b23
-b23:
-	%r107 = fcmp one float 0x0, 0x0
-	br i1 %r107, label %b26, label %b25
-b24:
-	call void @error()
-	br label %b25
-b25:
-	%r113 = icmp ne i32 0, 0
-	br i1 %r113, label %b27, label %b29
-b26:
-	%r109 = icmp ne i32 3, 0
-	br i1 %r109, label %b24, label %b25
-b27:
-	call void @ok()
-	br label %b28
-b28:
-	%r124 = getelementptr inbounds [10 x float], [10 x float]* %r123, i32 0, i32 0
-	%r125 = bitcast float* %r124 to i32*
-	call void @memset(i32* %r125, i32 0, i32 40)
-	store float 0x3ff0000000000000, float* %r124
-	%r128 = getelementptr inbounds float, float* %r124, i32 1
-	%r129 = sitofp i32 2 to float
-	store float %r129, float* %r128
-	%r131 = getelementptr inbounds [10 x float], [10 x float]* %r123, i32 0, i32 0
-	%r132 = call i32 @getfarray(float* %r131)
-	move i32 1, %r182
-	move i32 0, %r181
-	br label %b30
-b29:
-	%r115 = fcmp one float 0x3fd3333340000000, 0x0
-	br i1 %r115, label %b27, label %b28
-b30:
-	%r137 = icmp slt i32 %r182, 1000000000
-	br i1 %r137, label %b31, label %b32
-b31:
-	%r139 = call float @getfloat()
-	%r143 = fmul float 0x400921fb60000000, %r139
-	%r145 = fmul float %r143, %r139
-	%r149 = fptosi float %r139 to i32
-	%r150 = call float @circle_area(i32 %r149)
-	%r154 = getelementptr inbounds [10 x float], [10 x float]* %r123, i32 0, i32 %r181
-	%r156 = getelementptr inbounds [10 x float], [10 x float]* %r123, i32 0, i32 %r181
-	%r157 = load float, float* %r156
-	%r159 = fadd float %r157, %r139
-	store float %r159, float* %r154
-	call void @putfloat(float %r145)
-	call void @putch(i32 32)
-	%r165 = fptosi float %r150 to i32
-	call void @putint(i32 %r165)
-	call void @putch(i32 10)
-	%r169 = sitofp i32 %r182 to float
-	%r170 = fmul float %r169, 0x4024000000000000
-	%r171 = fptosi float %r170 to i32
-	%r174 = add i32 %r181, 1
-	move i32 %r171, %r182
-	move i32 %r174, %r181
-	br label %b30
-b32:
-	%r178 = getelementptr inbounds [10 x float], [10 x float]* %r123, i32 0, i32 0
-	call void @putfarray(i32 %r132, float* %r178)
-	ret i32 0
-}
-define dso_local void @error() 
-{
-b9:
-	call void @putch(i32 101)
-	call void @putch(i32 114)
-	call void @putch(i32 114)
-	call void @putch(i32 111)
-	call void @putch(i32 114)
-	call void @putch(i32 10)
-	ret void
-}
-define dso_local void @assert(i32 %f64) 
-{
-b11:
-	%r68 = icmp eq i32 %f64, 0
-	br i1 %r68, label %b12, label %b13
-b12:
-	call void @error()
-	br label %b14
-b13:
-	call void @ok()
-	br label %b14
 b14:
-	ret void
+	%r57 = call i32 @FourWhile()
+	ret i32 %r57
 }
-define dso_local void @ok() 
+define dso_local i32 @FourWhile() 
 {
-b10:
-	call void @putch(i32 111)
-	call void @putch(i32 107)
-	call void @putch(i32 10)
-	ret void
-}
-define dso_local void @assert_not(i32 %f75) 
-{
-b15:
-	%r79 = icmp ne i32 %f75, 0
-	br i1 %r79, label %b16, label %b17
-b16:
-	call void @error()
-	br label %b18
-b17:
-	call void @ok()
-	br label %b18
-b18:
-	ret void
-}
-define dso_local float @circle_area(i32 %f13) 
-{
+b1:
+	move i32 5, %r68
+	move i32 6, %r67
+	move i32 7, %r65
+	move i32 10, %r62
+	br label %b2
+b2:
+	%r10 = icmp slt i32 %r68, 20
+	br i1 %r10, label %b3, label %b4
+b3:
+	%r13 = add i32 %r68, 3
+	move i32 %r67, %r66
+	move i32 %r65, %r63
+	move i32 %r62, %r61
+	br label %b5
 b4:
-	%r17 = sitofp i32 %f13 to float
-	%r18 = fmul float 0x400921fb60000000, %r17
-	%r20 = sitofp i32 %f13 to float
-	%r21 = fmul float %r18, %r20
-	%r24 = mul i32 %f13, %f13
-	%r25 = sitofp i32 %r24 to float
-	%r26 = fmul float %r25, 0x400921fb60000000
-	%r27 = fadd float %r21, %r26
-	%r28 = sitofp i32 2 to float
-	%r29 = fdiv float %r27, %r28
-	ret float %r29
+	%r52 = add i32 %r67, %r62
+	%r53 = add i32 %r68, %r52
+	%r55 = add i32 %r53, %r65
+	ret i32 %r55
+b5:
+	%r17 = icmp slt i32 %r66, 10
+	br i1 %r17, label %b6, label %b7
+b6:
+	%r20 = add i32 %r66, 1
+	move i32 %r63, %r64
+	move i32 %r61, %r60
+	br label %b8
+b7:
+	%r46 = sub i32 %r66, 2
+	move i32 %r13, %r68
+	move i32 %r46, %r67
+	move i32 %r63, %r65
+	move i32 %r61, %r62
+	br label %b2
+b8:
+	%r24 = icmp eq i32 %r64, 7
+	br i1 %r24, label %b9, label %b10
+b9:
+	%r27 = sub i32 %r64, 1
+	move i32 %r60, %r59
+	br label %b11
+b10:
+	%r42 = add i32 %r64, 1
+	move i32 %r20, %r66
+	move i32 %r42, %r63
+	move i32 %r60, %r61
+	br label %b5
+b11:
+	%r31 = icmp slt i32 %r59, 20
+	br i1 %r31, label %b12, label %b13
+b12:
+	%r34 = add i32 %r59, 3
+	move i32 %r34, %r59
+	br label %b11
+b13:
+	%r38 = sub i32 %r59, 1
+	move i32 %r27, %r64
+	move i32 %r38, %r60
+	br label %b8
 }
