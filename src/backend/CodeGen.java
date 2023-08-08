@@ -197,7 +197,7 @@ public class CodeGen {
                 assert type instanceof ArrayType;
                 Operand addr = getOperand(alloc);
                 Operand offset = getOperand(new Variable.ConstInt(curMcFunc.getStackSize()));
-                curMcFunc.addStackSize(((ArrayType) type).getFattenSize());
+                curMcFunc.addStackSize(((ArrayType) type).getFattenSize() * 4);
                 new McBinary(McBinary.BinaryType.Add, addr,
                         Operand.PhyReg.getPhyReg("sp"), offset, curMcBlock);
             }
@@ -597,7 +597,7 @@ public class CodeGen {
                         Operand dst1 = new Operand.VirtualReg(left instanceof Variable.ConstFloat, curMcFunc);
                         new McBinary(McBinary.BinaryType.Div, dst1, lopd, ropd, curMcBlock);
                         new McBinary(McBinary.BinaryType.Mul, dst1, dst1, ropd, curMcBlock);
-                        new McBinary(McBinary.BinaryType.Sub, dst1, lopd, dst1, curMcBlock);
+                        new McBinary(McBinary.BinaryType.Sub, dstVr, lopd, dst1, curMcBlock);
                     }
                 }
             }
