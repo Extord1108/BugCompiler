@@ -98,7 +98,7 @@ public class RegAllocate {
             for(McInstr mcInstr: mcBlock.getMcInstrs()) {
 
                 for(Operand use: mcInstr.useOperands) {
-                    System.out.println(mcInstr);
+//                    System.out.println(mcInstr);
 //                    System.out.println(mcInstr.useOperands.size());
                     if(use.needColor(type)) {
                         use.addWeight(weight);

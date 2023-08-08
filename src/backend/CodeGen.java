@@ -160,6 +160,7 @@ public class CodeGen {
                     }
                     continue;
                 }
+//                System.out.println(instr);
                 Cond mcCond = value2cond.get(cond);
                 if(exchanged) {
                     McBlock tmp = thenBlock;
@@ -502,10 +503,17 @@ public class CodeGen {
                         (imm1 >= imm2 && op.equals(OpTree.Operator.Ge)) ||
                         (imm1 != imm2 && op.equals(OpTree.Operator.Ne)) ||
                         (imm1 == imm2 && op.equals(OpTree.Operator.Eq)));
-                if(ans) {
-                    new McMove(dstVr, new Operand.Imm(1), curMcBlock);
+                Operand.Imm imm;
+                if(ans){
+                    imm = new Operand.Imm(1);
+                }else {
+                    imm = new Operand.Imm(0);
+                }
+                if(fcmp.getNext() instanceof Branch && fcmp.getUsedSize() == 1
+                        && fcmp.getUser(0).equals(fcmp.getNext())) {
+                    value2Imm.put(instr, imm);
                 } else {
-                    new McMove(dstVr, new Operand.Imm(0), curMcBlock);
+                    new McMove(dstVr, imm, curMcBlock);
                 }
             } else {
                 Operand lopd = getOperand(left);
