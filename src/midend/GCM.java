@@ -33,7 +33,6 @@ public class GCM extends Pass {
             curFunc = function;
             scheduleLate(function);
         }
-
         //move to fit position
         for(Function function : this.functions.values())
         {
@@ -113,7 +112,7 @@ public class GCM extends Pass {
         }
         BasicBlock best = lca;
         BasicBlock cur = lca;
-        while(cur.getDomTreeDepth() >= instr.getEarliestBasicBlock().getDomTreeDepth()){
+        while(cur.getDomTreeDepth() != instr.getEarliestBasicBlock().getDomTreeDepth()){
             if(cur.getLoopDepth()< best.getLoopDepth()){
                 best = cur;
             }
@@ -156,6 +155,7 @@ public class GCM extends Pass {
                 instrs.add(instr);
             }
             for(Instr instr: instrs){
+                if(instr.getBasicBlock().equals(instr.getLatestBasicBlock())) continue;
                 BasicBlock best = instr.getLatestBasicBlock();
                 instr.remove();
                 //best.addInstr(instr);

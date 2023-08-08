@@ -39,4 +39,13 @@ public class Value extends MyNode {
         usedInfo.insertTail(used);
     }
 
+    public void removeUser(Value user){
+        for(int i = 0; i < usedInfo.size; i++){
+            if(usedInfo.get(i).getUser().equals(user)){
+                usedInfo.remove(usedInfo.get(i));
+                return;
+            }
+        }
+    }
+
 }

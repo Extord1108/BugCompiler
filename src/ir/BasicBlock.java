@@ -35,7 +35,7 @@ public class BasicBlock extends Value {
 
     public BasicBlock(Function function, Loop loop) {
         this.label = ++block_count;
-        this.name = name;
+        this.name = "b" + this.label;
         this.function = function;
         this.loop = loop;
         function.addAtEnd(this);

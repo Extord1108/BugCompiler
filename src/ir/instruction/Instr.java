@@ -72,14 +72,17 @@ public class Instr extends Value {
         }
     }
 
-    public void replaceUser(Value value){
-        for(Used used:usedInfo){
-            used.getUser().replaceUse(this,value);
+    public void removeUse(){
+        for(Value use:uses){
+            use.removeUser(this);
         }
+        uses.clear();
+        usedInfo.clear();
     }
 
     public void remove(){
         this.basicBlock.getInstrs().remove(this);
+        removeUse();
     }
 
     public static int getCount() {
