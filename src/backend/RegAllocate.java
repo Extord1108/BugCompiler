@@ -85,7 +85,6 @@ public class RegAllocate {
             K = 14;
             type = "Integer";
             init(mcFunction);
-
             allocate(mcFunction);
         }
     }
@@ -577,11 +576,11 @@ public class RegAllocate {
                         if(set != null) {
                             if(set instanceof Operand.FPhyReg) {
                                 curMcFunc.usedFPhyRegs.add((Operand.FPhyReg) set);
-                                uses.set(0, set);
+                                uses.set(i, set);
                             } else {
                                 assert set instanceof Operand.PhyReg;
                                 curMcFunc.usedPhyRegs.add((Operand.PhyReg) set);
-                                uses.set(0, set);
+                                uses.set(i, set);
                             }
                         }
                     }

@@ -39,6 +39,8 @@ public class Instr extends Value {
     }
 
     public Value getUse(int i){
+        if(i >= uses.size())
+            return null;
         return uses.get(i);
     }
 

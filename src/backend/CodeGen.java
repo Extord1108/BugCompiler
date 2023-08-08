@@ -75,6 +75,7 @@ public class CodeGen {
                     Operand.PhyReg.getPhyReg("sp"), new Operand.Imm(0), curMcBlock);
             mcBinary.setNeedFix(McBinary.FixType.VAR_STACK);
             dealParam();
+
             nextBBList.push(basicBlock);
             while(nextBBList.size() > 0) {
                 BasicBlock visitBlock = nextBBList.pop();
@@ -127,6 +128,7 @@ public class CodeGen {
         curMcBlock.setMcFunction(curMcFunc);
         curMcFunc.addMcBlock(curMcBlock);
         MyList<Instr> instrs = basicBlock.getInstrs();
+
         for(Instr instr:instrs){
             if(instr instanceof Binary){
                 genBinaryInstr((Binary) instr);
@@ -196,7 +198,8 @@ public class CodeGen {
                 Operand addr = getOperand(alloc);
                 Operand offset = getOperand(new Variable.ConstInt(curMcFunc.getStackSize()));
                 curMcFunc.addStackSize(((ArrayType) type).getFattenSize());
-                new McBinary(McBinary.BinaryType.Add, addr, Operand.PhyReg.getPhyReg("sp"), offset, curMcBlock);
+                new McBinary(McBinary.BinaryType.Add, addr,
+                        Operand.PhyReg.getPhyReg("sp"), offset, curMcBlock);
             }
             else if(instr instanceof Call) {
                 genCall((Call) instr);
@@ -213,6 +216,11 @@ public class CodeGen {
                 ArrayList<Value> idxList = ((GetElementPtr) instr).getIdxList();
                 Type curBasicType = pointer.getType().getBasicType();
                 Operand addrOpd = getOperand(pointer);
+                if(addrOpd instanceof Operand.Global) {
+                    Operand temp = new Operand.VirtualReg(false, curMcFunc);
+                    new McMove(temp, addrOpd, curMcBlock);
+                    addrOpd = temp;
+                }
                 Operand dst = getOperand(instr);
                 Operand tmpAddr = null;
                 int allOff = 0;
@@ -221,9 +229,11 @@ public class CodeGen {
                     int offset = 4;
                     if(curBasicType instanceof ArrayType) {
                         offset = offset * ((ArrayType) curBasicType).getFattenSize();
+                        curBasicType = curBasicType.getBasicType();
                     }
                     if(idx instanceof Variable.ConstInt) {
                         int sum = ((Variable.ConstInt) idx).getIntVal() * offset;
+//                        System.out.println(sum);
                         allOff += sum;
                     } else {
                         Operand tmp = getOperand(idx);
@@ -237,7 +247,6 @@ public class CodeGen {
                             new McBinary(McBinary.BinaryType.Add, tmpAddr, tmpAddr, tmp, curMcBlock);
                         }
                     }
-
                     if(i == idxList.size() - 1) {
                         if(allOff == 0) {
                             if(tmpAddr == null)
@@ -265,6 +274,7 @@ public class CodeGen {
                     new McMove(temp, addrOpd, curMcBlock);
                     addrOpd = temp;
                 }
+//                System.out.println(dtOpd);
                 new McStore(dtOpd, addrOpd, curMcBlock);
             }
             else if(instr instanceof Load) {
@@ -311,12 +321,24 @@ public class CodeGen {
             else if(instr instanceof Unary) {
                 OpTree.Operator op = ((Unary) instr).getOp();
                 if(op.equals(OpTree.Operator.Neg)) {
-                    Operand dst = getOperand(instr);
-                    Operand src = getOperand(((Unary) instr).getVal());
+                    Operand src;
+
+
                     if(instr.type instanceof ir.type.FloatType) {
+                        src = getOperand(((Unary) instr).getVal());
+                        Operand dst = getOperand(instr);
                         new McNeg( dst, src, curMcBlock);
                     } else {
-                        new McBinary(McBinary.BinaryType.Rsb, dst, src, new Operand.Imm(0), curMcBlock);
+                        if(((Unary) instr).getVal() instanceof Variable.ConstInt) {
+                            Unary unary = (Unary) instr;
+                            int ans = 0 - ((Variable.ConstInt)unary.getVal()).getIntVal();
+                            value2opd.put(instr, getOperand(new Variable.ConstInt(ans)));
+                        } else {
+                            src = getOperand(((Unary) instr).getVal());
+                            Operand dst = getOperand(instr);
+                            new McBinary(McBinary.BinaryType.Rsb, dst, src, new Operand.Imm(0), curMcBlock);
+                        }
+
                     }
                 } else {
                     System.err.println("unary中的not直接生成了fcmp和icmp");
@@ -640,6 +662,7 @@ public class CodeGen {
                 }
             }
             case Sub -> {
+
                 if(left instanceof Variable.ConstInt && right instanceof Variable.ConstInt){
                     int ans = ((Variable.ConstInt) left).getIntVal() - ((Variable.ConstInt) right).getIntVal();
                     new McMove(dstVr, getOperand(new Variable.ConstInt(ans)),curMcBlock);
