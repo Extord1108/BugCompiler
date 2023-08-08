@@ -77,7 +77,10 @@ public class PhiResolution extends Pass {
         to.getPredecessors().remove(from);
         to.getPredecessors().add(freshBlock);
 
-        Instr instr = from.getInstrs().get(from.getInstrs().size()-1);
+        Instr instr = from.getInstrs().getLast();
+        //System.out.println(from.getInstrs().size());
+        //System.out.println(from);
+
         Branch branch = (Branch) instr;
         BasicBlock thenBB = (branch).getThenBlock();
         BasicBlock elseBB = (branch).getElseBlock();

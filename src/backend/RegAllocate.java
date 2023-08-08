@@ -608,7 +608,7 @@ public class RegAllocate {
                 offset = curMcFunc.getStackSize() + mcBinary.getOffset();
             }
             if(offset == 0) {
-                mcBinary.remove();
+                mcBinary.mcBlock.getMcInstrs().remove(mcBinary);
             } else {
                 if(CodeGen.canImmSaved(offset)) {
                     mcBinary.useOperands.set(1, new Operand.Imm(offset));
