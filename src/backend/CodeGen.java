@@ -407,6 +407,11 @@ public class CodeGen {
                 }
                 else {
                     int offset = - (regStack + 1) * 4;
+                    if(src instanceof Operand.Imm) {
+                        Operand temp = new Operand.VirtualReg(src.isFloat(), curMcFunc);
+                        new McMove(temp, src, curMcBlock);
+                        src =temp;
+                    }
                     if(canImmOffset(offset)){
                         new McStore(src, Operand.PhyReg.getPhyReg("sp"), new Operand.Imm(offset), curMcBlock);
                     } else {
