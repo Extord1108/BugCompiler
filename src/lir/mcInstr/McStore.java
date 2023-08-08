@@ -33,7 +33,7 @@ public class McStore extends McInstr{
     @Override
     public String toString() {
         StringBuilder stb = new StringBuilder();
-        if(useVFP()) {
+        if(!useVFP()) {
             stb.append("str" + "\t" + useOperands.get(0) + ",\t" + "[" + useOperands.get(1));
             if(useOperands.size() > 2)
                 stb.append(",\t" + useOperands.get(2));

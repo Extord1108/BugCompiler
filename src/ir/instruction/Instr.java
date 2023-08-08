@@ -26,7 +26,7 @@ public class Instr extends Value {
 
     public Instr(Type type, BasicBlock basicBlock, boolean head) {
         this.type = type;
-        this.basicBlock = basicBlock;
+        this.basicBlock = basicBlock.getFunction().getBasicBlocks().get(0);
         this.name = "%r" + count++;
         this.uses = new ArrayList<>();
 //        basicBlock.addInstrHead(this);
@@ -42,6 +42,8 @@ public class Instr extends Value {
     }
 
     public Value getUse(int i){
+        if(i >= uses.size())
+            return null;
         return uses.get(i);
     }
 

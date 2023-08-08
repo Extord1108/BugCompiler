@@ -74,8 +74,8 @@ public class McFunction {
 
             if(i == 0) {
                 genPush(stb);
-                if(stackSize != 0)
-                    stb.append("\t").append("sub\tsp,\tsp,\t#").append(stackSize).append("\n");
+//                if(stackSize != 0)
+//                    stb.append("\t").append("sub\tsp,\tsp,\t#").append(stackSize).append("\n");
             }
 
             for(McInstr mcInstr: mcBlock.getMcInstrs()) {
@@ -84,10 +84,10 @@ public class McFunction {
 
 
 
-            if(i == mcBlocks.size() - 1) {
-                if(stackSize != 0)
-                    stb.append("\t").append("add\tsp,\tsp,\t#").append(stackSize).append("\n");
-            }
+//            if(i == mcBlocks.size() - 1) {
+//                if(stackSize != 0)
+//                    stb.append("\t").append("add\tsp,\tsp,\t#").append(stackSize).append("\n");
+//            }
         }
         return stb.toString();
     }

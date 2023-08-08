@@ -1,11 +1,9 @@
 package midend;
 
 import ir.*;
-import ir.instruction.Instr;
-import ir.instruction.Move;
-import ir.instruction.Pcopy;
-import ir.instruction.Phi;
+import ir.instruction.*;
 import ir.type.Int32Type;
+import util.MyList;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,23 +27,26 @@ public class PhiResolution extends Pass {
 
     private void criticalEdgeSplit(Function function)
     {
-        for(int i = 0; i < function.getBasicBlocks().size(); i++)
+        ArrayList<BasicBlock> BBs = new ArrayList<>();
+        for(BasicBlock bb:function.getBasicBlocks())
+            BBs.add(bb);
+        for(BasicBlock bb:BBs)
         {
-            BasicBlock bb = function.getBasicBlocks().get(i);
-            ArrayList<BasicBlock> incomings = bb.getPredecessors();
+            if(!(bb.getInstrs().get(0) instanceof Phi)) continue;
+            ArrayList<BasicBlock> incomings = new ArrayList<>(bb.getPredecessors());
             ArrayList<Pcopy> PCs = new ArrayList<>();
             for(int j = 0;j < incomings.size(); j++){
                 BasicBlock incomingBB = incomings.get(j);
                 Pcopy pcopy = new Pcopy();//空的平行复制指令
-                PCs.add(pcopy);
                 if(incomingBB.getSuccessors().size()>1){
-                    BasicBlock freshBlock = new BasicBlock();
+                    BasicBlock freshBlock = new BasicBlock(function);
                     replaceEdge(incomingBB, bb, freshBlock);
                     pcopy.setBasicBlock(freshBlock);
                 }
                 else{
                     pcopy.setBasicBlock(incomingBB);
                 }
+                PCs.add(pcopy);
             }
             for(Instr instr:bb.getInstrs()){
                 if(instr instanceof Phi){
@@ -54,9 +55,16 @@ public class PhiResolution extends Pass {
                         //Variable freshVar = new Variable(phi.getType());
                         PCs.get(j).addFromAndTo(phi.getUse(j), phi);
                         phi.modifyUse(j, phi);
-                        phi.remove();
                     }
-                }
+                }else
+                    break;
+            }
+            for(Instr instr:bb.getInstrs()){
+                if(instr instanceof Phi){
+                    Phi phi = (Phi) instr;
+                    phi.remove();
+                }else
+                    break;
             }
         }
     }
@@ -68,6 +76,24 @@ public class PhiResolution extends Pass {
         freshBlock.getSuccessors().add(to);
         to.getPredecessors().remove(from);
         to.getPredecessors().add(freshBlock);
+
+        Instr instr = from.getInstrs().getLast();
+        //System.out.println(from.getInstrs().size());
+        //System.out.println(from);
+
+        Branch branch = (Branch) instr;
+        BasicBlock thenBB = (branch).getThenBlock();
+        BasicBlock elseBB = (branch).getElseBlock();
+
+        if (to.equals(thenBB)) {
+            branch.setThenBlock(freshBlock);
+            Jump jump = new Jump(to, freshBlock);
+        } else if (to.equals(elseBB)) {
+            branch.setElseBlock(freshBlock);
+            Jump jump = new Jump(to, freshBlock);
+        } else {
+            System.err.println("Panic At Remove PHI addMidBB");
+        }
     }
 
     private void replacePCwithSC(Function function) {
@@ -89,6 +115,7 @@ public class PhiResolution extends Pass {
                     }
                     pcopy.setFrom(tempFrom);
                     pcopy.setTo(tempTo);
+
                     while(!checkFromEqualTo(pcopy)){
                         boolean flag = false;
                         Value from = null;

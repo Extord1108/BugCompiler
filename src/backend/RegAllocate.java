@@ -85,7 +85,6 @@ public class RegAllocate {
             K = 14;
             type = "Integer";
             init(mcFunction);
-
             allocate(mcFunction);
         }
     }
@@ -95,8 +94,12 @@ public class RegAllocate {
             int succSize = mcBlock.getSuccMcBlocks().size();
             int predSize = mcBlock.getPredMcBlocks().size();
             double weight = Math.pow(10, Math.min(succSize, predSize));
+//            System.out.println(mcBlock.getName());
             for(McInstr mcInstr: mcBlock.getMcInstrs()) {
+
                 for(Operand use: mcInstr.useOperands) {
+//                    System.out.println(mcInstr);
+//                    System.out.println(mcInstr.useOperands.size());
                     if(use.needColor(type)) {
                         use.addWeight(weight);
                     }
@@ -529,7 +532,9 @@ public class RegAllocate {
 
         ArrayList<McBinary> needFixed = new ArrayList<>();
         for(McBlock mcBlock: curMcFunc.getMcBlocks()) {
+//            System.out.println(mcBlock.getName() + ":");
             for(McInstr mcInstr: mcBlock.getMcInstrs()) {
+//                System.out.println("\t" + mcInstr);
                 if(mcInstr instanceof McBinary && ((McBinary) mcInstr).needFix){
                     needFixed.add((McBinary) mcInstr);
                 }
@@ -577,11 +582,11 @@ public class RegAllocate {
                         if(set != null) {
                             if(set instanceof Operand.FPhyReg) {
                                 curMcFunc.usedFPhyRegs.add((Operand.FPhyReg) set);
-                                uses.set(0, set);
+                                uses.set(i, set);
                             } else {
                                 assert set instanceof Operand.PhyReg;
                                 curMcFunc.usedPhyRegs.add((Operand.PhyReg) set);
-                                uses.set(0, set);
+                                uses.set(i, set);
                             }
                         }
                     }
@@ -603,7 +608,7 @@ public class RegAllocate {
                 offset = curMcFunc.getStackSize() + mcBinary.getOffset();
             }
             if(offset == 0) {
-                mcBinary.remove();
+                mcBinary.mcBlock.getMcInstrs().remove(mcBinary);
             } else {
                 if(CodeGen.canImmSaved(offset)) {
                     mcBinary.useOperands.set(1, new Operand.Imm(offset));
@@ -704,6 +709,7 @@ public class RegAllocate {
                 curMcFunc.getMcBlocks().head; iter = iter.getPrev()){
             McBlock mcBlock = (McBlock) iter;
             HashSet<Operand> live = new HashSet<>(mcBlock.liveOutSet);
+//            System.out.println(mcBlock.getName());
             for(MyNode myNode = mcBlock.getMcLastInstr(); myNode !=
                     mcBlock.getMcInstrs().head; myNode = myNode.getPrev()) {
                 McInstr mcInstr = (McInstr) myNode;

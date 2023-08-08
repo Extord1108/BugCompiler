@@ -1,7 +1,9 @@
 package midend;
 
+import ir.BasicBlock;
 import ir.Function;
 import ir.GlobalValue;
+import ir.instruction.Instr;
 
 import java.util.ArrayList;
 import java.util.HashMap;

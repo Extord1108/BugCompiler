@@ -21,14 +21,14 @@ public class McVcvt extends McInstr{
     @Override
     public String toString() {
         StringBuilder stb = new StringBuilder();
-        stb.append("\tvcvt.");
+        stb.append("vcvt.");
         if (vcvtType.equals(VcvtType.f2i)) {
             stb.append("S32.F32\t");
         } else {
             assert vcvtType.equals(vcvtType.i2f);
             stb.append("F32.S32\t");
         }
-        stb.append(defOperands.get(0)+ ",\t" + useOperands.get(0) + "\n");
+        stb.append(defOperands.get(0)+ ",\t" + useOperands.get(0));
         return stb.toString();
     }
 }

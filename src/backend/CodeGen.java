@@ -1,6 +1,5 @@
 package backend;
 
-import com.sun.jdi.FloatType;
 import frontend.semantic.OpTree;
 import ir.*;
 import ir.instruction.*;
@@ -75,6 +74,7 @@ public class CodeGen {
                     Operand.PhyReg.getPhyReg("sp"), new Operand.Imm(0), curMcBlock);
             mcBinary.setNeedFix(McBinary.FixType.VAR_STACK);
             dealParam();
+
             nextBBList.push(basicBlock);
             while(nextBBList.size() > 0) {
                 BasicBlock visitBlock = nextBBList.pop();
@@ -91,7 +91,7 @@ public class CodeGen {
             Operand dst = getOperand(param);
             if(param.getType() instanceof ir.type.FloatType) {
                 if(sRegIdx < sParamCnt) {
-                    new McMove( dst, Operand.PhyReg.getPhyReg(sRegIdx), curMcBlock);
+                    new McMove( dst, Operand.FPhyReg.getFPhyReg(sRegIdx), curMcBlock);
                     sRegIdx ++;
                 } else {
                     int offset = -(regStack + 1) * 4;
@@ -127,6 +127,7 @@ public class CodeGen {
         curMcBlock.setMcFunction(curMcFunc);
         curMcFunc.addMcBlock(curMcBlock);
         MyList<Instr> instrs = basicBlock.getInstrs();
+
         for(Instr instr:instrs){
             if(instr instanceof Binary){
                 genBinaryInstr((Binary) instr);
@@ -158,6 +159,7 @@ public class CodeGen {
                     }
                     continue;
                 }
+//                System.out.println(instr);
                 Cond mcCond = value2cond.get(cond);
                 if(exchanged) {
                     McBlock tmp = thenBlock;
@@ -196,7 +198,8 @@ public class CodeGen {
                 Operand addr = getOperand(alloc);
                 Operand offset = getOperand(new Variable.ConstInt(curMcFunc.getStackSize()));
                 curMcFunc.addStackSize(((ArrayType) type).getFattenSize());
-                new McBinary(McBinary.BinaryType.Add, addr, Operand.PhyReg.getPhyReg("sp"), offset, curMcBlock);
+                new McBinary(McBinary.BinaryType.Add, addr,
+                        Operand.PhyReg.getPhyReg("sp"), offset, curMcBlock);
             }
             else if(instr instanceof Call) {
                 genCall((Call) instr);
@@ -213,6 +216,11 @@ public class CodeGen {
                 ArrayList<Value> idxList = ((GetElementPtr) instr).getIdxList();
                 Type curBasicType = pointer.getType().getBasicType();
                 Operand addrOpd = getOperand(pointer);
+                if(addrOpd instanceof Operand.Global) {
+                    Operand temp = new Operand.VirtualReg(false, curMcFunc);
+                    new McMove(temp, addrOpd, curMcBlock);
+                    addrOpd = temp;
+                }
                 Operand dst = getOperand(instr);
                 Operand tmpAddr = null;
                 int allOff = 0;
@@ -221,15 +229,23 @@ public class CodeGen {
                     int offset = 4;
                     if(curBasicType instanceof ArrayType) {
                         offset = offset * ((ArrayType) curBasicType).getFattenSize();
+                        curBasicType = curBasicType.getBasicType();
                     }
                     if(idx instanceof Variable.ConstInt) {
                         int sum = ((Variable.ConstInt) idx).getIntVal() * offset;
+//                        System.out.println(sum);
                         allOff += sum;
                     } else {
                         Operand tmp = getOperand(idx);
                         Operand mulAns = new Operand.VirtualReg(false, curMcFunc);
+                        Operand mulOff = getOperand(new Variable.ConstInt(offset));
+                        if(mulOff instanceof Operand.Imm) {
+                            Operand temp = new Operand.VirtualReg(mulOff.isFloat(), curMcFunc);
+                            new McMove(temp, mulOff, curMcBlock);
+                            mulOff = temp;
+                        }
                         new McBinary(McBinary.BinaryType.Mul, mulAns, tmp,
-                                getOperand(new Variable.ConstInt(offset)), curMcBlock);
+                                mulOff, curMcBlock);
                         if(tmpAddr == null) {
                             tmpAddr = new Operand.VirtualReg(false, curMcFunc);
                             new McBinary(McBinary.BinaryType.Add, tmpAddr, addrOpd, tmp, curMcBlock);
@@ -237,7 +253,6 @@ public class CodeGen {
                             new McBinary(McBinary.BinaryType.Add, tmpAddr, tmpAddr, tmp, curMcBlock);
                         }
                     }
-
                     if(i == idxList.size() - 1) {
                         if(allOff == 0) {
                             if(tmpAddr == null)
@@ -265,6 +280,12 @@ public class CodeGen {
                     new McMove(temp, addrOpd, curMcBlock);
                     addrOpd = temp;
                 }
+                if(dtOpd instanceof Operand.Imm) {
+                    Operand temp = new Operand.VirtualReg(dtOpd.isFloat(), curMcFunc);
+                    new McMove(temp, dtOpd, curMcBlock);
+                    dtOpd = temp;
+                }
+//                System.out.println(dtOpd);
                 new McStore(dtOpd, addrOpd, curMcBlock);
             }
             else if(instr instanceof Load) {
@@ -288,7 +309,7 @@ public class CodeGen {
                     }else{
                         assert ret.getType() instanceof ir.type.FloatType;
                         retOpd = getOperand(ret);
-                        new McMove(Operand.PhyReg.getPhyReg("s0"), retOpd, curMcBlock);
+                        new McMove(Operand.FPhyReg.getFPhyReg("s0"), retOpd, curMcBlock);
                     }
                     McBinary mcBinary = new McBinary(McBinary.BinaryType.Add, Operand.PhyReg.getPhyReg("sp"),
                             Operand.PhyReg.getPhyReg("sp"), new Operand.Imm(0), curMcBlock);
@@ -304,19 +325,33 @@ public class CodeGen {
             else if(instr instanceof Sitofp) {
                 Operand src = getOperand(instr.getUse(0));
                 Operand tmp = new Operand.VirtualReg(true, curMcFunc);
+//                System.out.println(instr.type + "!!!!!!!!!!!!!");
                 Operand dst = getOperand(instr);
+//                System.out.println(dst.isFloat());
                 new McMove(tmp, src, curMcBlock);
-                new McVcvt(McVcvt.VcvtType.i2f, tmp, dst, curMcBlock);
+                new McVcvt(McVcvt.VcvtType.i2f, dst, tmp, curMcBlock);
             }
             else if(instr instanceof Unary) {
                 OpTree.Operator op = ((Unary) instr).getOp();
                 if(op.equals(OpTree.Operator.Neg)) {
-                    Operand dst = getOperand(instr);
-                    Operand src = getOperand(((Unary) instr).getVal());
+                    Operand src;
+
+
                     if(instr.type instanceof ir.type.FloatType) {
+                        src = getOperand(((Unary) instr).getVal());
+                        Operand dst = getOperand(instr);
                         new McNeg( dst, src, curMcBlock);
                     } else {
-                        new McBinary(McBinary.BinaryType.Rsb, dst, src, new Operand.Imm(0), curMcBlock);
+                        if(((Unary) instr).getVal() instanceof Variable.ConstInt) {
+                            Unary unary = (Unary) instr;
+                            int ans = 0 - ((Variable.ConstInt)unary.getVal()).getIntVal();
+                            value2opd.put(instr, getOperand(new Variable.ConstInt(ans)));
+                        } else {
+                            src = getOperand(((Unary) instr).getVal());
+                            Operand dst = getOperand(instr);
+                            new McBinary(McBinary.BinaryType.Rsb, dst, src, new Operand.Imm(0), curMcBlock);
+                        }
+
                     }
                 } else {
                     System.err.println("unary中的not直接生成了fcmp和icmp");
@@ -372,6 +407,11 @@ public class CodeGen {
                 }
                 else {
                     int offset = - (regStack + 1) * 4;
+                    if(src instanceof Operand.Imm) {
+                        Operand temp = new Operand.VirtualReg(src.isFloat(), curMcFunc);
+                        new McMove(temp, src, curMcBlock);
+                        src =temp;
+                    }
                     if(canImmOffset(offset)){
                         new McStore(src, Operand.PhyReg.getPhyReg("sp"), new Operand.Imm(offset), curMcBlock);
                     } else {
@@ -395,7 +435,7 @@ public class CodeGen {
             new McMove(dst, Operand.PhyReg.getPhyReg("r0"), curMcBlock);
         } else if(call.type instanceof ir.type.FloatType) {
             Operand dst = getOperand(call);
-            new McMove(dst, Operand.PhyReg.getPhyReg("s0"), curMcBlock);
+            new McMove(dst, Operand.FPhyReg.getFPhyReg("s0"), curMcBlock);
         }
     }
 
@@ -475,10 +515,17 @@ public class CodeGen {
                         (imm1 >= imm2 && op.equals(OpTree.Operator.Ge)) ||
                         (imm1 != imm2 && op.equals(OpTree.Operator.Ne)) ||
                         (imm1 == imm2 && op.equals(OpTree.Operator.Eq)));
-                if(ans) {
-                    new McMove(dstVr, new Operand.Imm(1), curMcBlock);
+                Operand.Imm imm;
+                if(ans){
+                    imm = new Operand.Imm(1);
+                }else {
+                    imm = new Operand.Imm(0);
+                }
+                if(fcmp.getNext() instanceof Branch && fcmp.getUsedSize() == 1
+                        && fcmp.getUser(0).equals(fcmp.getNext())) {
+                    value2Imm.put(instr, imm);
                 } else {
-                    new McMove(dstVr, new Operand.Imm(0), curMcBlock);
+                    new McMove(dstVr, imm, curMcBlock);
                 }
             } else {
                 Operand lopd = getOperand(left);
@@ -531,12 +578,22 @@ public class CodeGen {
                     }
                 }
                 else {
-                    Operand lopd = getOperand(left);
-                    Operand ropd = getOperand(right);
-                    Operand dst1 = new Operand.VirtualReg(left instanceof Variable.ConstFloat, curMcFunc);
-                    new McBinary(McBinary.BinaryType.Div, dst1, lopd, ropd, curMcBlock);
-                    new McBinary(McBinary.BinaryType.Mul, dst1, dst1, ropd, curMcBlock);
-                    new McBinary(McBinary.BinaryType.Sub, dst1, lopd, dst1, curMcBlock);
+                    if(left instanceof Variable.ConstInt && right instanceof Variable.ConstInt){
+                        int valLeft = ((Variable.ConstInt)left).getIntVal();
+                        new McMove(dstVr, getOperand(new Variable.ConstInt(valLeft % imm)),curMcBlock);
+                    } else {
+                        Operand lopd = getOperand(left);
+                        Operand ropd = getOperand(right);
+                        if(ropd instanceof Operand.Imm) {
+                            Operand temp = new Operand.VirtualReg(ropd.isFloat(), curMcFunc);
+                            new McMove(temp, ropd, curMcBlock);
+                            ropd = temp;
+                        }
+                        Operand dst1 = new Operand.VirtualReg(left instanceof Variable.ConstFloat, curMcFunc);
+                        new McBinary(McBinary.BinaryType.Div, dst1, lopd, ropd, curMcBlock);
+                        new McBinary(McBinary.BinaryType.Mul, dst1, dst1, ropd, curMcBlock);
+                        new McBinary(McBinary.BinaryType.Sub, dst1, lopd, dst1, curMcBlock);
+                    }
                 }
             }
             case Mul  -> {
@@ -559,19 +616,26 @@ public class CodeGen {
                         new McMove(dstVr,  new Operand.Imm( 0),curMcBlock);
                     }
                     else if((abs & (abs - 1)) == 0 && isOptMulDiv){
+//                        System.out.println(instr);
                         // 2的多少次方
                         int sh = 31 - Integer.numberOfLeadingZeros(abs);
                         if(sh == 0) {
                             new McMove(dstVr, src, curMcBlock);
                         } else {
-                            new MCShift(dstVr, dstVr, getOperand(new Variable.ConstInt(sh)),MCShift.ShiftType.lsl,curMcBlock);
+                            MCShift mcShift = new MCShift(dstVr, src, getOperand(new Variable.ConstInt(sh)),MCShift.ShiftType.lsl,curMcBlock);
                         }
                         if(imm < 0) {
                             new McBinary(McBinary.BinaryType.Rsb, dstVr, dstVr, new Operand.Imm(0),curMcBlock);
                         }
                     }
                     else {
-                        new McBinary(McBinary.BinaryType.Mul, dstVr, src, getOperand(new Variable.ConstInt(imm)), curMcBlock);
+                        Operand src2 = getOperand(new Variable.ConstInt(imm));
+                        if(src2 instanceof Operand.Imm) {
+                            Operand temp = new Operand.VirtualReg(false, curMcFunc);
+                            new McMove(temp, src2, curMcBlock);
+                            src2 = temp;
+                        }
+                        new McBinary(McBinary.BinaryType.Mul, dstVr, src, src2, curMcBlock);
                     }
                 } else {
                     // 没有常量的int类型乘法
@@ -608,7 +672,13 @@ public class CodeGen {
                         }
                     } else {
                         // TODO 魔法数的除法
-                        new McBinary(McBinary.BinaryType.Mul, dstVr, lopd, getOperand(new Variable.ConstInt(imm)), curMcBlock);
+                        Operand immOpd = getOperand(new Variable.ConstInt(imm));
+                        if(immOpd instanceof Operand.Imm) {
+                            Operand temp = new Operand.VirtualReg(immOpd.isFloat(), curMcFunc);
+                            new McMove(temp, immOpd, curMcBlock);
+                            immOpd = temp;
+                        }
+                        new McBinary(McBinary.BinaryType.Div, dstVr, lopd, immOpd, curMcBlock);
                     }
                 }
                 else {
@@ -640,6 +710,7 @@ public class CodeGen {
                 }
             }
             case Sub -> {
+
                 if(left instanceof Variable.ConstInt && right instanceof Variable.ConstInt){
                     int ans = ((Variable.ConstInt) left).getIntVal() - ((Variable.ConstInt) right).getIntVal();
                     new McMove(dstVr, getOperand(new Variable.ConstInt(ans)),curMcBlock);
@@ -681,6 +752,7 @@ public class CodeGen {
                 opd = getFloatImm(value);
             }
             else {
+
                 if(value.getType() instanceof FloatType) {
                     opd = new Operand.VirtualReg(true, curMcFunc);
                 } else {

@@ -19,11 +19,5 @@ public class MyNode {
     public void setNext(MyNode next){
         this.next = next;
     }
-    public void remove(){
-        if(this.prev!=null)
-        this.prev.setNext(this.next);
-        if(this.next!=null)
-        this.next.setPrev(this.prev);
-    }
 
 }
