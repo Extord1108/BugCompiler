@@ -221,10 +221,12 @@ public class Operand {
         }
 
         public static PhyReg getPhyReg(String name){
+            assert name != "pc";
             return name2reg.get(name);
         }
 
         public static PhyReg getPhyReg(int idx) {
+            assert idx != 15;
             return  idx2reg.get(idx);
         }
 

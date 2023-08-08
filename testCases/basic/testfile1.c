@@ -1,49 +1,72 @@
-int n;
-int select_sort(int A[],int n)
+int N;
+int M;
+int L;
+
+int sub(float a0[],float a1[], float a2[],float b0[],float b1[],float b2[],float c0[],float c1[],float c2[])
 {
     int i;
-    int j;
-    int min;
-    i =0;
-    while(i < n-1)
+    i=0;
+    while(i<3)
     {
-        min=i;//
-        j = i + 1;
-        while(j < n)
-        {
-            if(A[min]>A[j])
-            {
-                min=j;
-            }
-            j=j+1;
-        }
-        if(min!=i)
-        {
-            int tmp;
-            tmp = A[min];
-            A[min] = A[i];
-            A[i] = tmp;
-        }
-        i = i + 1;
+        c0[i]=a0[i]-b0[i];
+        c1[i]=a1[i]-b1[i];
+        c2[i]=a2[i]-b2[i];
+        i=i+1;
     }
+
     return 0;
+
 }
 
-int main(){
-    n = 10;
-    int a[10];
-    a[0]=4;a[1]=3;a[2]=9;a[3]=2;a[4]=0;
-    a[5]=1;a[6]=6;a[7]=5;a[8]=7;a[9]=8;
+int main()
+{
+    N=3;
+    M=3;
+    L=3;
+    float a0[3], a1[3], a2[3], b0[3], b1[3], b2[3], c0[6], c1[3], c2[3];
     int i;
-    i = 0;
-    i = select_sort(a, n);
-    while (i < n) {
-        int tmp;
-        tmp = a[i];
-        putint(tmp);
-        tmp = 10;
-        putch(tmp);
-        i = i + 1;
+    i=0;
+    while(i<3)
+    {
+        a0[i]=i;
+        a1[i]=i;
+        a2[i]=i;
+        b0[i]=i;
+        b1[i]=i;
+        b2[i]=i;
+        i=i+1;
     }
+    i=sub( a0, a1,  a2, b0, b1, b2, c0, c1, c2);
+    int x;
+    while(i<3)
+    {
+        x = c0[i];
+        putint(x);
+
+        i=i+1;
+    }
+    x = 10;
+    i=0;
+    putch(x);
+    while(i<3)
+    {
+        x = c1[i];
+        putint(x);
+
+        i=i+1;
+    }
+    x = 10;
+    i=0;
+    putch(x);
+    while(i<3)
+    {
+        x = c2[i];
+        putint(x);
+
+        i=i+1;
+    }
+    x =10;
+    putch(x);
+
     return 0;
 }
