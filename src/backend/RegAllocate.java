@@ -528,7 +528,9 @@ public class RegAllocate {
 
         ArrayList<McBinary> needFixed = new ArrayList<>();
         for(McBlock mcBlock: curMcFunc.getMcBlocks()) {
+//            System.out.println(mcBlock.getName() + ":");
             for(McInstr mcInstr: mcBlock.getMcInstrs()) {
+//                System.out.println("\t" + mcInstr);
                 if(mcInstr instanceof McBinary && ((McBinary) mcInstr).needFix){
                     needFixed.add((McBinary) mcInstr);
                 }

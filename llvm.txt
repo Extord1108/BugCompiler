@@ -1,4 +1,3 @@
-@a = dso_local global i32 0
 declare i32 @getch()
 declare i32 @parallel_start()
 declare i32 @getfarray(float* )
@@ -16,15 +15,43 @@ declare float @getfloat()
 declare void @parallel_end(i32 )
 define dso_local i32 @main() 
 {
-b2:
-	store i32 10, i32* @a
-	%r10 = load i32, i32* @a
-	%r11 = call i32 @func(i32 %r10)
-	ret i32 %r11
+b11:
+	%r29 = call i32 @whileIf()
+	ret i32 %r29
 }
-define dso_local i32 @func(i32 %f0) 
+define dso_local i32 @whileIf() 
 {
 b1:
-	%r4 = sub i32 %f0, 1
-	ret i32 %r4
+	move i32 0, %r34
+	move i32 0, %r33
+	br label %b2
+b2:
+	%r6 = icmp slt i32 %r34, 100
+	br i1 %r6, label %b3, label %b4
+b3:
+	%r9 = icmp eq i32 %r34, 5
+	br i1 %r9, label %b5, label %b6
+b4:
+	ret i32 %r33
+b5:
+	move i32 25, %r31
+	br label %b7
+b6:
+	%r14 = icmp eq i32 %r34, 10
+	br i1 %r14, label %b8, label %b9
+b7:
+	%r24 = add i32 %r34, 1
+	move i32 %r24, %r34
+	move i32 %r31, %r33
+	br label %b2
+b8:
+	move i32 42, %r32
+	br label %b10
+b9:
+	%r19 = mul i32 %r34, 2
+	move i32 %r19, %r32
+	br label %b10
+b10:
+	move i32 %r32, %r31
+	br label %b7
 }

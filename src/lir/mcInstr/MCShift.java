@@ -34,7 +34,7 @@ public class MCShift extends McInstr{
     public String toString() {
         StringBuilder stb = new StringBuilder();
         if(imm == null) {
-            stb.append(type.name()).append("\t").append(defOperands.get(0) + "\t" + useOperands.get(0) + ",\t")
+            stb.append(type.name()).append("\t").append(defOperands.get(0) + ",\t" + useOperands.get(0) + ",\t")
                     .append(useOperands.get(1));
         } else {
             stb.append(type.name()).append("\t").append(imm);

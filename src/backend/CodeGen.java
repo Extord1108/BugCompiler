@@ -591,12 +591,14 @@ public class CodeGen {
                         new McMove(dstVr,  new Operand.Imm( 0),curMcBlock);
                     }
                     else if((abs & (abs - 1)) == 0 && isOptMulDiv){
+//                        System.out.println(instr);
                         // 2的多少次方
                         int sh = 31 - Integer.numberOfLeadingZeros(abs);
                         if(sh == 0) {
                             new McMove(dstVr, src, curMcBlock);
                         } else {
-                            new MCShift(dstVr, dstVr, getOperand(new Variable.ConstInt(sh)),MCShift.ShiftType.lsl,curMcBlock);
+                            MCShift mcShift = new MCShift(dstVr, src, getOperand(new Variable.ConstInt(sh)),MCShift.ShiftType.lsl,curMcBlock);
+//                            System.out.println(mcShift);
                         }
                         if(imm < 0) {
                             new McBinary(McBinary.BinaryType.Rsb, dstVr, dstVr, new Operand.Imm(0),curMcBlock);
