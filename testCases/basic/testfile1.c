@@ -1,53 +1,21 @@
-int main(){
-	int a = 893;
-	int b = 716;
-	{
-		int a = 837;
-		a = a + 128;
-		b = b + a;
-		{
-			int b = 241;
-			a = a + b - 412;
-			{
-				int a = 771;
-				b = b + a -18;
-				a = b + 66;
-			}
-			b = b + a - 33;
-			a = b - 55;
-            {
-                return (a + b) % 21;
-            }
-
-		}
-		a = b + a - 97;
-		b = (b - a) % 62;
-        {
-             return (a + b) % 17;
-        }
-        return (a + b) % 13;
-	}
-	a = (b * a) % 83;
-	b = a + b - 771;
-	return (a + b) % 11;
+// Use complex expression in if structure
+int main () {
+    int a;
+    int b;
+    int c;
+    int d;
+    int result;
+    a = 5;
+    b = 5;
+    c = 1;
+    d = -2;
+    result = 2;
+    if ((d * 1 / 2) < 0 || (a - b) != 0 && (c + 3) % 2 != 0) {
+        putint(result);
+    }
+    if ((d % 2 + 67) < 0 || (a - b) != 0 && (c + 2) % 2 != 0) {
+        result = 4;
+        putint(result);
+    }
+    return 0;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

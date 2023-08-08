@@ -16,17 +16,41 @@ declare void @parallel_end(i32 )
 define dso_local i32 @main() 
 {
 b1:
-	%r7 = add i32 837, 128
-	%r11 = add i32 716, %r7
-	%r17 = add i32 %r7, 241
-	%r18 = sub i32 %r17, 412
-	%r24 = add i32 241, 771
-	%r25 = sub i32 %r24, 18
-	%r28 = add i32 %r25, 66
-	%r32 = add i32 %r25, %r18
-	%r33 = sub i32 %r32, 33
-	%r36 = sub i32 %r33, 55
-	%r40 = add i32 %r36, %r33
-	%r41 = srem i32 %r40, 21
-	ret i32 %r41
+	%r8 = sub i32 0, 2
+	%r12 = mul i32 %r8, 1
+	%r13 = sdiv i32 %r12, 2
+	%r14 = icmp slt i32 %r13, 0
+	br i1 %r14, label %b2, label %b4
+b2:
+	call void @putint(i32 2)
+	br label %b3
+b3:
+	%r30 = srem i32 %r8, 2
+	%r31 = add i32 %r30, 67
+	%r32 = icmp slt i32 %r31, 0
+	br i1 %r32, label %b6, label %b8
+b4:
+	%r18 = sub i32 5, 5
+	%r19 = icmp ne i32 %r18, 0
+	br i1 %r19, label %b5, label %b3
+b5:
+	%r22 = add i32 1, 3
+	%r23 = srem i32 %r22, 2
+	%r24 = icmp ne i32 %r23, 0
+	br i1 %r24, label %b2, label %b3
+b6:
+	call void @putint(i32 4)
+	move i32 4, %r49
+	br label %b7
+b7:
+	ret i32 0
+b8:
+	%r36 = sub i32 5, 5
+	%r37 = icmp ne i32 %r36, 0
+	br i1 %r37, label %b9, label %b7
+b9:
+	%r40 = add i32 1, 2
+	%r41 = srem i32 %r40, 2
+	%r42 = icmp ne i32 %r41, 0
+	br i1 %r42, label %b6, label %b7
 }
