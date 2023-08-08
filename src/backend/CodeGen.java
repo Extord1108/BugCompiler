@@ -584,6 +584,11 @@ public class CodeGen {
                     } else {
                         Operand lopd = getOperand(left);
                         Operand ropd = getOperand(right);
+                        if(ropd instanceof Operand.Imm) {
+                            Operand temp = new Operand.VirtualReg(ropd.isFloat(), curMcFunc);
+                            new McMove(temp, ropd, curMcBlock);
+                            ropd = temp;
+                        }
                         Operand dst1 = new Operand.VirtualReg(left instanceof Variable.ConstFloat, curMcFunc);
                         new McBinary(McBinary.BinaryType.Div, dst1, lopd, ropd, curMcBlock);
                         new McBinary(McBinary.BinaryType.Mul, dst1, dst1, ropd, curMcBlock);
