@@ -179,14 +179,14 @@ public class OpTreeHandler {
 
 
             if (op == OpTree.Operator.And) { // and时，左右都为Int1
-                BasicBlock newTrueBlock = new BasicBlock(Visitor.Instance.getCurBasicBlock().getFunction());
+                BasicBlock newTrueBlock = new BasicBlock(Visitor.Instance.getCurBasicBlock().getFunction(),Visitor.Instance.getCurLoop());
                 first = Visitor.Instance.turnTo(first, Int1Type.getInstance());
                 new Branch(first, newTrueBlock, falseBlock, Visitor.Instance.getCurBasicBlock());
                 Visitor.Instance.setCurBasicBlock(newTrueBlock);
                 first = evalCond(child, null, null);
             } else if (op == OpTree.Operator.Or) {// or时，左右都为Int1
                 if(it.hasNext()) {
-                    BasicBlock newFalseBlock = new BasicBlock(Visitor.Instance.getCurBasicBlock().getFunction());
+                    BasicBlock newFalseBlock = new BasicBlock(Visitor.Instance.getCurBasicBlock().getFunction(),Visitor.Instance.getCurLoop());
                     first = evalCond(child, trueBlock, newFalseBlock);
                     first = Visitor.Instance.turnTo(first, Int1Type.getInstance());
                     new Branch(first, trueBlock, newFalseBlock, Visitor.Instance.getCurBasicBlock());

@@ -12,6 +12,9 @@ public class Instr extends Value {
     protected BasicBlock basicBlock;
     private ArrayList<Value> uses; // 使用了的value
 
+    private BasicBlock earliestBasicBlock;
+    private BasicBlock latestBasicBlock;
+
     public Instr(Type type, BasicBlock basicBlock) {
         this.type = type;
         this.basicBlock = basicBlock;
@@ -89,6 +92,22 @@ public class Instr extends Value {
 
     public void setBasicBlock(BasicBlock basicBlock) {
         this.basicBlock = basicBlock;
+    }
+
+    public BasicBlock getEarliestBasicBlock() {
+        return earliestBasicBlock;
+    }
+
+    public void setEarliestBasicBlock(BasicBlock earliestBasicBlock) {
+        this.earliestBasicBlock = earliestBasicBlock;
+    }
+
+    public BasicBlock getLatestBasicBlock() {
+        return latestBasicBlock;
+    }
+
+    public void setLatestBasicBlock(BasicBlock latestBasicBlock) {
+        this.latestBasicBlock = latestBasicBlock;
     }
 
     @Override
