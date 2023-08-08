@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 public class BasicBlock extends Value {
     private Function function;
+    private Loop loop;
 
     MyList<Instr> instrs = new MyList<>();
 
@@ -32,9 +33,25 @@ public class BasicBlock extends Value {
         function.addAtEnd(this);
     }
 
+    public BasicBlock(Function function, Loop loop) {
+        this.label = ++block_count;
+        this.name = "b" + this.label;
+        this.function = function;
+        this.loop = loop;
+        function.addAtEnd(this);
+        loop.addBasicBlock(this);
+    }
+
     public void addFunction(Function function) {
         this.function = function;
         function.addAtEnd(this);
+    }
+
+    public void addFunction(Function function,Loop loop) {
+        this.function = function;
+        function.addAtEnd(this);
+        this.loop = loop;
+        loop.addBasicBlock(this);
     }
 
     public MyList<Instr> getInstrs() {
@@ -94,6 +111,10 @@ public class BasicBlock extends Value {
     }
     public ArrayList<BasicBlock> getIDoms() {
         return iDoms;
+    }
+
+    public int getLoopDepth(){
+        return loop.getDepth();
     }
 
     @Override

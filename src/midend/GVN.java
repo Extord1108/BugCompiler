@@ -62,12 +62,8 @@ public class GVN extends Pass{
         HashSet<Instr> instrs = new HashSet<>();
         for(Instr instr:bb.getInstrs()){
             if(canGVN(instr)){
-                String key = getHashofInstr(instr);
-                if(GVNMap.containsKey(key)){
+                if(addToMap(instr)){
                     instrs.add(instr);
-                }
-                else{
-                    GVNMap.put(key, instr);
                 }
             }
         }
@@ -75,7 +71,11 @@ public class GVN extends Pass{
             RPOSearch(next);
         }
         for(Instr instr:instrs){
-            instr.remove();
+            String key = getHashofInstr(instr);
+            GVNCount.put(key, GVNCount.get(key) - 1);
+            if(GVNCount.get(key) == 0){
+                GVNMap.remove(key);
+            }
         }
     }
 
@@ -142,20 +142,20 @@ public class GVN extends Pass{
         if(instr instanceof Binary){
             Binary binary = (Binary) instr;
             if(binary.getType() instanceof  Int32Type)
-            return binary.getOp().toString() + binary.getLeft().toString() + binary.getRight().toString();
+            return binary.getOp().toString() + binary.getLeft().getName() + binary.getRight().getName();
             else{
-                return binary.getOp().getfName() + binary.getLeft().toString() + binary.getRight().toString();
+                return binary.getOp().getfName() + binary.getLeft().getName() + binary.getRight().getName();
             }
         }
         else if(instr instanceof Icmp){
             Icmp icmp = (Icmp) instr;
-            return icmp.getOp().toString() + icmp.getLhs().toString() + icmp.getRhs().toString();
+            return icmp.getOp().toString() + icmp.getLhs().getName() + icmp.getRhs().getName();
         }
         else if(instr instanceof GetElementPtr){
             GetElementPtr getElementPtr = (GetElementPtr) instr;
-            String ret = getElementPtr.getPointer().toString();
+            String ret = getElementPtr.getPointer().getName();
             for(Value value:getElementPtr.getIdxList()){
-                ret += value.toString();
+                ret += value.getName();
             }
             return ret;
         }
@@ -165,7 +165,7 @@ public class GVN extends Pass{
             stringBuilder.append(call.getFunction().getName());
             for(int i=0;i<call.getParams().size();i++)
             {
-                stringBuilder.append(call.getParams().get(i).toString());
+                stringBuilder.append(call.getParams().get(i).getName());
                 if(i!=call.getParams().size()-1)
                     stringBuilder.append(",");
             }
@@ -173,15 +173,34 @@ public class GVN extends Pass{
         }
         else if(instr instanceof Fptosi){
             Fptosi fptosi = (Fptosi) instr;
-            return "Fptosi"+fptosi.getValue().toString();
+            return "Fptosi"+fptosi.getValue().getName();
         }
         else if(instr instanceof Sitofp){
             Sitofp sitofp = (Sitofp) instr;
-            return "Sitofp"+sitofp.getValue().toString();
+            return "Sitofp"+sitofp.getValue().getName();
         }
         else{
             assert false;
             return null;
+        }
+    }
+
+    private boolean addToMap(Instr instr){
+        String key = getHashofInstr(instr);
+        if(GVNMap.containsKey(key))
+        {
+            instr.repalceUseofMeto(GVNMap.get(key));
+            instr.remove();
+            return false;
+        }
+        else{
+            if(!GVNCount.containsKey(key))
+                GVNCount.put(key, 1);
+            else
+                GVNCount.put(key, GVNCount.get(key)+1);
+            if(!GVNMap.containsKey(key))
+            GVNMap.put(key, instr);
+            return true;
         }
     }
 }

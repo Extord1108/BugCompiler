@@ -226,7 +226,7 @@ public class DomainAnalysis extends Pass {
         }
     }
 
-    //构造循环树
+    //循环分析
      private class LoopAnalysis {
          private Function function;
          private LoopAnalysis(Function function) {

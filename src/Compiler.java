@@ -29,11 +29,11 @@ public class Compiler {
             var visitor = Visitor.Instance;
             visitor.visit(tree);
 
-             if (!arg.llvmFile.isEmpty()) {
-                 FileOutputStream llvmOut = OutputHandler.getOutputFile(arg.llvmFile.split("\\.")[0]+"-pure." + arg.llvmFile.split("\\.")[1]);
-                 Manager.getManager().outputLLVM(llvmOut);
-                 OutputHandler.closeOutputFile(llvmOut);
-             }
+//             if (!arg.llvmFile.isEmpty()) {
+//                 FileOutputStream llvmOut = OutputHandler.getOutputFile(arg.llvmFile.split("\\.")[0]+"-pure." + arg.llvmFile.split("\\.")[1]);
+//                 Manager.getManager().outputLLVM(llvmOut);
+//                 OutputHandler.closeOutputFile(llvmOut);
+//             }
 
             var midEndRunner = new MidEndRunner(Manager.getFunctions(), Manager.getGlobals(), arg.opt);
             midEndRunner.run();
@@ -44,15 +44,15 @@ public class Compiler {
                 Manager.getManager().outputLLVM(llvmOut);
                 OutputHandler.closeOutputFile(llvmOut);
             }
-            System.out.println("CodeGen begin");
-            var codeGen = CodeGen.Instance;
-            codeGen.gen();
-            System.out.println("CodeGen end");
-
-            System.out.println("Alloc begin");
-            var regAllocate = new RegAllocate(Manager.getMcFunclist());
-            regAllocate.alloc();
-            System.out.println("Alloc end");
+//            System.out.println("CodeGen begin");
+//            var codeGen = CodeGen.Instance;
+//            codeGen.gen();
+//            System.out.println("CodeGen end");
+//
+//            System.out.println("Alloc begin");
+//            var regAllocate = new RegAllocate(Manager.getMcFunclist());
+//            regAllocate.alloc();
+//            System.out.println("Alloc end");
 
             // 输出 机器代码arm
             if (!arg.targetFile.isEmpty()) {

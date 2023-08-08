@@ -30,6 +30,7 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
     private SymTable curSymTable = new SymTable(null);
     private BasicBlock curBasicBlock = null;
     private Function curFunction = null;
+    private Loop curLoop = Loop.rootLoop;
 
     private Variable.ConstFloat CONST_0f = new Variable.ConstFloat(0.0f);
     private Variable.ConstInt CONST_0 = new Variable.ConstInt(0);
@@ -48,6 +49,10 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
 
     public void setCurBasicBlock(BasicBlock curBasicBlock) {
         this.curBasicBlock = curBasicBlock;
+    }
+
+    public Loop getCurLoop(){
+        return curLoop;
     }
 
     public Variable.ConstInt getCONST_0() {
@@ -388,6 +393,7 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
 
     @Override
     public Value visitFuncDef(SysYParser.FuncDefContext ctx) {
+        curLoop = new Loop(Loop.rootLoop);
         visit(ctx.funcType());
         Type returnType = defContextType;
         var ident = ctx.IDENT().getText();
@@ -395,11 +401,13 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
 
         BasicBlock entry = new BasicBlock();
         curBasicBlock = entry;
+        curLoop.setHeader(entry);
         curSymTable = new SymTable(curSymTable);
         curFuncParams = new ArrayList<>();
         Function function = new Function(ident, curFuncParams, returnType);
         manager.addFunction(function);
-        entry.addFunction(function);
+        entry.addFunction(function,curLoop);
+        curLoop.setFunction(function);
         if (ctx.funcFParams() != null) {
             visit(ctx.funcFParams());
             for (Function.Param param : curFuncParams) {
@@ -517,11 +525,11 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
 
     @Override
     public Value visitIfStmt(SysYParser.IfStmtContext ctx) {
-        BasicBlock thenBlock = new BasicBlock(curFunction);
+        BasicBlock thenBlock = new BasicBlock(curFunction,curLoop);
         BasicBlock followBlock;
         if (ctx.stmt().size() == 1) {
             visit(ctx.cond());
-            followBlock = new BasicBlock(curFunction);
+            followBlock = new BasicBlock(curFunction,curLoop);
             Value cond = OpTreeHandler.evalCond(current.getLast(), thenBlock, followBlock);
             cond = turnTo(cond, Int1Type.getInstance());
             new Branch(cond, thenBlock, followBlock, curBasicBlock);
@@ -529,8 +537,8 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
             visit(ctx.stmt(0));
         } else {
             assert ctx.stmt().size() == 2;
-            BasicBlock elseBlock = new BasicBlock(curFunction);
-            followBlock = new BasicBlock(curFunction);
+            BasicBlock elseBlock = new BasicBlock(curFunction,curLoop);
+            followBlock = new BasicBlock(curFunction,curLoop);
             visit(ctx.cond());
             Value cond = OpTreeHandler.evalCond(current.getLast(), thenBlock, elseBlock);
             cond = turnTo(cond, Int1Type.getInstance());
@@ -548,9 +556,11 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
 
     @Override
     public Value visitWhileStmt(SysYParser.WhileStmtContext ctx) {
-        BasicBlock condBlock = new BasicBlock(curFunction);
-        BasicBlock bodyBlock = new BasicBlock(curFunction);
-        BasicBlock followBlock = new BasicBlock(curFunction);
+        curLoop = new Loop(curLoop);
+        curLoop.setFunction(curFunction);
+        BasicBlock condBlock = new BasicBlock(curFunction,curLoop);
+        BasicBlock bodyBlock = new BasicBlock(curFunction,curLoop);
+        BasicBlock followBlock = new BasicBlock(curFunction,curLoop.getParent());
         new Jump(condBlock, curBasicBlock);
         curBasicBlock = condBlock;
         visit(ctx.cond());
@@ -565,6 +575,7 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
         blockFollows.pop();
         new Jump(condBlock, curBasicBlock);
         curBasicBlock = followBlock;
+        curLoop = curLoop.getParent();
         return null;
     }
 
