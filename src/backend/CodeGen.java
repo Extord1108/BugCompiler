@@ -303,7 +303,7 @@ public class CodeGen {
                     }else{
                         assert ret.getType() instanceof ir.type.FloatType;
                         retOpd = getOperand(ret);
-                        new McMove(Operand.PhyReg.getPhyReg("s0"), retOpd, curMcBlock);
+                        new McMove(Operand.FPhyReg.getFPhyReg("s0"), retOpd, curMcBlock);
                     }
                     McBinary mcBinary = new McBinary(McBinary.BinaryType.Add, Operand.PhyReg.getPhyReg("sp"),
                             Operand.PhyReg.getPhyReg("sp"), new Operand.Imm(0), curMcBlock);
@@ -422,7 +422,7 @@ public class CodeGen {
             new McMove(dst, Operand.PhyReg.getPhyReg("r0"), curMcBlock);
         } else if(call.type instanceof ir.type.FloatType) {
             Operand dst = getOperand(call);
-            new McMove(dst, Operand.PhyReg.getPhyReg("s0"), curMcBlock);
+            new McMove(dst, Operand.FPhyReg.getFPhyReg("s0"), curMcBlock);
         }
     }
 
@@ -598,14 +598,19 @@ public class CodeGen {
                             new McMove(dstVr, src, curMcBlock);
                         } else {
                             MCShift mcShift = new MCShift(dstVr, src, getOperand(new Variable.ConstInt(sh)),MCShift.ShiftType.lsl,curMcBlock);
-//                            System.out.println(mcShift);
                         }
                         if(imm < 0) {
                             new McBinary(McBinary.BinaryType.Rsb, dstVr, dstVr, new Operand.Imm(0),curMcBlock);
                         }
                     }
                     else {
-                        new McBinary(McBinary.BinaryType.Mul, dstVr, src, getOperand(new Variable.ConstInt(imm)), curMcBlock);
+                        Operand src2 = getOperand(new Variable.ConstInt(imm));
+                        if(src2 instanceof Operand.Imm) {
+                            Operand temp = new Operand.VirtualReg(false, curMcFunc);
+                            new McMove(temp, src2, curMcBlock);
+                            src2 = temp;
+                        }
+                        new McBinary(McBinary.BinaryType.Mul, dstVr, src, src2, curMcBlock);
                     }
                 } else {
                     // 没有常量的int类型乘法

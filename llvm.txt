@@ -1,3 +1,4 @@
+@e = dso_local global float 0x4005bf0a80000000
 declare i32 @getch()
 declare i32 @parallel_start()
 declare i32 @getfarray(float* )
@@ -13,45 +14,281 @@ declare void @putfloat(float )
 declare void @putch(i32 )
 declare float @getfloat()
 declare void @parallel_end(i32 )
+define dso_local float @eee(float %f283) 
+{
+b29:
+	%r287 = fcmp ogt float %f283, 0x3f50624de0000000
+	br i1 %r287, label %b30, label %b31
+b30:
+	%r290 = sitofp i32 2 to float
+	%r291 = fdiv float %f283, %r290
+	%r292 = call float @eee(float %r291)
+	%r297 = fmul float %r292, %r292
+	ret float %r297
+b31:
+	%r301 = sitofp i32 1 to float
+	%r302 = fadd float %r301, %f283
+	%r305 = fmul float %f283, %f283
+	%r306 = sitofp i32 2 to float
+	%r307 = fdiv float %r305, %r306
+	%r308 = fadd float %r302, %r307
+	%r310 = call float @my_pow(float %f283, i32 3)
+	%r311 = sitofp i32 6 to float
+	%r312 = fdiv float %r310, %r311
+	%r313 = fadd float %r308, %r312
+	%r315 = call float @my_pow(float %f283, i32 4)
+	%r316 = sitofp i32 24 to float
+	%r317 = fdiv float %r315, %r316
+	%r318 = fadd float %r313, %r317
+	%r320 = call float @my_pow(float %f283, i32 5)
+	%r321 = sitofp i32 120 to float
+	%r322 = fdiv float %r320, %r321
+	%r323 = fadd float %r318, %r322
+	ret float %r323
+}
 define dso_local i32 @main() 
 {
-b11:
-	%r29 = call i32 @whileIf()
-	ret i32 %r29
+b38:
+	%r391 = call i32 @getint()
+	br label %b39
+b39:
+	%r396 = icmp ne i32 %r391, 0
+	br i1 %r396, label %b40, label %b41
+b40:
+	%r398 = call float @getfloat()
+	%r401 = call float @getfloat()
+	%r405 = call float @my_fabs(float %r398)
+	call void @putfloat(float %r405)
+	br label %b39
+b41:
+	ret i32 0
 }
-define dso_local i32 @whileIf() 
+define dso_local float @my_ln(float %f360) 
+{
+b35:
+	%r363 = sitofp i32 1 to float
+	%r365 = call float @asr4(float %r363, float %f360, float 0x3e45798ee0000000, i32 1)
+	ret float %r365
+}
+define dso_local float @my_fabs(float %f0) 
 {
 b1:
-	move i32 0, %r34
-	move i32 0, %r33
-	br label %b2
+	%r4 = sitofp i32 0 to float
+	%r5 = fcmp ogt float %f0, %r4
+	br i1 %r5, label %b2, label %b3
 b2:
-	%r6 = icmp slt i32 %r34, 100
-	br i1 %r6, label %b3, label %b4
+	ret float %f0
 b3:
-	%r9 = icmp eq i32 %r34, 5
-	br i1 %r9, label %b5, label %b6
+	%r11 = fneg float %f0
+	ret float %r11
+}
+define dso_local float @my_pow(float %f13, i32 %f14) 
+{
 b4:
-	ret i32 %r33
+	%r20 = icmp slt i32 %f14, 0
+	br i1 %r20, label %b5, label %b6
 b5:
-	move i32 25, %r31
-	br label %b7
+	%r24 = sub i32 0, %f14
+	%r25 = call float @my_pow(float %f13, i32 %r24)
+	%r26 = sitofp i32 1 to float
+	%r27 = fdiv float %r26, %r25
+	ret float %r27
 b6:
-	%r14 = icmp eq i32 %r34, 10
-	br i1 %r14, label %b8, label %b9
-b7:
-	%r24 = add i32 %r34, 1
-	move i32 %r24, %r34
-	move i32 %r31, %r33
-	br label %b2
-b8:
-	move i32 42, %r32
-	br label %b10
-b9:
-	%r19 = mul i32 %r34, 2
-	move i32 %r19, %r32
-	br label %b10
-b10:
-	move i32 %r32, %r31
 	br label %b7
+b7:
+	%r34 = icmp ne i32 %r411, 0
+	br i1 %r34, label %b8, label %b9
+b8:
+	%r37 = srem i32 %r411, 2
+	%r38 = icmp ne i32 %r37, 0
+	br i1 %r38, label %b10, label %b11
+b9:
+	ret float %r410
+b10:
+	%r42 = fmul float %r410, %r412
+	br label %b11
+b11:
+	%r47 = fmul float %r412, %r412
+	%r50 = sdiv i32 %r411, 2
+	move float %r47, %r412
+	move i32 %r50, %r411
+	move float %r409, %r410
+	br label %b7
+}
+define dso_local float @asr5(float %f184, float %f185, float %f186, float %f187, i32 %f188) 
+{
+b25:
+	%r202 = fsub float %f185, %f184
+	%r203 = sitofp i32 2 to float
+	%r204 = fdiv float %r202, %r203
+	%r205 = fadd float %f184, %r204
+	%r211 = call float @simpson(float %f184, float %r205, i32 %f188)
+	%r217 = call float @simpson(float %r205, float %f185, i32 %f188)
+	%r222 = fadd float %r211, %r217
+	%r224 = fsub float %r222, %f187
+	%r225 = call float @my_fabs(float %r224)
+	%r227 = sitofp i32 15 to float
+	%r228 = fmul float %r227, %f186
+	%r229 = fcmp ole float %r225, %r228
+	br i1 %r229, label %b26, label %b27
+b26:
+	%r233 = fadd float %r211, %r217
+	%r236 = fadd float %r211, %r217
+	%r238 = fsub float %r236, %f187
+	%r239 = fdiv float %r238, 0x402e000000000000
+	%r240 = fadd float %r233, %r239
+	ret float %r240
+b27:
+	%r246 = sitofp i32 2 to float
+	%r247 = fdiv float %f186, %r246
+	%r250 = call float @asr5(float %f184, float %r205, float %r247, float %r211, i32 %f188)
+	%r254 = sitofp i32 2 to float
+	%r255 = fdiv float %f186, %r254
+	%r258 = call float @asr5(float %r205, float %f185, float %r255, float %r217, i32 %f188)
+	%r259 = fadd float %r250, %r258
+	ret float %r259
+}
+define dso_local float @asr4(float %f261, float %f262, float %f263, i32 %f264) 
+{
+b28:
+	%r279 = call float @simpson(float %f261, float %f262, i32 %f264)
+	%r281 = call float @asr5(float %f261, float %f262, float %f263, float %r279, i32 %f264)
+	ret float %r281
+}
+define dso_local float @my_exp(float %f325) 
+{
+b32:
+	%r329 = sitofp i32 0 to float
+	%r330 = fcmp olt float %f325, %r329
+	br i1 %r330, label %b33, label %b34
+b33:
+	%r333 = fneg float %f325
+	%r334 = call float @my_exp(float %r333)
+	%r335 = sitofp i32 1 to float
+	%r336 = fdiv float %r335, %r334
+	ret float %r336
+b34:
+	%r341 = fptosi float %f325 to i32
+	%r345 = sitofp i32 %r341 to float
+	%r346 = fsub float %f325, %r345
+	%r349 = call float @my_pow(float 0x4005bf0a80000000, i32 %r341)
+	%r353 = call float @eee(float %r346)
+	%r358 = fmul float %r349, %r353
+	ret float %r358
+}
+define dso_local float @my_sqrt(float %f55) 
+{
+b12:
+	%r59 = sitofp i32 100 to float
+	%r60 = fcmp ogt float %f55, %r59
+	br i1 %r60, label %b13, label %b14
+b13:
+	%r63 = sitofp i32 100 to float
+	%r64 = fdiv float %f55, %r63
+	%r65 = call float @my_sqrt(float %r64)
+	%r66 = fmul float 0x4024000000000000, %r65
+	ret float %r66
+b14:
+	%r70 = sitofp i32 8 to float
+	%r71 = fdiv float %f55, %r70
+	%r72 = fadd float %r71, 0x3fe0000000000000
+	%r74 = sitofp i32 2 to float
+	%r75 = fmul float %r74, %f55
+	%r77 = sitofp i32 4 to float
+	%r78 = fadd float %r77, %f55
+	%r79 = fdiv float %r75, %r78
+	%r80 = fadd float %r72, %r79
+	move float %r80, %r414
+	move i32 10, %r413
+	br label %b15
+b15:
+	%r87 = icmp ne i32 %r413, 0
+	br i1 %r87, label %b16, label %b17
+b16:
+	%r92 = fdiv float %f55, %r414
+	%r93 = fadd float %r414, %r92
+	%r94 = sitofp i32 2 to float
+	%r95 = fdiv float %r93, %r94
+	%r98 = sub i32 %r413, 1
+	move float %r95, %r414
+	move i32 %r98, %r413
+	br label %b15
+b17:
+	ret float %r414
+}
+define dso_local float @my_log(float %f367, float %f368) 
+{
+b36:
+	%r374 = call float @my_ln(float %f368)
+	%r376 = call float @my_ln(float %f367)
+	%r377 = fdiv float %r374, %r376
+	ret float %r377
+}
+define dso_local float @F1(float %f103) 
+{
+b18:
+	%r107 = sitofp i32 1 to float
+	%r108 = fdiv float %r107, %f103
+	ret float %r108
+}
+define dso_local float @F2(float %f110) 
+{
+b19:
+	%r115 = fmul float %f110, %f110
+	%r116 = sitofp i32 1 to float
+	%r117 = fsub float %r116, %r115
+	%r118 = call float @my_sqrt(float %r117)
+	%r119 = sitofp i32 1 to float
+	%r120 = fdiv float %r119, %r118
+	ret float %r120
+}
+define dso_local float @my_powf(float %f379, float %f380) 
+{
+b37:
+	%r387 = call float @my_ln(float %f379)
+	%r388 = fmul float %f380, %r387
+	%r389 = call float @my_exp(float %r388)
+	ret float %r389
+}
+define dso_local float @simpson(float %f122, float %f123, i32 %f124) 
+{
+b20:
+	%r134 = fsub float %f123, %f122
+	%r135 = sitofp i32 2 to float
+	%r136 = fdiv float %r134, %r135
+	%r137 = fadd float %f122, %r136
+	%r141 = icmp eq i32 %f124, 1
+	br i1 %r141, label %b21, label %b22
+b21:
+	%r144 = call float @F1(float %f122)
+	%r146 = call float @F1(float %r137)
+	%r147 = sitofp i32 4 to float
+	%r148 = fmul float %r147, %r146
+	%r149 = fadd float %r144, %r148
+	%r151 = call float @F1(float %f123)
+	%r152 = fadd float %r149, %r151
+	%r155 = fsub float %f123, %f122
+	%r156 = fmul float %r152, %r155
+	%r157 = sitofp i32 6 to float
+	%r158 = fdiv float %r156, %r157
+	ret float %r158
+b22:
+	%r162 = icmp eq i32 %f124, 2
+	br i1 %r162, label %b23, label %b24
+b23:
+	%r165 = call float @F2(float %f122)
+	%r167 = call float @F2(float %r137)
+	%r168 = sitofp i32 4 to float
+	%r169 = fmul float %r168, %r167
+	%r170 = fadd float %r165, %r169
+	%r172 = call float @F2(float %f123)
+	%r173 = fadd float %r170, %r172
+	%r176 = fsub float %f123, %f122
+	%r177 = fmul float %r173, %r176
+	%r178 = sitofp i32 6 to float
+	%r179 = fdiv float %r177, %r178
+	ret float %r179
+b24:
+	%r182 = sitofp i32 0 to float
+	ret float %r182
 }

@@ -94,8 +94,12 @@ public class RegAllocate {
             int succSize = mcBlock.getSuccMcBlocks().size();
             int predSize = mcBlock.getPredMcBlocks().size();
             double weight = Math.pow(10, Math.min(succSize, predSize));
+//            System.out.println(mcBlock.getName());
             for(McInstr mcInstr: mcBlock.getMcInstrs()) {
+
                 for(Operand use: mcInstr.useOperands) {
+                    System.out.println(mcInstr);
+//                    System.out.println(mcInstr.useOperands.size());
                     if(use.needColor(type)) {
                         use.addWeight(weight);
                     }

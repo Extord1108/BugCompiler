@@ -9,6 +9,7 @@ public class McMove extends McInstr{
 
     public McMove(Operand dstOp, Operand srcOp, McBlock mcBlock) {
         super(mcBlock);
+        assert dstOp != null;
         defOperands.add(dstOp);
         useOperands.add(srcOp);
     }
