@@ -122,7 +122,7 @@ public class DeadCodeElimination extends Pass {
             for(Function function : this.functions.values()) {
                 for(BasicBlock bb : function.getBasicBlocks()){
                     for(Instr instr : bb.getInstrs()){
-                        if(instr.getUsedInfo().size()!=0 || instr instanceof Call || instr instanceof Return || instr instanceof Branch || instr instanceof Jump || instr instanceof Store){
+                        if(instr instanceof Load || instr instanceof Call || instr instanceof Return || instr instanceof Branch || instr instanceof Jump || instr instanceof Store){
                             queue.addLast(instr);
                         }
                     }
