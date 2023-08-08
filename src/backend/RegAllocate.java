@@ -71,20 +71,26 @@ public class RegAllocate {
     }
 
     public void alloc(){
+        int t = 0;
         for(McFunction mcFunction: mcFunctions) {
+
             if(mcFunction.getSvrList().size() > 0) {
                 K = 32;
                 type = "Float";
+
                 init(mcFunction);
+
                 allocate(mcFunction);
             }
             K = 14;
             type = "Integer";
             init(mcFunction);
+
             allocate(mcFunction);
         }
     }
     private void init(McFunction mcFunction){
+        preColored = new HashSet<>();
         for(McBlock mcBlock: mcFunction.getMcBlocks()) {
             int succSize = mcBlock.getSuccMcBlocks().size();
             int predSize = mcBlock.getPredMcBlocks().size();
@@ -94,10 +100,16 @@ public class RegAllocate {
                     if(use.needColor(type)) {
                         use.addWeight(weight);
                     }
+                    if(use.isPreColored(type)) {
+                        preColored.add(use);
+                    }
                 }
                 for(Operand def: mcInstr.defOperands) {
                     if(def.needColor(type)) {
                         def.addWeight(weight);
+                    }
+                    if(def.isPreColored(type)) {
+                        preColored.add(def);
                     }
                 }
             }
@@ -106,7 +118,6 @@ public class RegAllocate {
     }
     private void turnInit(McFunction mcFunction) {
         workListMoves = new HashSet<>();
-        preColored = new HashSet<>();
         activeMoves = new HashSet<>();
         spillWorkList = new HashSet<>();
         freezeWorkList = new HashSet<>();
@@ -155,8 +166,6 @@ public class RegAllocate {
                 }
             }
 
-
-            System.err.println("这里应该缺一堆需要初始化的东西");
             build();
             makeWorkList();
             regAllocIteration();
@@ -315,6 +324,8 @@ public class RegAllocate {
     private void regAllocIteration() {
         while (!spillWorkList.isEmpty() || !freezeWorkList.isEmpty() || !simplifyWorkList.isEmpty()
                 || !workListMoves.isEmpty()) {
+//            System.out.println( simplifyWorkList.size() + " " + workListMoves.size()+
+//                    " " + freezeWorkList.size() + " " + spillWorkList.size());
             if(!simplifyWorkList.isEmpty()) {
                 simplify();
             }
@@ -332,7 +343,7 @@ public class RegAllocate {
 
     private void simplify() {
         Operand operand = simplifyWorkList.iterator().next();
-        spillWorkList.remove(operand);
+        simplifyWorkList.remove(operand);
         selectStack.push(operand);
         for(Operand adj: operand.adjOpdSet) {
             if(!(selectStack.contains(adj) || coalescedNodes.contains(adj))){
@@ -524,7 +535,6 @@ public class RegAllocate {
                 }
                 if(mcInstr instanceof McCall) {
                     curMcFunc.setUseLr();
-                    // 感觉没必要写，都是一堆物理寄存器
                     ArrayList<Operand> defs = mcInstr.defOperands;
                     int i = 0;
                     for(Operand def: defs) {
@@ -682,6 +692,7 @@ public class RegAllocate {
                     McMove mcMove = (McMove) mcInstr;
                     live.remove(mcMove.getSrcOp());
                     mcMove.getDstOp().moveList.add(mcMove);
+                    System.out.println(mcMove.getSrcOp());
                     mcMove.getSrcOp().moveList.add(mcMove);
                     workListMoves.add(mcMove);
                 }
@@ -722,6 +733,7 @@ public class RegAllocate {
     }
 
     private void livenessAnalysis() {
+
         for(McBlock mcBlock: curMcFunc.getMcBlocks()){
             mcBlock.liveUseSet = new HashSet<>();
             mcBlock.liveDefSet = new HashSet<>();
@@ -761,6 +773,7 @@ public class RegAllocate {
                     for(Operand liveIn : succMcBlock.liveInSet) {
                         if(!mcBlock.liveOutSet.contains(liveIn)) {
                             newLiveOut.add(liveIn);
+                            mcBlock.liveOutSet.add(liveIn);
                         }
                     }
                 }
