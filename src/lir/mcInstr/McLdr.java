@@ -34,12 +34,12 @@ public class McLdr extends McInstr{
             stb.append("ldr" + "\t" + defOperands.get(0) + ",\t" + "[" + useOperands.get(0));
             if(useOperands.size() == 2)
                 stb.append(",\t" + useOperands.get(1));
-            stb.append("]\n");
+            stb.append("]");
         } else {
             stb.append("vldr.F32" + "\t" + defOperands.get(0) + ",\t" + "[" + useOperands.get(0));
             if(useOperands.size() == 2)
                 stb.append(",\t" + useOperands.get(1));
-            stb.append("]\n");
+            stb.append("]");
         }
         return stb.toString();
     }

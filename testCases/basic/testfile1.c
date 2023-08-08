@@ -1,27 +1,25 @@
-int a = 7;
+// test if-else-if
+int ifElseIf() {
+  int a;
+  a = 5;
+  int b;
+  b = 10;
+  if(a == 6 || b == 0xb) {
+    return a;
+  }
+  else {
+    if (b == 10 && a == 1)
+      a = 25;
+    else if (b == 10 && a == -5)
+      a = a + 15;
+    else
+      a = -+a;
+  }
 
-int func() {
-	int b = a;
-	int a = 1;
-	if (a == b) {
-		a = a + 1;
-		return 1;
-	}
-	else
-		return 0;
+  return a;
 }
 
-int main() {
-	int result = 0;
-	int i = 0;
-	while (i < 100) {
-		if (func() == 1)
-			result = result + 1;
-		i = i + 1;
-	}
-	if (result < 100)
-		putint(1);
-	else
-		putint(0);
-	return 0;
+int main(){
+  putint(ifElseIf());
+  return 0;
 }

@@ -29,6 +29,7 @@ public class CodeGen {
     private HashMap<Value, Operand> value2opd = new HashMap<>();
     private HashMap<OpTree.Operator, Cond> icmpOp2cond = new HashMap<>();
     private HashMap<Value, Cond> value2cond = new HashMap<>();
+    private HashMap<Value, Operand.Imm> value2Imm = new HashMap<>();
 
     HashSet<McBlock> visitBBset = new HashSet<>();
     Stack<BasicBlock> nextBBList = new Stack<>();
@@ -146,6 +147,16 @@ public class CodeGen {
                 if(visitBBset.add(thenBlock)) {
                     nextBBList.push(thenBlock.getBasicBlock());
                     exchanged = true;
+                }
+                Operand opd = value2Imm.get(cond);
+                if(opd != null) {
+                    if(((Operand.Imm) opd).getIntNumber() == 1) {
+                        new McJump(thenBlock, curMcBlock);
+                    } else{
+                        assert ((Operand.Imm) opd).getIntNumber() == 0;
+                        new McJump(elseBlock, curMcBlock);
+                    }
+                    continue;
                 }
                 Cond mcCond = value2cond.get(cond);
                 if(exchanged) {
@@ -392,6 +403,7 @@ public class CodeGen {
         Operand dst = getOperand(instr);
         Operand dstVr = getOperand(instr);
         if(instr instanceof Icmp){
+//            System.out.println(instr);
             Icmp icmp = (Icmp) instr;
             OpTree.Operator op = icmp.getOp();
             Value left = icmp.getLhs();
@@ -414,8 +426,15 @@ public class CodeGen {
                 }else {
                     imm = new Operand.Imm(0);
                 }
-                new McMove(dstVr, imm, curMcBlock);
-            } else {
+                if(icmp.getNext() instanceof Branch && icmp.getUsedSize() == 1
+                        && icmp.getUser(0).equals(icmp.getNext())) {
+                    value2Imm.put(instr, imm);
+                } else {
+                    new McMove(dstVr, imm, curMcBlock);
+                }
+
+            }
+            else {
                 Cond cond = icmpOp2cond.get(op);
                 if(lopd.isImm()) {
                     Operand temp = lopd;
@@ -437,6 +456,7 @@ public class CodeGen {
                     new McMove(getIcmpOppoCond(cond), dstVr, new Operand.Imm(0), curMcBlock);
                 }
             }
+
         }
         else {
             assert instr instanceof Fcmp;

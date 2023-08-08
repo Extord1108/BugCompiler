@@ -1,4 +1,3 @@
-@a = dso_local global i32 7
 declare i32 @getch()
 declare i32 @parallel_start()
 declare i32 @getfarray(float* )
@@ -16,46 +15,50 @@ declare float @getfloat()
 declare void @parallel_end(i32 )
 define dso_local i32 @main() 
 {
-b5:
-	%r46 = add i32 0, 0
-	%r44 = add i32 0, 0
-	br label %b6
-b6:
-	%r23 = icmp slt i32 %r44, 100
-	br i1 %r23, label %b7, label %b8
-b7:
-	%r25 = call i32 @func()
-	%r26 = icmp eq i32 %r25, 1
-	br i1 %r26, label %b9, label %b10
-b8:
-	%r37 = icmp slt i32 %r46, 100
-	br i1 %r37, label %b11, label %b12
-b9:
-	%r29 = add i32 %r46, 1
-	br label %b10
-b10:
-	%r33 = add i32 %r44, 1
-	%r46 = add i32 %r45, 0
-	%r44 = add i32 %r33, 0
-	br label %b6
-b11:
-	call void @putint(i32 1)
-	br label %b13
-b12:
-	call void @putint(i32 0)
-	br label %b13
-b13:
+b14:
+	%r40 = call i32 @ifElseIf()
+	call void @putint(i32 %r40)
 	ret i32 0
 }
-define dso_local i32 @func() 
+define dso_local i32 @ifElseIf() 
 {
 b1:
-	%r0 = load i32, i32* @a
-	%r7 = icmp eq i32 1, %r0
-	br i1 %r7, label %b2, label %b3
+	%r5 = icmp eq i32 5, 6
+	br i1 %r5, label %b2, label %b5
 b2:
-	%r10 = add i32 1, 1
-	ret i32 1
+	ret i32 5
 b3:
-	ret i32 0
+	%r14 = icmp eq i32 10, 10
+	br i1 %r14, label %b9, label %b7
+b4:
+	ret i32 %r44
+b5:
+	%r8 = icmp eq i32 10, 11
+	br i1 %r8, label %b2, label %b3
+b6:
+	%r44 = add i32 25, 0
+	br label %b8
+b7:
+	%r22 = icmp eq i32 10, 10
+	br i1 %r22, label %b13, label %b11
+b8:
+	br label %b4
+b9:
+	%r17 = icmp eq i32 5, 1
+	br i1 %r17, label %b6, label %b7
+b10:
+	%r29 = add i32 5, 15
+	%r43 = add i32 %r29, 0
+	br label %b12
+b11:
+	%r33 = sub i32 0, 5
+	%r43 = add i32 %r33, 0
+	br label %b12
+b12:
+	%r44 = add i32 %r43, 0
+	br label %b8
+b13:
+	%r25 = sub i32 0, 5
+	%r26 = icmp eq i32 5, %r25
+	br i1 %r26, label %b10, label %b11
 }
