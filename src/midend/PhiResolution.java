@@ -32,12 +32,10 @@ public class PhiResolution extends Pass {
             BBs.add(bb);
         for(BasicBlock bb:BBs)
         {
-            System.out.println(bb.getName());
             if(!(bb.getInstrs().get(0) instanceof Phi)) continue;
             ArrayList<BasicBlock> incomings = new ArrayList<>(bb.getPredecessors());
             ArrayList<Pcopy> PCs = new ArrayList<>();
             for(int j = 0;j < incomings.size(); j++){
-                System.out.println("incoming:"+incomings.get(j).getName());
                 BasicBlock incomingBB = incomings.get(j);
                 Pcopy pcopy = new Pcopy();//空的平行复制指令
                 if(incomingBB.getSuccessors().size()>1){
@@ -56,7 +54,6 @@ public class PhiResolution extends Pass {
                     for(int j = 0; j < phi.getUses().size(); j++){
                         //Variable freshVar = new Variable(phi.getType());
                         PCs.get(j).addFromAndTo(phi.getUse(j), phi);
-                        System.out.println("bb:"+PCs.get(j).getBasicBlock().getName()+" "+PCs.get(j));
                         phi.modifyUse(j, phi);
                     }
                 }else
