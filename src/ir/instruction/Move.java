@@ -13,6 +13,7 @@ public class Move extends Instr{
         this.type = type;
         this.from = from;
         this.to = to;
+        this.basicBlock = basicBlock;
     }
 
     public Value getFrom() {
