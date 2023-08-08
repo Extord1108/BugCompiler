@@ -30,7 +30,7 @@ public class McLdr extends McInstr{
     @Override
     public String toString() {
         StringBuilder stb = new StringBuilder();
-        if(useVFP()) {
+        if(!useVFP()) {
             stb.append("ldr" + "\t" + defOperands.get(0) + ",\t" + "[" + useOperands.get(0));
             if(useOperands.size() == 2)
                 stb.append(",\t" + useOperands.get(1));
