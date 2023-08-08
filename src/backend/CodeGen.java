@@ -407,6 +407,11 @@ public class CodeGen {
                 }
                 else {
                     int offset = - (regStack + 1) * 4;
+                    if(src instanceof Operand.Imm) {
+                        Operand temp = new Operand.VirtualReg(src.isFloat(), curMcFunc);
+                        new McMove(temp, src, curMcBlock);
+                        src =temp;
+                    }
                     if(canImmOffset(offset)){
                         new McStore(src, Operand.PhyReg.getPhyReg("sp"), new Operand.Imm(offset), curMcBlock);
                     } else {
@@ -579,6 +584,11 @@ public class CodeGen {
                     } else {
                         Operand lopd = getOperand(left);
                         Operand ropd = getOperand(right);
+                        if(ropd instanceof Operand.Imm) {
+                            Operand temp = new Operand.VirtualReg(ropd.isFloat(), curMcFunc);
+                            new McMove(temp, ropd, curMcBlock);
+                            ropd = temp;
+                        }
                         Operand dst1 = new Operand.VirtualReg(left instanceof Variable.ConstFloat, curMcFunc);
                         new McBinary(McBinary.BinaryType.Div, dst1, lopd, ropd, curMcBlock);
                         new McBinary(McBinary.BinaryType.Mul, dst1, dst1, ropd, curMcBlock);
@@ -662,7 +672,13 @@ public class CodeGen {
                         }
                     } else {
                         // TODO 魔法数的除法
-                        new McBinary(McBinary.BinaryType.Mul, dstVr, lopd, getOperand(new Variable.ConstInt(imm)), curMcBlock);
+                        Operand immOpd = getOperand(new Variable.ConstInt(imm));
+                        if(immOpd instanceof Operand.Imm) {
+                            Operand temp = new Operand.VirtualReg(immOpd.isFloat(), curMcFunc);
+                            new McMove(temp, immOpd, curMcBlock);
+                            immOpd = temp;
+                        }
+                        new McBinary(McBinary.BinaryType.Div, dstVr, lopd, immOpd, curMcBlock);
                     }
                 }
                 else {

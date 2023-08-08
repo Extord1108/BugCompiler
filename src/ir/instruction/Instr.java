@@ -23,7 +23,7 @@ public class Instr extends Value {
 
     public Instr(Type type, BasicBlock basicBlock, boolean head) {
         this.type = type;
-        this.basicBlock = basicBlock;
+        this.basicBlock = basicBlock.getFunction().getBasicBlocks().get(0);
         this.name = "%r" + count++;
         this.uses = new ArrayList<>();
 //        basicBlock.addInstrHead(this);

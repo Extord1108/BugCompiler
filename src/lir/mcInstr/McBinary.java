@@ -47,7 +47,12 @@ public class McBinary extends McInstr{
     @Override
     public String toString() {
         if(useVFP()) {
-            return "v" + type + ".F32\t" + defOperands.get(0) + ",\t" + useOperands.get(0) + ",\t" + useOperands.get(1);
+            if(type.equals(BinaryType.Div)) {
+                return "vdiv.F32\t" + defOperands.get(0) + ",\t" +
+                        useOperands.get(0) + ",\t" + useOperands.get(1);
+            }
+            return "v" + type + ".F32\t" + defOperands.get(0) + ",\t" +
+                    useOperands.get(0) + ",\t" + useOperands.get(1);
         }
         return type + "\t" + defOperands.get(0) + ",\t" + useOperands.get(0) + ",\t" + useOperands.get(1);
     }
@@ -56,7 +61,7 @@ public class McBinary extends McInstr{
         Neg("neg"),
         Not("not"),
         Mul("mul","fmul"),
-        Div("sdiv","fdiv"),
+        Div("sdiv","div"),
         Mod("srem","frem"),
         Add("add","fadd"),
         Sub("sub","fsub"),
@@ -67,7 +72,7 @@ public class McBinary extends McInstr{
         Eq("eq","oeq"),
         Ne("ne","one"),
         And("and"),
-        Or("or"),
+        Or("orr"),
         CastInt("castint"), // 隐式转换
         CastFloat("casefloat"),
         Rsb("rsb")

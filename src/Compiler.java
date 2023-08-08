@@ -3,6 +3,7 @@ import backend.RegAllocate;
 import frontend.parser.SysYLexer;
 import frontend.parser.SysYParser;
 import frontend.parser.Visitor;
+import ir.BasicBlock;
 import manager.Manager;
 
 import midend.MidEndRunner;
