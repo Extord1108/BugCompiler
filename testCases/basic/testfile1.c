@@ -1,65 +1,98 @@
-const int len = 20;
+// float global constants
+const float RADIUS = 5.5, PI = 03.141592653589793, EPS = 1e-6;
 
-int main()
-{
-	int i, j, t, n, temp;
-	int mult1[len] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0};
-	int mult2[len] = {2, 3, 4, 2, 5, 7 ,9 ,9, 0, 1, 9, 8, 7, 6, 4, 3, 2, 1, 2, 2};
-	int len1 = len;
-	int len2 = len;
-	int c1[len + 5];
-	int c2[len + 5];
-	int result[len * 2] = {};
+// hexadecimal float constant
+const float PI_HEX = 0x1.921fb6p+1, HEX2 = 0x.AP-3;
 
-	i = 0;
-	while (i < len1) {
-		c1[i] = mult1[i];
-		i = i + 1;
-	}	
+// float constant evaluation
+const float FACT = -.33E+5, EVAL1 = PI * RADIUS * RADIUS, EVAL2 = 2 * PI_HEX * RADIUS, EVAL3 = PI * 2 * RADIUS;
 
-	i = 0;
-	while (i < len2) {
-		c2[i] = mult2[i];
-		i = i + 1;
-	}	
+// float constant implicit conversion
+const float CONV1 = 233, CONV2 = 0xfff;
+const int MAX = 1e9, TWO = 2.9, THREE = 3.2, FIVE = TWO + THREE;
 
-	n = len1 + len2 - 1;
+// float -> float function
+float float_abs(float x) {
+  if (x < 0) return -x;
+  return x;
+}
 
-	i = 0;
-	while (i <= n) {
-		result[i]=0;
-		i = i + 1;
-	}	 
+// int -> float function & float/int expression
+float circle_area(int radius) {
+  return (PI * radius * radius + (radius * radius) * PI) / 2;
+}
 
-	temp=0;
+// float -> float -> int function & float/int expression
+int float_eq(float a, float b) {
+  if (float_abs(a - b) < EPS) {
+    return 1 * 2. / 2;
+  } else {
+    return 0;
+  }
+}
 
-	i = len2 - 1;
-	while (i > -1) {
-		t = c2[i];
-		j = len1 - 1;
-		while (j > -1) {
-			temp = result[n] + t * c1[j];
-			if(temp >= 10) {
-				result[n] = (temp);
-				result[n-1] = result[n-1] + temp / 10;
-			}
-			else
-				result[n] = temp;
-			j = j - 1;
-			n = n - 1;
-		}
-		n = n + len1 - 1;
-		i = i - 1;
-	}
+void error() {
+  putch(101);
+  putch(114);
+  putch(114);
+  putch(111);
+  putch(114);
+  putch(10);
+}
 
-	if(result[0] != 0)
-		putint(result[0]); 
+void ok() {
+  putch(111);
+  putch(107);
+  putch(10);
+}
 
-	i = 1;
-	while (i <= len1 + len2 - 1) {
-		putint(result[i]); 
-		i = i + 1;
-	}
+void assert(int cond) {
+  if (!cond) {
+    error();
+  } else {
+    ok();
+  }
+}
 
-	return 0;
+void assert_not(int cond) {
+  if (cond) {
+    error();
+  } else {
+    ok();
+  }
+}
+
+int main() {
+  assert_not(float_eq(HEX2, FACT));
+  assert_not(float_eq(EVAL1, EVAL2));
+  assert(float_eq(EVAL2, EVAL3));
+  assert(float_eq(circle_area(RADIUS) /* f->i implicit conversion */,
+                  circle_area(FIVE)));
+  assert_not(float_eq(CONV1, CONV2) /* i->f implicit conversion */);
+
+  // float conditional expressions
+  if (1.5) ok();
+  if (!!3.3) ok();
+  if (.0 && 3) error();
+  if (0 || 0.3) ok();
+
+  // float array & I/O functions
+  int i = 1, p = 0;
+  float arr[10] = {1., 2};
+  int len = getfarray(arr);
+  while (i < MAX) {
+    float input = getfloat();
+    float area = PI * input * input, area_trunc = circle_area(input);
+    arr[p] = arr[p] + input;
+
+    putfloat(area);
+    putch(32);
+    putint(area_trunc); // f->i implicit conversion
+    putch(10);
+
+    i = i * - -1e1;
+    p = p + 1;
+  }
+  putfarray(len, arr);
+  return 0;
 }

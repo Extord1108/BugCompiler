@@ -672,7 +672,13 @@ public class CodeGen {
                         }
                     } else {
                         // TODO 魔法数的除法
-                        new McBinary(McBinary.BinaryType.Div, dstVr, lopd, getOperand(new Variable.ConstInt(imm)), curMcBlock);
+                        Operand immOpd = getOperand(new Variable.ConstInt(imm));
+                        if(immOpd instanceof Operand.Imm) {
+                            Operand temp = new Operand.VirtualReg(immOpd.isFloat(), curMcFunc);
+                            new McMove(temp, immOpd, curMcBlock);
+                            immOpd = temp;
+                        }
+                        new McBinary(McBinary.BinaryType.Div, dstVr, lopd, immOpd, curMcBlock);
                     }
                 }
                 else {
