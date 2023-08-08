@@ -18,6 +18,7 @@ public class GCM extends Pass {
     @Override
     public void run(){
         //scheduleEarly
+        System.out.println(1);
         for(Function function : this.functions.values())
         {
             if(function.isExternal()) continue;
@@ -26,6 +27,7 @@ public class GCM extends Pass {
             scheduleEarly(function);
         }
         //scheduleLate
+        System.out.println(2);
         for(Function function : this.functions.values())
         {
             if(function.isExternal()) continue;
@@ -34,6 +36,7 @@ public class GCM extends Pass {
             scheduleLate(function);
         }
         //move to fit position
+        System.out.println(3);
         for(Function function : this.functions.values())
         {
             if(function.isExternal()) continue;
@@ -41,6 +44,7 @@ public class GCM extends Pass {
             curFunc = function;
             moveInstr(function);
         }
+        System.out.println(4);
     }
 
     private void scheduleEarly(Function function){
@@ -127,10 +131,10 @@ public class GCM extends Pass {
         if(a == null) return b;
         if(b == null) return a;
         if(a == b) return a;
-        while(a.getDomTreeDepth() < b.getDomTreeDepth()){
+        while(a.getDomTreeDepth() > b.getDomTreeDepth()){
             a = curFunc.getDomTree().get(a);
         }
-        while(b.getDomTreeDepth() < a.getDomTreeDepth()){
+        while(b.getDomTreeDepth() > a.getDomTreeDepth()){
             b = curFunc.getDomTree().get(b);
         }
         while(a != b){
