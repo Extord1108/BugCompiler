@@ -116,10 +116,10 @@ public class McFunction {
             }
         }
         if(!popFRegs.toString().equals("")) {
-            stb.append("\tvpop\t{"+ popFRegs.toString()+"}\n");
+            stb.append("\tvpush\t{"+ popFRegs.toString()+"}\n");
         }
         if(!popRegs.toString().equals("")) {
-            stb.append("\tpop\t{"+ popRegs.toString()+ "}\n");
+            stb.append("\tpush\t{"+ popRegs.toString()+ "}\n");
         }
     }
 }

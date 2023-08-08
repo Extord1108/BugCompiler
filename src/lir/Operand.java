@@ -62,6 +62,8 @@ public class Operand {
     }
 
     public Operand getAlias() {
+        if(alias == null)
+            return this;
         return alias;
     }
 
@@ -79,10 +81,19 @@ public class Operand {
 
     public boolean needColor(String type) {
         if(type == "Integer") {
-            return !isFloat && !(this instanceof Imm);
+            return !isFloat && !(this instanceof Imm) && !(this instanceof Global);
         } else {
             assert type == "Float";
-            return isFloat && !(this instanceof Imm);
+            return isFloat && !(this instanceof Imm) && !(this instanceof Global);
+        }
+    }
+
+    public boolean isPreColored(String type) {
+        if(type == "Integer") {
+            return !isFloat && this instanceof PhyReg;
+        } else {
+            assert type == "Float";
+            return isFloat && this instanceof FPhyReg;
         }
     }
     public boolean isFloat(){
@@ -160,44 +171,11 @@ public class Operand {
         }
     }
 
-    public static class PhyReg extends Operand{
+    public static class PhyReg extends Operand implements Comparable<PhyReg>{
         int idx;
         String name;
         private static HashMap<String, PhyReg> name2reg = new HashMap<>();
         private static HashMap<Integer, PhyReg> idx2reg = new HashMap<>();
-        private static ArrayList<Operand> colorList = new ArrayList<>();
-
-        private PhyReg(int idx, String name){
-            this.idx = idx;
-            this.name = name;
-            this.isFloat = false;
-            this.phyReg = this;
-        }
-
-        public int getIdx() {
-            return idx;
-        }
-
-        public static PhyReg getPhyReg(String name){
-            return name2reg.get(name);
-        }
-
-        public static PhyReg getPhyReg(int idx) {
-            return  idx2reg.get(idx);
-        }
-
-        public static TreeSet<Operand> getOkColorList() {
-            TreeSet<Operand> okColorList = new TreeSet<>(colorList);
-            okColorList.remove(name2reg.get("sp"));
-            okColorList.remove(name2reg.get("pc"));
-            okColorList.remove(name2reg.get("cspr"));
-            return okColorList;
-        }
-
-        @Override
-        public String toString() {
-            return name;
-        }
 
         public static class PhyRegs{
             public static final PhyReg R0 = new PhyReg(0, "r0");
@@ -225,15 +203,53 @@ public class Operand {
                     PhyReg phyReg= (PhyReg) field.get(Operand.PhyReg.PhyRegs.class);
                     name2reg.put(phyReg.name, phyReg);
                     idx2reg.put(phyReg.idx, phyReg);
-                    colorList.add(phyReg);
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 }
             }
         }
+
+        private PhyReg(int idx, String name){
+            this.idx = idx;
+            this.name = name;
+            this.isFloat = false;
+            this.phyReg = this;
+        }
+
+        public int getIdx() {
+            return idx;
+        }
+
+        public static PhyReg getPhyReg(String name){
+            return name2reg.get(name);
+        }
+
+        public static PhyReg getPhyReg(int idx) {
+            return  idx2reg.get(idx);
+        }
+
+        public static TreeSet<Operand> getOkColorList() {
+            TreeSet<Operand> okColorList = new TreeSet<>();
+            for(int i = 0; i < 17; i++){
+                okColorList.add(idx2reg.get(i));
+            }
+            okColorList.remove(name2reg.get("sp"));
+            okColorList.remove(name2reg.get("pc"));
+            okColorList.remove(name2reg.get("cspr"));
+            return okColorList;
+        }
+
+        @Override
+        public String toString() {
+            return name;
+        }
+
+        public int compareTo(PhyReg o) {
+            return  this.getIdx() - o.getIdx();
+        }
     }
 
-    public static class FPhyReg extends Operand{
+    public static class FPhyReg extends Operand implements Comparable<FPhyReg>{
         int idx;
         String name;
         public int degree = 0;
@@ -316,6 +332,10 @@ public class Operand {
                     e.printStackTrace();
                 }
             }
+        }
+
+        public int compareTo(FPhyReg o) {
+            return  this.getIdx() - o.getIdx();
         }
     }
 }
