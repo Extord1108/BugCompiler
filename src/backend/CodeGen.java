@@ -248,9 +248,9 @@ public class CodeGen {
                                 mulOff, curMcBlock);
                         if(tmpAddr == null) {
                             tmpAddr = new Operand.VirtualReg(false, curMcFunc);
-                            new McBinary(McBinary.BinaryType.Add, tmpAddr, addrOpd, tmp, curMcBlock);
+                            new McBinary(McBinary.BinaryType.Add, tmpAddr, addrOpd, mulAns, curMcBlock);
                         } else {
-                            new McBinary(McBinary.BinaryType.Add, tmpAddr, tmpAddr, tmp, curMcBlock);
+                            new McBinary(McBinary.BinaryType.Add, tmpAddr, tmpAddr, mulAns, curMcBlock);
                         }
                     }
                     if(i == idxList.size() - 1) {

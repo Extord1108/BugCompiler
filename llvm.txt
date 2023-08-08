@@ -1,3 +1,5 @@
+@N = dso_local global i32 -1
+@arr = dso_local global [6 x i32] [i32 1, i32 2, i32 33, i32 4, i32 5, i32 6]
 declare i32 @getch()
 declare i32 @parallel_start()
 declare i32 @getfarray(float* )
@@ -15,70 +17,21 @@ declare float @getfloat()
 declare void @parallel_end(i32 )
 define dso_local i32 @main() 
 {
-b14:
-	%r57 = call i32 @FourWhile()
-	ret i32 %r57
-}
-define dso_local i32 @FourWhile() 
-{
 b1:
-	move i32 5, %r68
-	move i32 6, %r67
-	move i32 7, %r65
-	move i32 10, %r62
+	move i32 0, %r21
+	move i32 0, %r20
 	br label %b2
 b2:
-	%r10 = icmp slt i32 %r68, 20
-	br i1 %r10, label %b3, label %b4
+	%r6 = icmp slt i32 %r21, 6
+	br i1 %r6, label %b3, label %b4
 b3:
-	%r13 = add i32 %r68, 3
-	move i32 %r67, %r66
-	move i32 %r65, %r63
-	move i32 %r62, %r61
-	br label %b5
-b4:
-	%r52 = add i32 %r67, %r62
-	%r53 = add i32 %r68, %r52
-	%r55 = add i32 %r53, %r65
-	ret i32 %r55
-b5:
-	%r17 = icmp slt i32 %r66, 10
-	br i1 %r17, label %b6, label %b7
-b6:
-	%r20 = add i32 %r66, 1
-	move i32 %r63, %r64
-	move i32 %r61, %r60
-	br label %b8
-b7:
-	%r46 = sub i32 %r66, 2
-	move i32 %r13, %r68
-	move i32 %r46, %r67
-	move i32 %r63, %r65
-	move i32 %r61, %r62
+	%r10 = getelementptr inbounds [6 x i32], [6 x i32]* @arr, i32 0, i32 %r21
+	%r11 = load i32, i32* %r10
+	%r12 = add i32 %r20, %r11
+	%r15 = add i32 %r21, 1
+	move i32 %r15, %r21
+	move i32 %r12, %r20
 	br label %b2
-b8:
-	%r24 = icmp eq i32 %r64, 7
-	br i1 %r24, label %b9, label %b10
-b9:
-	%r27 = sub i32 %r64, 1
-	move i32 %r60, %r59
-	br label %b11
-b10:
-	%r42 = add i32 %r64, 1
-	move i32 %r20, %r66
-	move i32 %r42, %r63
-	move i32 %r60, %r61
-	br label %b5
-b11:
-	%r31 = icmp slt i32 %r59, 20
-	br i1 %r31, label %b12, label %b13
-b12:
-	%r34 = add i32 %r59, 3
-	move i32 %r34, %r59
-	br label %b11
-b13:
-	%r38 = sub i32 %r59, 1
-	move i32 %r27, %r64
-	move i32 %r38, %r60
-	br label %b8
+b4:
+	ret i32 %r20
 }
