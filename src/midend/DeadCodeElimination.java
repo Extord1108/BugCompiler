@@ -123,7 +123,7 @@ public class DeadCodeElimination extends Pass {
                 for(BasicBlock bb : function.getBasicBlocks()){
                     for(Instr instr : bb.getInstrs()){
                         if(instr.getUsedInfo().size()!=0 || instr instanceof Call || instr instanceof Return || instr instanceof Branch || instr instanceof Jump || instr instanceof Store){
-                            queue.add(instr);
+                            queue.addLast(instr);
                         }
                     }
                     while (!queue.isEmpty()){
@@ -150,13 +150,17 @@ public class DeadCodeElimination extends Pass {
         }
 
         private void setUseful(Value value){
+            if(useful.contains(value))
+                return;
             useful.add(value);
             if(value instanceof Instr){
                 useful.add(((Instr) value).getBasicBlock());
             }
-            for(Used used : value.getUsedInfo()){
-                if(!useful.contains(used.getUser())){
-                    queue.add(used.getUser());
+            if(value instanceof Instr){
+                for(Value use:((Instr) value).getUses()){
+                    if((use instanceof Instr || use instanceof Function || use instanceof BasicBlock) && !useful.contains(use)){
+                        queue.addLast(use);
+                    }
                 }
             }
         }
