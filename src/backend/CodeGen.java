@@ -1,6 +1,5 @@
 package backend;
 
-import com.sun.jdi.FloatType;
 import frontend.semantic.OpTree;
 import ir.*;
 import ir.instruction.*;
@@ -92,7 +91,7 @@ public class CodeGen {
             Operand dst = getOperand(param);
             if(param.getType() instanceof ir.type.FloatType) {
                 if(sRegIdx < sParamCnt) {
-                    new McMove( dst, Operand.PhyReg.getPhyReg(sRegIdx), curMcBlock);
+                    new McMove( dst, Operand.FPhyReg.getFPhyReg(sRegIdx), curMcBlock);
                     sRegIdx ++;
                 } else {
                     int offset = -(regStack + 1) * 4;
@@ -239,8 +238,14 @@ public class CodeGen {
                     } else {
                         Operand tmp = getOperand(idx);
                         Operand mulAns = new Operand.VirtualReg(false, curMcFunc);
+                        Operand mulOff = getOperand(new Variable.ConstInt(offset));
+                        if(mulOff instanceof Operand.Imm) {
+                            Operand temp = new Operand.VirtualReg(mulOff.isFloat(), curMcFunc);
+                            new McMove(temp, mulOff, curMcBlock);
+                            mulOff = temp;
+                        }
                         new McBinary(McBinary.BinaryType.Mul, mulAns, tmp,
-                                getOperand(new Variable.ConstInt(offset)), curMcBlock);
+                                mulOff, curMcBlock);
                         if(tmpAddr == null) {
                             tmpAddr = new Operand.VirtualReg(false, curMcFunc);
                             new McBinary(McBinary.BinaryType.Add, tmpAddr, addrOpd, tmp, curMcBlock);
@@ -320,9 +325,11 @@ public class CodeGen {
             else if(instr instanceof Sitofp) {
                 Operand src = getOperand(instr.getUse(0));
                 Operand tmp = new Operand.VirtualReg(true, curMcFunc);
+//                System.out.println(instr.type + "!!!!!!!!!!!!!");
                 Operand dst = getOperand(instr);
+//                System.out.println(dst.isFloat());
                 new McMove(tmp, src, curMcBlock);
-                new McVcvt(McVcvt.VcvtType.i2f, tmp, dst, curMcBlock);
+                new McVcvt(McVcvt.VcvtType.i2f, dst, tmp, curMcBlock);
             }
             else if(instr instanceof Unary) {
                 OpTree.Operator op = ((Unary) instr).getOp();
@@ -729,6 +736,7 @@ public class CodeGen {
                 opd = getFloatImm(value);
             }
             else {
+
                 if(value.getType() instanceof FloatType) {
                     opd = new Operand.VirtualReg(true, curMcFunc);
                 } else {

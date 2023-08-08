@@ -709,6 +709,7 @@ public class RegAllocate {
                 curMcFunc.getMcBlocks().head; iter = iter.getPrev()){
             McBlock mcBlock = (McBlock) iter;
             HashSet<Operand> live = new HashSet<>(mcBlock.liveOutSet);
+//            System.out.println(mcBlock.getName());
             for(MyNode myNode = mcBlock.getMcLastInstr(); myNode !=
                     mcBlock.getMcInstrs().head; myNode = myNode.getPrev()) {
                 McInstr mcInstr = (McInstr) myNode;
