@@ -594,7 +594,27 @@ public class RegAllocate {
     }
 
     private void fixStack(ArrayList<McBinary> needFixed) {
-        System.err.println("等能输出了再来修栈吧");
+        for(McBinary mcBinary: needFixed) {
+            int offset;
+            if(mcBinary.fixType.equals(McBinary.FixType.VAR_STACK)) {
+                offset = curMcFunc.getStackSize();
+            } else {
+                assert mcBinary.fixType.equals(McBinary.FixType.PARAM_STACK);
+                offset = curMcFunc.getStackSize() + mcBinary.getOffset();
+            }
+            if(offset == 0) {
+                mcBinary.remove();
+            } else {
+                if(CodeGen.canImmSaved(offset)) {
+                    mcBinary.useOperands.set(1, new Operand.Imm(offset));
+                } else {
+                    Operand off = Operand.PhyReg.getPhyReg("r4");
+                    McMove mcMove = new McMove(off, new Operand.Imm(offset), mcBinary.mcBlock, false);
+                    mcBinary.mcBlock.getMcInstrs().insertBefore(mcBinary, mcMove);
+                    mcBinary.useOperands.set(1, off);
+                }
+            }
+        }
     }
 
     private void preAssignColors() {
@@ -692,7 +712,6 @@ public class RegAllocate {
                     McMove mcMove = (McMove) mcInstr;
                     live.remove(mcMove.getSrcOp());
                     mcMove.getDstOp().moveList.add(mcMove);
-                    System.out.println(mcMove.getSrcOp());
                     mcMove.getSrcOp().moveList.add(mcMove);
                     workListMoves.add(mcMove);
                 }

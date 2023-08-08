@@ -72,7 +72,7 @@ public class CodeGen {
             curMcBlock.setMcFunction(curMcFunc);
             McBinary mcBinary = new McBinary(McBinary.BinaryType.Sub, Operand.PhyReg.getPhyReg("sp"),
                     Operand.PhyReg.getPhyReg("sp"), new Operand.Imm(0), curMcBlock);
-            mcBinary.setNeedFix(true);
+            mcBinary.setNeedFix(McBinary.FixType.VAR_STACK);
             dealParam();
             nextBBList.push(basicBlock);
             while(nextBBList.size() > 0) {
@@ -97,7 +97,7 @@ public class CodeGen {
                     Operand addr = new Operand.VirtualReg(false, curMcFunc);
                     McBinary mcBinary =new McBinary(McBinary.BinaryType.Add, addr, Operand.PhyReg.getPhyReg("sp"),
                             new Operand.Imm(offset), curMcBlock);
-                    mcBinary.setNeedFix(true);
+                    mcBinary.setNeedFix(McBinary.FixType.PARAM_STACK);
                     new McLdr(dst, addr, curMcBlock);
                     curMcFunc.addStackSize(4);
                     regStack ++;
@@ -111,7 +111,7 @@ public class CodeGen {
                     Operand addr = new Operand.VirtualReg(false, curMcFunc);
                     McBinary mcBinary =new McBinary(McBinary.BinaryType.Add, addr, Operand.PhyReg.getPhyReg("sp"),
                             new Operand.Imm(offset), curMcBlock);
-                    mcBinary.setNeedFix(true);
+                    mcBinary.setNeedFix(McBinary.FixType.PARAM_STACK);
                     new McLdr(dst, addr, curMcBlock);
                     curMcFunc.addStackSize(4);
                     regStack ++;
@@ -281,12 +281,12 @@ public class CodeGen {
                     }
                     McBinary mcBinary = new McBinary(McBinary.BinaryType.Add, Operand.PhyReg.getPhyReg("sp"),
                             Operand.PhyReg.getPhyReg("sp"), new Operand.Imm(0), curMcBlock);
-                    mcBinary.setNeedFix(true);
+                    mcBinary.setNeedFix(McBinary.FixType.VAR_STACK);
                     new McReturn(retOpd, curMcBlock);
                 } else {
                     McBinary mcBinary = new McBinary(McBinary.BinaryType.Add, Operand.PhyReg.getPhyReg("sp"),
                             Operand.PhyReg.getPhyReg("sp"), new Operand.Imm(0), curMcBlock);
-                    mcBinary.setNeedFix(true);
+                    mcBinary.setNeedFix(McBinary.FixType.VAR_STACK);
                     new McReturn(curMcBlock);
                 }
             }
