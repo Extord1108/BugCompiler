@@ -324,6 +324,11 @@ public class CodeGen {
             }
             else if(instr instanceof Sitofp) {
                 Operand src = getOperand(instr.getUse(0));
+                if(src instanceof Operand.Imm) {
+                    Operand temp = new Operand.VirtualReg(src.isFloat(), curMcFunc);
+                    new McMove(temp, src, curMcBlock);
+                    src =temp;
+                }
                 Operand tmp = new Operand.VirtualReg(true, curMcFunc);
 //                System.out.println(instr.type + "!!!!!!!!!!!!!");
                 Operand dst = getOperand(instr);

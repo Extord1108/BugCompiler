@@ -1,5 +1,7 @@
 package lir.mcInstr;
 
+import backend.CodeGen;
+import frontend.parser.Visitor;
 import lir.McBlock;
 import lir.Operand;
 
