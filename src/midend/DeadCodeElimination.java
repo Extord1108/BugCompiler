@@ -247,9 +247,6 @@ public class DeadCodeElimination extends Pass {
                     }
                 }
             }
-            for (Function function : uselessFunctions) {
-                System.out.println(function.getName());
-            }
         }
     }
 
