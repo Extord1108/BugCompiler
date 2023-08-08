@@ -34,7 +34,7 @@ public class Instr extends Value {
     }
 
     public Instr(){
-
+        this.uses = new ArrayList<>();
     }
 
     public ArrayList<Value> getUses() {
