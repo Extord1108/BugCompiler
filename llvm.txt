@@ -1,4 +1,4 @@
-@a = dso_local global [5 x i32] [i32 0, i32 1, i32 2, i32 3, i32 4]
+@a = dso_local global i32 0
 declare i32 @getch()
 declare i32 @parallel_start()
 declare i32 @getfarray(float* )
@@ -16,8 +16,15 @@ declare float @getfloat()
 declare void @parallel_end(i32 )
 define dso_local i32 @main() 
 {
+b2:
+	store i32 10, i32* @a
+	%r10 = load i32, i32* @a
+	%r11 = call i32 @func(i32 %r10)
+	ret i32 %r11
+}
+define dso_local i32 @func(i32 %f0) 
+{
 b1:
-	%r0 = getelementptr inbounds [5 x i32], [5 x i32]* @a, i32 0, i32 4
-	%r1 = load i32, i32* %r0
-	ret i32 %r1
+	%r4 = sub i32 %f0, 1
+	ret i32 %r4
 }

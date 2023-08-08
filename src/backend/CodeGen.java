@@ -274,6 +274,11 @@ public class CodeGen {
                     new McMove(temp, addrOpd, curMcBlock);
                     addrOpd = temp;
                 }
+                if(dtOpd instanceof Operand.Imm) {
+                    Operand temp = new Operand.VirtualReg(dtOpd.isFloat(), curMcFunc);
+                    new McMove(temp, dtOpd, curMcBlock);
+                    dtOpd = temp;
+                }
 //                System.out.println(dtOpd);
                 new McStore(dtOpd, addrOpd, curMcBlock);
             }
@@ -553,12 +558,17 @@ public class CodeGen {
                     }
                 }
                 else {
-                    Operand lopd = getOperand(left);
-                    Operand ropd = getOperand(right);
-                    Operand dst1 = new Operand.VirtualReg(left instanceof Variable.ConstFloat, curMcFunc);
-                    new McBinary(McBinary.BinaryType.Div, dst1, lopd, ropd, curMcBlock);
-                    new McBinary(McBinary.BinaryType.Mul, dst1, dst1, ropd, curMcBlock);
-                    new McBinary(McBinary.BinaryType.Sub, dst1, lopd, dst1, curMcBlock);
+                    if(left instanceof Variable.ConstInt && right instanceof Variable.ConstInt){
+                        int valLeft = ((Variable.ConstInt)left).getIntVal();
+                        new McMove(dstVr, getOperand(new Variable.ConstInt(valLeft % imm)),curMcBlock);
+                    } else {
+                        Operand lopd = getOperand(left);
+                        Operand ropd = getOperand(right);
+                        Operand dst1 = new Operand.VirtualReg(left instanceof Variable.ConstFloat, curMcFunc);
+                        new McBinary(McBinary.BinaryType.Div, dst1, lopd, ropd, curMcBlock);
+                        new McBinary(McBinary.BinaryType.Mul, dst1, dst1, ropd, curMcBlock);
+                        new McBinary(McBinary.BinaryType.Sub, dst1, lopd, dst1, curMcBlock);
+                    }
                 }
             }
             case Mul  -> {
