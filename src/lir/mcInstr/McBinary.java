@@ -46,6 +46,18 @@ public class McBinary extends McInstr{
         return ((Operand.Imm)useOperands.get(1)).getIntNumber();
     }
 
+    public Operand getSrc1() {
+        return useOperands.get(0);
+    }
+
+    public Operand getSrc2() {
+        return useOperands.get(1);
+    }
+
+    public Operand getDst() {
+        return defOperands.get(0);
+    }
+
     @Override
     public String toString() {
         if(useVFP()) {

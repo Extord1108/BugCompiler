@@ -25,6 +25,18 @@ public class McStore extends McInstr{
         useOperands.add(offset);
     }
 
+    public Operand getAddr() {
+        return useOperands.get(1);
+    }
+
+    public Operand getOffset() {
+        return useOperands.get(2);
+    }
+
+    public Operand getData() {
+        return useOperands.get(0);
+    }
+
 
     public boolean useVFP(){
         return useOperands.get(0).isFloat();
