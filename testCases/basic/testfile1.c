@@ -1,80 +1,70 @@
-int n;
-int swap (int array[], int i, int j){
-    int temp;
-    temp = array[i];
-    array[i] = array[j];
-    array[j] = temp;
-    return 0;
-}
-int heap_ajust(int arr[], int start, int end) {
-    int dad;
-    dad = start;
-    int son;
-    son = dad * 2 + 1;
-    while (son < end + 1) { //
-        if (son < end && arr[son] < arr[son + 1])
-            son = son + 1;
-        if (arr[dad] > arr[son])
-            return 0;
-        else {
-            dad = swap(arr,dad,son);
-            dad = son;
-            son = dad * 2 + 1;
-        }
-    }
-    return 0;
-}
-int heap_sort(int arr[], int len) {
+int M;
+int L;
+int N;
+
+
+int add(float a0[],float a1[], float a2[],float b0[],float b1[],float b2[],float c0[],float c1[],float c2[])
+{
     int i;
-    int tmp;
-    i = len / 2 - 1;
-    putint(i);
-    while ( i > -1) {
-        tmp = len - 1;
-        putint(i);
-        putch(32);
-        putint(tmp);
-        putch(10);
-        tmp = heap_ajust(arr, i, tmp);
-        int j = 0;
-            while (j < len) {
-                int tmp;
-                tmp = arr[j];
-                putint(tmp);
-                tmp = 32;
-                putch(tmp);
-                j = j + 1;
-            }
-            putch(10);
-        i = i - 1;
+    i=0;
+    while(i<M)
+    {
+        c0[i]=a0[i]+b0[i];
+        c1[i]=a1[i]+b1[i];
+        c2[i]=a2[i]+b2[i];
+        i=i+1;
     }
-    i = len - 1;
-    while ( i > 0) {
-        int tmp0;
-        tmp0 = 0;
-        tmp = swap(arr,tmp0,i);
-        tmp = i - 1;
-        tmp = heap_ajust(arr, tmp0, tmp);
-        i = i-1;
-    }
+
     return 0;
+
 }
 
-int main(){
-    n = 10;
-    int a[10];
-    a[0]=4;a[1]=3;a[2]=9;a[3]=2;a[4]=0;
-    a[5]=1;a[6]=6;a[7]=5;a[8]=7;a[9]=8;
+int main()
+{
+    N=3;
+    M=3;
+    L=3;
+    float a0[3], a1[3], a2[3], b0[3], b1[3], b2[3], c0[6], c1[3], c2[3];
     int i;
-    i = 0;
-    i = heap_sort(a, n);
-    while (i < n) {
-        int tmp;
-        tmp = a[i];
-        putint(tmp);
-        tmp = 10;
-        putch(tmp);
-        i = i + 1;
+    i=0;
+    while(i<M)
+    {
+        a0[i]=i;
+        a1[i]=i;
+        a2[i]=i;
+        b0[i]=i;
+        b1[i]=i;
+        b2[i]=i;
+        i=i+1;
     }
+    i=add( a0, a1,  a2, b0, b1, b2, c0, c1, c2);
+    int x;
+    while(i<N)
+    {
+        x = c0[i];
+        putint(x);
+        i=i+1;
+    }
+    x = 10;
+    putch(x);
+    i=0;
+    while(i<N)
+    {
+        x = c1[i];
+        putint(x);
+        i=i+1;
+    }
+    x = 10;
+    putch(x);
+    i=0;
+    while(i<N)
+    {
+        x = c2[i];
+        putint(x);
+        i=i+1;
+    }
+    x = 10;
+    putch(x);
+
     return 0;
 }

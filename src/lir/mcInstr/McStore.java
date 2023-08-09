@@ -37,12 +37,12 @@ public class McStore extends McInstr{
             stb.append("str" + "\t" + useOperands.get(0) + ",\t" + "[" + useOperands.get(1));
             if(useOperands.size() > 2)
                 stb.append(",\t" + useOperands.get(2));
-            stb.append("]\n");
+            stb.append("]");
         } else {
             stb.append("vstr.F32" + "\t" + useOperands.get(0) + ",\t" + "[" + useOperands.get(1));
             if(useOperands.size() > 2)
                 stb.append(",\t" + useOperands.get(2));
-            stb.append("]\n");
+            stb.append("]");
         }
         return stb.toString();
     }

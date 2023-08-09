@@ -631,12 +631,11 @@ public class RegAllocate {
 
             }
         }
-
-        fixStack(needFixed);
+        if(type.equals("Integer"))
+            fixStack(needFixed);
     }
 
     private void fixStack(ArrayList<McBinary> needFixed) {
-//        System.out.println(curMcFunc.getName());
 //        System.out.println(curMcFunc.getStackSize());
         for(McBinary mcBinary: needFixed) {
             int offset;
