@@ -81,26 +81,16 @@ int main()
     E = getint();
     my_memset(size, 0, 10);
 
-    putint(1);
-    putch(10);
-
     while (E > 0) {
         int u, v;
         u = getint();
         v = getint();
         int c = getint();
-        putint(2);
-        putch(10);
         add_node(u, v, c);
         E = E - 1;
     }
 
-    putint(3);
-    putch(10);
-
     putint(max_flow(1, V));
     putch(10);
-
-
     return 0;
 }

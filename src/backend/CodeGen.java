@@ -153,9 +153,11 @@ public class CodeGen {
                 if(opd != null) {
                     if(((Operand.Imm) opd).getIntNumber() == 1) {
                         new McJump(thenBlock, curMcBlock);
+                        curMcBlock.addSuccMcBlock(thenBlock);
                     } else{
                         assert ((Operand.Imm) opd).getIntNumber() == 0;
                         new McJump(elseBlock, curMcBlock);
+                        curMcBlock.addSuccMcBlock(elseBlock);
                     }
                     continue;
                 }

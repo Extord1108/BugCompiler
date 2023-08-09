@@ -38,7 +38,7 @@ public class InitVal {
         else if(value instanceof Variable.ConstFloat)
             return "\t.word\t" + Float.floatToIntBits(((Variable.ConstFloat) value).getFloatVal()) + "\n";
         else if(value instanceof Variable.ZeroInit)
-            return "\t.zero\t" + ((ArrayType)value.getType()).getFattenSize() + "\n";
+            return "\t.zero\t" + (((ArrayType)value.getType()).getFattenSize() * 4) + "\n";
         else{
             assert value instanceof Variable.VarArray;
             StringBuilder stb = new StringBuilder();

@@ -143,11 +143,11 @@ public class RegAllocate {
         int t = 0;
         while(true) {
             // 生存周期分析
-//            if(mcFunction.getName().equals("main")) {
-//                System.out.println(t);
+//            if(mcFunction.getName().equals("max_flow")) {
+////                System.out.println(t);
 //                OutputStream out = OutputHandler.getOutputFile("bug" + t++);
 //                OutputHandler.output2Stream(mcFunction.toString(),out);
-//                System.out.println("-------------------");
+////                System.out.println("-------------------");
 //            }
 
 
@@ -758,9 +758,18 @@ public class RegAllocate {
             McBlock mcBlock = (McBlock) iter;
             HashSet<Operand> live = new LinkedHashSet<>(mcBlock.liveOutSet);
 //            System.out.println(mcBlock.getName());
+//            System.out.println(mcBlock.liveOutSet.size());
+//            System.out.println(mcBlock.getName());
             for(MyNode myNode = mcBlock.getMcLastInstr(); myNode !=
                     mcBlock.getMcInstrs().head; myNode = myNode.getPrev()) {
                 McInstr mcInstr = (McInstr) myNode;
+//                if(mcInstr instanceof McMove && ((McMove) mcInstr).getDstOp().toString().equals("v12")) {
+//                    System.out.println(mcBlock.getName());
+//                    System.out.println(mcInstr);
+//                    for(Operand li: live) {
+//                        System.out.println(li);
+//                    }
+//                }
                 if(mcInstr instanceof McMove && ((McMove) mcInstr).getSrcOp().needColor(type)
                         && ((McMove) mcInstr).getDstOp().needColor(type)) {
                     McMove mcMove = (McMove) mcInstr;
@@ -777,13 +786,21 @@ public class RegAllocate {
     private void dealDefUse(HashSet<Operand> live, McInstr mcInstr, McBlock mcBlock) {
         ArrayList<Operand> defs = mcInstr.defOperands;
         ArrayList<Operand> uses = mcInstr.useOperands;
+
+//        if(mcInstr instanceof McMove && ((McMove) mcInstr).getDstOp().toString().equals("v12")) {
+//            System.out.println("----------begin---------");
+//            System.out.println(mcInstr);
+//            for(Operand li: live){
+//                System.out.println(li);
+//            }
+//            System.out.println("----------end-----------");
+//        }
+
         for(Operand def: defs) {
             if(def.needColor(type)) {
                 live.add(def);
             }
         }
-
-
 
         for(Operand def: defs) {
             if(def.needColor(type)) {
@@ -805,16 +822,15 @@ public class RegAllocate {
                 live.add(use);
             }
         }
-
 //        if(mcInstr instanceof McCall && ((McCall) mcInstr).mcFunction.getName().equals("param16")) {
-//            System.out.println("----------begin---------");
+
 //            System.out.println(mcInstr);
 //            System.out.println(mcInstr.defOperands.size());
 //            System.out.println(mcInstr.useOperands.size());
 //            for(Operand li: live){
 //                System.out.println(li);
 //            }
-//            System.out.println("----------end-----------");
+
 //        }
 
 
@@ -856,9 +872,13 @@ public class RegAllocate {
             changed = false;
             for(MyNode iter = curMcFunc.getMcLastBlock(); iter !=
                     curMcFunc.getMcBlocks().head; iter = iter.getPrev()){
+//                System.out.println("*************begin*************");
+
                 McBlock mcBlock = (McBlock) iter;
+//                System.out.println(mcBlock.getName());
                 HashSet<Operand> newLiveOut = new LinkedHashSet<>();
                 for(McBlock succMcBlock: mcBlock.getSuccMcBlocks()) {
+//                    System.out.println(succMcBlock.getName());
                     for(Operand liveIn : succMcBlock.liveInSet) {
                         if(!mcBlock.liveOutSet.contains(liveIn)) {
                             newLiveOut.add(liveIn);
@@ -876,6 +896,7 @@ public class RegAllocate {
                         }
                     }
                 }
+//                System.out.println("*************end*************");
             }
         }
     }
