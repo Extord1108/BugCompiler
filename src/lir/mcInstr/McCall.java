@@ -36,7 +36,6 @@ public class McCall extends McInstr{
         for(int i = 0; i < sRegIdx; i++) {
             useOperands.add(Operand.FPhyReg.getFPhyReg(i));
         }
-        System.out.println(useOperands.size());
     }
 
     @Override

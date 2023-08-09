@@ -13,6 +13,7 @@ public class McBinary extends McInstr{
     }
     public FixType fixType;
     public BinaryType type;
+    private MCShift mcShift = null;
     public boolean needFix = false;
     public McBinary(BinaryType binaryType, Operand dst, Operand src1, Operand src2, McBlock mcBlock) {
         super(mcBlock);
@@ -25,6 +26,7 @@ public class McBinary extends McInstr{
     public McBinary(BinaryType binaryType, Operand dst, Operand src1, Operand src2, MCShift shift, McBlock mcBlock) {
         super(mcBlock);
         this.type = binaryType;
+        this.mcShift = shift;
         defOperands.add(dst);
         useOperands.add(src1);
         useOperands.add(src2);
@@ -54,7 +56,10 @@ public class McBinary extends McInstr{
             return "v" + type + ".F32\t" + defOperands.get(0) + ",\t" +
                     useOperands.get(0) + ",\t" + useOperands.get(1);
         }
-        return type + "\t" + defOperands.get(0) + ",\t" + useOperands.get(0) + ",\t" + useOperands.get(1);
+        if(mcShift == null)
+            return type + "\t" + defOperands.get(0) + ",\t" + useOperands.get(0) + ",\t" + useOperands.get(1);
+        return type + "\t" + defOperands.get(0) + ",\t" + useOperands.get(0) + ",\t"
+                + useOperands.get(1) + ",\t" + mcShift;
     }
 
     public enum BinaryType {

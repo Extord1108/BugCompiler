@@ -143,12 +143,12 @@ public class RegAllocate {
         int t = 0;
         while(true) {
             // 生存周期分析
-            if(mcFunction.getName().equals("main")) {
-                System.out.println(t);
-                OutputStream out = OutputHandler.getOutputFile("bug" + t++);
-                OutputHandler.output2Stream(mcFunction.toString(),out);
-                System.out.println("-------------------");
-            }
+//            if(mcFunction.getName().equals("main")) {
+//                System.out.println(t);
+//                OutputStream out = OutputHandler.getOutputFile("bug" + t++);
+//                OutputHandler.output2Stream(mcFunction.toString(),out);
+//                System.out.println("-------------------");
+//            }
 
 
             livenessAnalysis();

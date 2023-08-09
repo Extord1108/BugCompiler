@@ -149,7 +149,6 @@ public class CodeGen {
                     nextBBList.push(thenBlock.getBasicBlock());
                     exchanged = true;
                 }
-//                System.out.println(instr);
                 Operand opd = value2Imm.get(cond);
                 if(opd != null) {
                     if(((Operand.Imm) opd).getIntNumber() == 1) {
@@ -432,13 +431,13 @@ public class CodeGen {
         }
 
         Operand imm = getOperand(new Variable.ConstInt(regStack * 4));
-
-        new McBinary(McBinary.BinaryType.Sub, Operand.PhyReg.getPhyReg("sp"), Operand.PhyReg.getPhyReg("sp"), imm,curMcBlock);
+        if(regStack != 0)
+            new McBinary(McBinary.BinaryType.Sub, Operand.PhyReg.getPhyReg("sp"), Operand.PhyReg.getPhyReg("sp"), imm,curMcBlock);
         McFunction callMcFunc = funcMap.get(callFunc);
         McCall mcCall = new McCall(callMcFunc, curMcBlock);
-        new McBinary(McBinary.BinaryType.Add, Operand.PhyReg.getPhyReg("sp"), Operand.PhyReg.getPhyReg("sp"), imm,curMcBlock);
+        if(regStack != 0)
+            new McBinary(McBinary.BinaryType.Add, Operand.PhyReg.getPhyReg("sp"), Operand.PhyReg.getPhyReg("sp"), imm,curMcBlock);
 //        System.out.println(mcCall.getPrev());
-//        System.out.println(mcCall);
         mcCall.setsRegIdx(sRegIdx);
         mcCall.setrRegIdx(rRegIdx);
         mcCall.genDefUse();
@@ -580,14 +579,26 @@ public class CodeGen {
                     } else if(abs  == 1){
                         new McMove(dstVr, getOperand(new Variable.ConstInt(0)), curMcBlock);
                     } else {
-                        Operand sign = new Operand.VirtualReg(false, curMcFunc);
-                        Operand lVr = getOperand(left);
-                        new MCShift(sign, lVr, getOperand(new Variable.ConstInt(31)),MCShift.ShiftType.asr,curMcBlock);
-                        Operand immOpd = getOperand(new Variable.ConstInt(abs - 1));
-                        new McBinary(McBinary.BinaryType.And, dstVr, lVr, immOpd, curMcBlock );
-                        int sh = Integer.numberOfTrailingZeros(abs);
-                        new McBinary(McBinary.BinaryType.Or, dstVr, dstVr, sign,
-                                new MCShift( MCShift.ShiftType.lsl, new Operand.Imm(sh)), curMcBlock);
+//                        Operand sign = new Operand.VirtualReg(false, curMcFunc);
+//                        Operand lVr = getOperand(left);
+//                        new MCShift(sign, lVr, getOperand(new Variable.ConstInt(31)),MCShift.ShiftType.asr,curMcBlock);
+//                        Operand immOpd = getOperand(new Variable.ConstInt(abs - 1));
+//                        new McBinary(McBinary.BinaryType.And, dstVr, lVr, immOpd, curMcBlock );
+//                        int sh = Integer.numberOfTrailingZeros(abs);
+//                        new McBinary(McBinary.BinaryType.Or, dstVr, dstVr, sign,
+//                                new MCShift( MCShift.ShiftType.lsl, new Operand.Imm(sh)), curMcBlock);
+
+                        Operand lopd = getOperand(left);
+                        Operand ropd = getOperand(right);
+                        if(ropd instanceof Operand.Imm) {
+                            Operand temp = new Operand.VirtualReg(ropd.isFloat(), curMcFunc);
+                            new McMove(temp, ropd, curMcBlock);
+                            ropd = temp;
+                        }
+                        Operand dst1 = new Operand.VirtualReg(left instanceof Variable.ConstFloat, curMcFunc);
+                        new McBinary(McBinary.BinaryType.Div, dst1, lopd, ropd, curMcBlock);
+                        new McBinary(McBinary.BinaryType.Mul, dst1, dst1, ropd, curMcBlock);
+                        new McBinary(McBinary.BinaryType.Sub, dstVr, lopd, dst1, curMcBlock);
                     }
                 }
                 else {
