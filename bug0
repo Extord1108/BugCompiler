@@ -1,0 +1,86 @@
+
+
+.global	heap_ajust
+heap_ajust:
+
+heap_ajust_b2:
+	sub	sp,	sp,	#0
+	mov	v58,	r0
+	mov	v59,	r1
+	mov	v60,	r2
+	lsl	v61,	v59,	#1
+	add	v62,	v61,	#1
+	mov	v63,	v59
+	mov	v64,	v62
+	b	heap_ajust_b3
+heap_ajust_b3:
+	add	v65,	v60,	#1
+	cmp	v64,	v65
+	bge	heap_ajust_b5
+	b	heap_ajust_b4
+heap_ajust_b4:
+	cmp	v64,	v60
+	bge	heap_ajust_b26
+	b	heap_ajust_b8
+heap_ajust_b8:
+	mov	v70,	#4
+	mul	v69,	v64,	v70
+	add	v71,	v58,	v69
+	mov	v68,	v71
+	ldr	v72,	[v68]
+	add	v73,	v64,	#1
+	mov	v76,	#4
+	mul	v75,	v73,	v76
+	add	v77,	v58,	v75
+	mov	v74,	v77
+	ldr	v78,	[v74]
+	cmp	v72,	v78
+	bge	heap_ajust_b27
+	b	heap_ajust_b6
+heap_ajust_b6:
+	add	v80,	v64,	#1
+	mov	v81,	v80
+	b	heap_ajust_b7
+heap_ajust_b7:
+	mov	v84,	#4
+	mul	v83,	v63,	v84
+	add	v85,	v58,	v83
+	mov	v82,	v85
+	ldr	v86,	[v82]
+	mov	v89,	#4
+	mul	v88,	v81,	v89
+	add	v90,	v58,	v88
+	mov	v87,	v90
+	ldr	v91,	[v87]
+	cmp	v86,	v91
+	ble	heap_ajust_b10
+	b	heap_ajust_b9
+heap_ajust_b9:
+	mov	r0,	#0
+	add	sp,	sp,	#0
+	bx	lr
+
+heap_ajust_b10:
+	mov	r0,	v58
+	mov	r1,	v63
+	mov	r2,	v81
+	bl	swap
+	mov	v93,	r0
+	lsl	v94,	v81,	#1
+	add	v95,	v94,	#1
+	b	heap_ajust_b11
+heap_ajust_b11:
+	mov	v63,	v81
+	mov	v64,	v95
+	b	heap_ajust_b3
+heap_ajust_b27:
+	mov	v81,	v64
+	b	heap_ajust_b7
+heap_ajust_b26:
+	mov	v81,	v64
+	b	heap_ajust_b7
+heap_ajust_b5:
+	mov	r0,	#0
+	add	sp,	sp,	#0
+	bx	lr
+

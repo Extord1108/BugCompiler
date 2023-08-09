@@ -1,96 +1,80 @@
-/*
- * Max flow EK with DFS.
- */
-const int INF = 0x70000000;
-
-int size[10];
-int to[10][10];
-int cap[10][10];
-int rev[10][10];
-int used[10];
-
-void my_memset(int arr[], int val, int n)
-{
-    int i = 0;
-    while (i < n) {
-        arr[i] = val;
-        i = i + 1;
-    }
+int n;
+int swap (int array[], int i, int j){
+    int temp;
+    temp = array[i];
+    array[i] = array[j];
+    array[j] = temp;
+    return 0;
 }
-
-void add_node(int u, int v, int c)
-{
-    to[u][size[u]] = v;
-    cap[u][size[u]] = c;
-    rev[u][size[u]] = size[v];
-
-    to[v][size[v]] = u;
-    cap[v][size[v]] = 0;
-    rev[v][size[v]] = size[u];
-
-    size[u] = size[u] + 1;
-    size[v] = size[v] + 1;
-}
-
-int dfs(int s, int t, int f)
-{
-    if (s == t)
-        return f;
-    used[s] = 1;
-
-    int i = 0;
-    while (i < size[s]) {
-        if (used[to[s][i]]) { i = i + 1; continue; }
-        if (cap[s][i] <= 0) { i = i + 1; continue; }
-
-        int min_f;
-        if (f < cap[s][i])
-            min_f = f;
-        else
-            min_f = cap[s][i];
-        int d = dfs(to[s][i], t, min_f);
-
-        if (d > 0) {
-            cap[s][i] = cap[s][i] - d;
-            cap[to[s][i]][rev[s][i]] = cap[to[s][i]][rev[s][i]] + d;
-            return d;
+int heap_ajust(int arr[], int start, int end) {
+    int dad;
+    dad = start;
+    int son;
+    son = dad * 2 + 1;
+    while (son < end + 1) { //
+        if (son < end && arr[son] < arr[son + 1])
+            son = son + 1;
+        if (arr[dad] > arr[son])
+            return 0;
+        else {
+            dad = swap(arr,dad,son);
+            dad = son;
+            son = dad * 2 + 1;
         }
-        i = i + 1;
+    }
+    return 0;
+}
+int heap_sort(int arr[], int len) {
+    int i;
+    int tmp;
+    i = len / 2 - 1;
+    putint(i);
+    while ( i > -1) {
+        tmp = len - 1;
+        putint(i);
+        putch(32);
+        putint(tmp);
+        putch(10);
+        tmp = heap_ajust(arr, i, tmp);
+        int j = 0;
+            while (j < len) {
+                int tmp;
+                tmp = arr[j];
+                putint(tmp);
+                tmp = 32;
+                putch(tmp);
+                j = j + 1;
+            }
+            putch(10);
+        i = i - 1;
+    }
+    i = len - 1;
+    while ( i > 0) {
+        int tmp0;
+        tmp0 = 0;
+        tmp = swap(arr,tmp0,i);
+        tmp = i - 1;
+        tmp = heap_ajust(arr, tmp0, tmp);
+        i = i-1;
     }
     return 0;
 }
 
-int max_flow(int s, int t)
-{
-    int flow = 0;
-
-    while (1) {
-        my_memset(used, 0, 10);
-
-        int f = dfs(s, t, INF);
-        if (f == 0)
-            return flow;
-        flow = flow + f;
+int main(){
+    n = 10;
+    int a[10];
+    a[0]=4;a[1]=3;a[2]=9;a[3]=2;a[4]=0;
+    a[5]=1;a[6]=6;a[7]=5;a[8]=7;a[9]=8;
+    int i;
+    i = 0;
+    i = heap_sort(a, n);
+    while (i < n) {
+        int tmp;
+        tmp = a[i];
+        putint(tmp);
+        tmp = 10;
+        putch(tmp);
+        i = i + 1;
     }
-}
-
-int main()
-{
-    int V, E;
-    V = getint();
-    E = getint();
-    my_memset(size, 0, 10);
-
-    while (E > 0) {
-        int u, v;
-        u = getint();
-        v = getint();
-        int c = getint();
-        add_node(u, v, c);
-        E = E - 1;
-    }
-
-    putint(max_flow(1, V));
-    putch(10);
     return 0;
 }

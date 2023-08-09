@@ -87,7 +87,7 @@ public class RegAllocate {
             }
             K = 14;
             type = "Integer";
-            for(int i = 0; i < K; i++) {
+            for(int i = 0; i <= K; i++) {
                 Operand.PhyReg.getPhyReg(i).isAllocated = false;
             }
             init(mcFunction);
@@ -143,11 +143,11 @@ public class RegAllocate {
         int t = 0;
         while(true) {
             // 生存周期分析
-//            if(mcFunction.getName().equals("max_flow")) {
-////                System.out.println(t);
+//            if(mcFunction.getName().equals("heap_ajust")) {
+//                System.out.println(t);
 //                OutputStream out = OutputHandler.getOutputFile("bug" + t++);
 //                OutputHandler.output2Stream(mcFunction.toString(),out);
-////                System.out.println("-------------------");
+//                System.out.println("-------------------");
 //            }
 
 
@@ -373,9 +373,15 @@ public class RegAllocate {
             }
         }
     }
-
+//    int t = 0;
     private void coalesce() {
         McMove mcMove = (McMove) workListMoves.iterator().next();
+
+        t++;
+//        if(mcMove.getSrcOp().toString().equals("v95") && mcMove.getDstOp().toString().equals("v64")){
+//            System.out.println(mcMove);
+//            System.out.println("*******************" + t);
+//        }
         Operand u = getAlias(mcMove.defOperands.get(0));
         Operand v = getAlias(mcMove.useOperands.get(0));
         if(preColored.contains(v)) {
@@ -385,6 +391,7 @@ public class RegAllocate {
         }
         workListMoves.remove(mcMove);
         if(u.equals(v)) {
+
             coalescedMoves.add(mcMove);
             addWorkList(u);
         } else if(preColored.contains(v) || adjSet.contains(new Edge(u, v))) {
@@ -407,11 +414,13 @@ public class RegAllocate {
                 } else {
                     activeMoves.add(mcMove);
                 }
-            } else {
+            }
+            else {
                 Set<Operand> union = getAdjacent(u);
                 union.addAll(getAdjacent(v));
                 int cnt = 0;
                 for(Operand opd: union) {
+
                     if(!selectStack.contains(opd) && !coalescedNodes.contains(opd) && opd.degree >= K){
                         cnt ++;
                     }
@@ -476,7 +485,9 @@ public class RegAllocate {
         return p;
     }
 
+    int t = 0;
     private void freeze() {
+//        System.out.println("---------------------------" + t);
         Operand opd = freezeWorkList.iterator().next();
         freezeWorkList.remove(opd);
         simplifyWorkList.add(opd);
@@ -492,7 +503,6 @@ public class RegAllocate {
                     workListMoves.remove(mcMove);
                 }
                 frozenMoves.add(mcMove);
-
                 Operand v;
                 if (getAlias(mcMove.useOperands.get(0)).equals(getAlias(u))) {
                     v = getAlias(mcMove.defOperands.get(0));
@@ -738,6 +748,9 @@ public class RegAllocate {
                 simplifyWorkList.add(opd);
             }
         }
+//        for(Operand operand: freezeWorkList) {
+//            System.out.println(operand);
+//        }
     }
 
     private boolean isMoveRelated(Operand opd) {
@@ -776,6 +789,7 @@ public class RegAllocate {
                     live.remove(mcMove.getSrcOp());
                     mcMove.getDstOp().moveList.add(mcMove);
                     mcMove.getSrcOp().moveList.add(mcMove);
+//                    System.out.println(mcMove);
                     workListMoves.add(mcMove);
                 }
                 dealDefUse(live, mcInstr, mcBlock);
@@ -787,14 +801,7 @@ public class RegAllocate {
         ArrayList<Operand> defs = mcInstr.defOperands;
         ArrayList<Operand> uses = mcInstr.useOperands;
 
-//        if(mcInstr instanceof McMove && ((McMove) mcInstr).getDstOp().toString().equals("v12")) {
-//            System.out.println("----------begin---------");
-//            System.out.println(mcInstr);
-//            for(Operand li: live){
-//                System.out.println(li);
-//            }
-//            System.out.println("----------end-----------");
-//        }
+
 
         for(Operand def: defs) {
             if(def.needColor(type)) {
@@ -822,19 +829,6 @@ public class RegAllocate {
                 live.add(use);
             }
         }
-//        if(mcInstr instanceof McCall && ((McCall) mcInstr).mcFunction.getName().equals("param16")) {
-
-//            System.out.println(mcInstr);
-//            System.out.println(mcInstr.defOperands.size());
-//            System.out.println(mcInstr.useOperands.size());
-//            for(Operand li: live){
-//                System.out.println(li);
-//            }
-
-//        }
-
-
-
     }
 
     private void livenessAnalysis() {
@@ -903,12 +897,10 @@ public class RegAllocate {
 
     private void addEdge(Operand u, Operand v) {
         Edge edge = new Edge( u, v);
-//        if(u.toString().equals("v688") || v.toString().equals("v688")) {
-//            System.out.println(edge);
-//        }
 
         if(!adjSet.contains(edge) && !u.equals(v)) {
             adjSet.add(edge);
+            adjSet.add(new Edge(v, u));
             if(!preColored.contains(u)) {
                 u.addAdj(v);
                 u.degree ++;
