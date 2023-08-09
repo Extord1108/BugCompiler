@@ -1,12 +1,15 @@
 package backend;
 
+import ir.instruction.Return;
 import lir.McBlock;
 import lir.McFunction;
 import lir.Operand;
 import lir.mcInstr.*;
 import util.MyList;
 import util.MyNode;
+import util.OutputHandler;
 
+import java.io.OutputStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -73,17 +76,20 @@ public class RegAllocate {
     public void alloc(){
         int t = 0;
         for(McFunction mcFunction: mcFunctions) {
-
             if(mcFunction.getSvrList().size() > 0) {
                 K = 32;
                 type = "Float";
-
+                for(int i = 0; i < K; i++) {
+                    Operand.FPhyReg.getFPhyReg(i).isAllocated = false;
+                }
                 init(mcFunction);
-
                 allocate(mcFunction);
             }
             K = 14;
             type = "Integer";
+            for(int i = 0; i < K; i++) {
+                Operand.PhyReg.getPhyReg(i).isAllocated = false;
+            }
             init(mcFunction);
             allocate(mcFunction);
         }
@@ -94,12 +100,9 @@ public class RegAllocate {
             int succSize = mcBlock.getSuccMcBlocks().size();
             int predSize = mcBlock.getPredMcBlocks().size();
             double weight = Math.pow(10, Math.min(succSize, predSize));
-//            System.out.println(mcBlock.getName());
             for(McInstr mcInstr: mcBlock.getMcInstrs()) {
 
                 for(Operand use: mcInstr.useOperands) {
-//                    System.out.println(mcInstr);
-//                    System.out.println(mcInstr.useOperands.size());
                     if(use.needColor(type)) {
                         use.addWeight(weight);
                     }
@@ -117,6 +120,7 @@ public class RegAllocate {
                 }
             }
         }
+
         count = 0;
     }
     private void turnInit(McFunction mcFunction) {
@@ -131,12 +135,22 @@ public class RegAllocate {
         constrainedMoves = new LinkedHashSet<>();
         frozenMoves = new LinkedHashSet<>();
         spilledNodes = new LinkedHashSet<>();
+
     }
 
     private void allocate(McFunction mcFunction) {
         curMcFunc = mcFunction;
+        int t = 0;
         while(true) {
             // 生存周期分析
+            if(mcFunction.getName().equals("main")) {
+                System.out.println(t);
+                OutputStream out = OutputHandler.getOutputFile("bug" + t++);
+                OutputHandler.output2Stream(mcFunction.toString(),out);
+                System.out.println("-------------------");
+            }
+
+
             livenessAnalysis();
             turnInit(curMcFunc);
             adjSet = new LinkedHashSet<>();
@@ -153,7 +167,8 @@ public class RegAllocate {
                     operand.adjOpdSet = new LinkedHashSet<>();
                     operand.moveList = new LinkedHashSet<>();
                 }
-            } else {
+            }
+            else {
                 assert type == "Float";
                 for(int i = 0; i < K; i++) {
                     Operand.FPhyReg.getFPhyReg(i).degree = MAX_DEGREE;
@@ -188,7 +203,11 @@ public class RegAllocate {
         for(McBlock mcBlock: curMcFunc.getMcBlocks()) {
             ArrayList<McInstr> newInstrs = new ArrayList<>();
             for(McInstr mcInstr: mcBlock.getMcInstrs()) {
-                if(mcInstr instanceof McCall) continue;
+//                if(mcInstr instanceof McCall) {
+//                    newInstrs.add(mcInstr);
+//                    continue;
+//                }
+
                 ArrayList<Operand> defs = mcInstr.defOperands;
                 ArrayList<Operand> uses = mcInstr.useOperands;
                 ArrayList<McInstr> stores = new ArrayList<>();
@@ -544,11 +563,13 @@ public class RegAllocate {
                     int i = 0;
                     for(Operand def: defs) {
                         defs.set(i ++, def.getPhyReg());
+                        def.getPhyReg().isAllocated = true;
                     }
                     i = 0;
                     ArrayList<Operand> uses = mcInstr.useOperands;
                     for(Operand use: uses){
                         uses.set(i ++, use.getPhyReg());
+                        use.getPhyReg().isAllocated = true;
                     }
                     continue;
                 }
@@ -558,16 +579,19 @@ public class RegAllocate {
                     Operand def = defs.get(0);
                     if(preColored.contains(def) && def.needColor(type)) {
                         defs.set(0, def.getPhyReg());
+                        def.getPhyReg().isAllocated = true;
                     } else {
                         Operand set = colorMap.get(def);
                         if(set != null) {
                             if(set instanceof Operand.FPhyReg) {
                                 curMcFunc.usedFPhyRegs.add((Operand.FPhyReg) set);
                                 defs.set(0, set);
+                                defs.get(0).isAllocated = true;
                             } else {
                                 assert set instanceof Operand.PhyReg;
                                 curMcFunc.usedPhyRegs.add((Operand.PhyReg) set);
                                 defs.set(0, set);
+                                defs.get(0).isAllocated = true;
                             }
                         }
                     }
@@ -577,16 +601,19 @@ public class RegAllocate {
                     Operand use = uses.get(i);
                     if(preColored.contains(use) && use.needColor(type)) {
                         uses.set(i, use.getPhyReg());
+                        uses.get(i).isAllocated = true;
                     } else {
                         Operand set = colorMap.get(use);
                         if(set != null) {
                             if(set instanceof Operand.FPhyReg) {
                                 curMcFunc.usedFPhyRegs.add((Operand.FPhyReg) set);
                                 uses.set(i, set);
+                                uses.get(i).isAllocated = true;
                             } else {
                                 assert set instanceof Operand.PhyReg;
                                 curMcFunc.usedPhyRegs.add((Operand.PhyReg) set);
                                 uses.set(i, set);
+                                uses.get(i).isAllocated = true;
                             }
                         }
                     }
@@ -599,19 +626,38 @@ public class RegAllocate {
     }
 
     private void fixStack(ArrayList<McBinary> needFixed) {
+//        System.out.println(curMcFunc.getName());
+//        System.out.println(curMcFunc.getStackSize());
         for(McBinary mcBinary: needFixed) {
             int offset;
             if(mcBinary.fixType.equals(McBinary.FixType.VAR_STACK)) {
                 offset = curMcFunc.getStackSize();
             } else {
                 assert mcBinary.fixType.equals(McBinary.FixType.PARAM_STACK);
-                offset = curMcFunc.getStackSize() + mcBinary.getOffset();
+                offset = curMcFunc.getStackSize() + mcBinary.getOffset() + curMcFunc.getParamSize();
+                int idx = 0;
+                int size = 0;
+                for(Operand reg: curMcFunc.usedPhyRegs) {
+                    idx ++;
+                    if(((Operand.PhyReg)reg).getIdx() > 3 && !reg.equals(Operand.PhyReg.getPhyReg("sp"))){
+                        size++;
+                    }
+                }
+                idx = 0;
+                for(Operand reg: curMcFunc.usedFPhyRegs) {
+                    idx ++;
+                    if(((Operand.FPhyReg)reg).getIdx() > 15) {
+                        size ++;
+                    }
+                }
+                offset = offset + size * 4;
             }
             if(offset == 0) {
                 mcBinary.mcBlock.getMcInstrs().remove(mcBinary);
             } else {
                 if(CodeGen.canImmSaved(offset)) {
                     mcBinary.useOperands.set(1, new Operand.Imm(offset));
+//                    System.out.println(mcBinary);
                 } else {
                     Operand off = Operand.PhyReg.getPhyReg("r4");
                     McMove mcMove = new McMove(off, new Operand.Imm(offset), mcBinary.mcBlock, false);
@@ -634,6 +680,7 @@ public class RegAllocate {
                 okColorSet = Operand.FPhyReg.getOkColorList();
             }
 
+
             // 待分配节点的邻近节点的颜色不能选
             for(Operand adj: toBeColored.adjOpdSet) {
                 Operand opd = adj.getAlias();
@@ -650,6 +697,7 @@ public class RegAllocate {
                 spilledNodes.add(toBeColored);
             } else {
                 Operand color = okColorSet.pollFirst();
+
                 colorMap.put(toBeColored, color);
             }
         }
@@ -735,6 +783,8 @@ public class RegAllocate {
             }
         }
 
+
+
         for(Operand def: defs) {
             if(def.needColor(type)) {
                 for(Operand operand: live) {
@@ -749,11 +799,25 @@ public class RegAllocate {
             }
         }
 
+
         for(Operand use: uses) {
             if(use.needColor(type)) {
                 live.add(use);
             }
         }
+
+//        if(mcInstr instanceof McCall && ((McCall) mcInstr).mcFunction.getName().equals("param16")) {
+//            System.out.println("----------begin---------");
+//            System.out.println(mcInstr);
+//            System.out.println(mcInstr.defOperands.size());
+//            System.out.println(mcInstr.useOperands.size());
+//            for(Operand li: live){
+//                System.out.println(li);
+//            }
+//            System.out.println("----------end-----------");
+//        }
+
+
 
     }
 
@@ -818,6 +882,10 @@ public class RegAllocate {
 
     private void addEdge(Operand u, Operand v) {
         Edge edge = new Edge( u, v);
+//        if(u.toString().equals("v688") || v.toString().equals("v688")) {
+//            System.out.println(edge);
+//        }
+
         if(!adjSet.contains(edge) && !u.equals(v)) {
             adjSet.add(edge);
             if(!preColored.contains(u)) {
@@ -826,6 +894,7 @@ public class RegAllocate {
             }
 
             if(!preColored.contains(v)) {
+
                 v.addAdj(u);
                 v.degree ++;
             }
@@ -853,6 +922,11 @@ public class RegAllocate {
         @Override
         public int hashCode() {
             return Objects.hash(u, v);
+        }
+
+        @Override
+        public String toString() {
+            return "edge " + u + " "  + v + "\n";
         }
     }
 }

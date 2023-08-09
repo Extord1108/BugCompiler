@@ -11,6 +11,7 @@ public class McFunction {
     private Function irFunction;
     private String name;
     private int stackSize;
+    private int paramSize = 0;
     public boolean isMain;
     public boolean useLr = false;
     private MyList<McBlock> mcBlocks = new MyList<McBlock>();
@@ -61,6 +62,14 @@ public class McFunction {
 
     public void addStackSize(int n){
         this.stackSize = this.stackSize + n;
+    }
+
+    public int getParamSize() {
+        return paramSize;
+    }
+
+    public void addParamSize(int n) {
+        this.paramSize += n;
     }
 
     @Override

@@ -100,7 +100,7 @@ public class CodeGen {
                             new Operand.Imm(offset), curMcBlock);
                     mcBinary.setNeedFix(McBinary.FixType.PARAM_STACK);
                     new McLdr(dst, addr, curMcBlock);
-                    curMcFunc.addStackSize(4);
+                    curMcFunc.addParamSize(4);
                     regStack ++;
                 }
             } else {
@@ -114,7 +114,7 @@ public class CodeGen {
                             new Operand.Imm(offset), curMcBlock);
                     mcBinary.setNeedFix(McBinary.FixType.PARAM_STACK);
                     new McLdr(dst, addr, curMcBlock);
-                    curMcFunc.addStackSize(4);
+                    curMcFunc.addParamSize(4);
                     regStack ++;
                 }
             }
@@ -431,10 +431,17 @@ public class CodeGen {
             }
         }
 
+        Operand imm = getOperand(new Variable.ConstInt(regStack * 4));
+
+        new McBinary(McBinary.BinaryType.Sub, Operand.PhyReg.getPhyReg("sp"), Operand.PhyReg.getPhyReg("sp"), imm,curMcBlock);
         McFunction callMcFunc = funcMap.get(callFunc);
         McCall mcCall = new McCall(callMcFunc, curMcBlock);
+        new McBinary(McBinary.BinaryType.Add, Operand.PhyReg.getPhyReg("sp"), Operand.PhyReg.getPhyReg("sp"), imm,curMcBlock);
+//        System.out.println(mcCall.getPrev());
+//        System.out.println(mcCall);
         mcCall.setsRegIdx(sRegIdx);
         mcCall.setrRegIdx(rRegIdx);
+        mcCall.genDefUse();
 
         if(call.type instanceof Int32Type) {
             Operand dst = getOperand(call);

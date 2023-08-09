@@ -26,7 +26,7 @@ public class Move extends Instr{
 
     @Override
     public String toString() {
-        return "move " + this.type + " " + this.from.getName() + ", " + this.to.getName();
+        return "move " + this.type + " " + this.to.getName() + "<- " + this.from.getName();
 //        if(this.type instanceof Int32Type){
 //            return this.to.getName() + " = " + "add " + this.type.toString() + " " + this.from.getName() + ", 0";
 //        }else{

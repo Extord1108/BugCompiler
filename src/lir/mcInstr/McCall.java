@@ -11,7 +11,6 @@ public class McCall extends McInstr{
     public McCall(McFunction mcFunction, McBlock mcBlock) {
         super(mcBlock);
         this.mcFunction = mcFunction;
-        genDefUse();
     }
 
     public void setsRegIdx(int sRegIdx) {
@@ -22,7 +21,7 @@ public class McCall extends McInstr{
         this.rRegIdx = rRegIdx;
     }
 
-    private void genDefUse() {
+    public void genDefUse() {
         defOperands.add(Operand.PhyReg.getPhyReg("lr"));
         defOperands.add(Operand.PhyReg.getPhyReg("r12"));
         for(int i = 0; i < 4; i++) {
@@ -37,6 +36,7 @@ public class McCall extends McInstr{
         for(int i = 0; i < sRegIdx; i++) {
             useOperands.add(Operand.FPhyReg.getFPhyReg(i));
         }
+        System.out.println(useOperands.size());
     }
 
     @Override

@@ -29,6 +29,8 @@ public class Operand {
 
     private int stackPos = -1;
 
+    public boolean isAllocated = false;
+
     public void setStackPos(int stackPos) {
         this.stackPos = stackPos;
     }
@@ -81,10 +83,23 @@ public class Operand {
 
     public boolean needColor(String type) {
         if(type == "Integer") {
-            return !isFloat && !(this instanceof Imm) && !(this instanceof Global);
+
+            if(!isFloat && !(this instanceof Imm) && !(this instanceof Global) ){
+                if(this instanceof PhyReg && ((PhyReg) this).isAllocated){
+                    return false;
+                }
+                return true;
+            }
+            return false;
         } else {
             assert type == "Float";
-            return isFloat && !(this instanceof Imm) && !(this instanceof Global);
+            if(isFloat && !(this instanceof Imm) && !(this instanceof Global)) {
+                if(this instanceof FPhyReg && ((FPhyReg) this).isAllocated){
+                    return false;
+                }
+                return true;
+            }
+            return false;
         }
     }
 
