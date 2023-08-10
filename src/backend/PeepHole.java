@@ -21,7 +21,11 @@ public class PeepHole {
 
     private void peepHole(McFunction function){
         for(McBlock mb:function.getMcBlocks()){
-            for(McInstr instr : mb.getMcInstrs()){
+            ArrayList<McInstr> instrs = new ArrayList<>();
+            for(McInstr instr:mb.getMcInstrs()){
+                instrs.add(instr);
+            }
+            for(McInstr instr : instrs){
                 McInstr nextInstr = instr.getNext() == mb.getMcInstrs().tail?McInstr.nop:(McInstr)instr.getNext();
                 McInstr prevInstr = instr.getPrev() == mb.getMcInstrs().head?McInstr.nop:(McInstr)instr.getPrev();
                 if(instr instanceof McMove){
@@ -86,8 +90,20 @@ public class PeepHole {
         McLdr ldr = (McLdr)instr;
         if(prevInstr instanceof McStore){
             McStore store = (McStore)prevInstr;
-            if(ldr.getAddr().equals(store.getAddr()) && ldr.getOffset().equals(store.getOffset())){
-                ldr.mcBlock.getMcInstrs().insertBefore(ldr, new McMove(ldr.getData(), store.getData(), store.mcBlock));
+            if(ldr.getAddr().equals(store.getAddr())){
+                if(ldr.getOffset()==null){
+                    if(store.getOffset()==null)
+                    {
+                        ldr.mcBlock.getMcInstrs().insertBefore(ldr, new McMove(ldr.getData(), store.getData(), store.mcBlock));
+                        ldr.remove();
+                    }
+                }else{
+                    if(store.getOffset()!=null && ldr.getOffset().equals(store.getOffset()))
+                    {
+                        ldr.mcBlock.getMcInstrs().insertBefore(ldr, new McMove(ldr.getData(), store.getData(), store.mcBlock));
+                        ldr.remove();
+                    }
+                }
             }
         }
 

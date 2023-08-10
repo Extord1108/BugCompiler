@@ -29,6 +29,8 @@ public class McLdr extends McInstr{
     }
 
     public Operand getOffset() {
+        if(useOperands.size() == 1)
+            return null;
         return useOperands.get(1);
     }
 

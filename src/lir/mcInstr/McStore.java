@@ -30,6 +30,8 @@ public class McStore extends McInstr{
     }
 
     public Operand getOffset() {
+        if(useOperands.size() < 3)
+            return null;
         return useOperands.get(2);
     }
 
