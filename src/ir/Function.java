@@ -123,6 +123,16 @@ public class Function extends Value {
         return canGVN;
     }
 
+    public void cleanDomInfo(){
+        domTree.clear();
+        domFrontier.clear();
+        succMap.clear();
+        predMap.clear();
+        for(BasicBlock basicBlock:basicBlocks){
+            basicBlock.cleanDomInfo();
+        }
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();

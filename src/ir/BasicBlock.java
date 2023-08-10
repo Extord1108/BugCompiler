@@ -117,6 +117,13 @@ public class BasicBlock extends Value {
         return loop.getDepth();
     }
 
+    public void cleanDomInfo() {
+        domTreeDepth = 0;
+        iDoms.clear();
+        succBBlocks.clear();
+        precBBlocks.clear();
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();

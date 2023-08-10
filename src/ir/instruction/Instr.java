@@ -83,6 +83,7 @@ public class Instr extends Value {
     }
 
     public void remove(){
+        //System.out.println("remove "+this.getName());
         this.basicBlock.getInstrs().remove(this);
         removeUse();
     }

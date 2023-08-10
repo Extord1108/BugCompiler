@@ -42,6 +42,7 @@ public class Value extends MyNode {
     public void removeUser(Value user){
         for(int i = 0; i < usedInfo.size; i++){
             if(usedInfo.get(i).getUser().equals(user)){
+                //System.out.println(user.getName()+" remove "+this.getName());
                 usedInfo.remove(usedInfo.get(i));
                 return;
             }

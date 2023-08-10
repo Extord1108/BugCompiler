@@ -11,6 +11,11 @@ public class Jump extends Instr {
         this.addUse(targetBlock);
     }
 
+    public Jump(BasicBlock targetBlock) {
+        this.type = VoidType.getInstance();
+        this.addUse(targetBlock);
+    }
+
     public BasicBlock getTargetBlock() {
         return (BasicBlock) getUse(0);
     }

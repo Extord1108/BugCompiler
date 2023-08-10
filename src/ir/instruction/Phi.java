@@ -24,6 +24,11 @@ public class Phi extends Instr {
 
     @Override
     public String toString() {
+//        System.out.println(this.getName());
+//        System.out.println(this.getBasicBlock().getPredecessors().size());
+//        System.out.println(this.getUses().size());
+//        System.out.println(this.getBasicBlock().getPredecessors().get(0).getName());
+//        System.out.println("=============");
         StringBuffer stringBuffer = new StringBuffer();
         stringBuffer.append(this.getName()+" = phi "+this.getType().toString()+" ");
         for(int i=0;i<this.getUses().size();i++) {

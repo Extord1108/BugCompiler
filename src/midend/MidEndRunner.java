@@ -27,6 +27,8 @@ public class MidEndRunner {
             new FunctionAnalysis(functions, globals).run();
             new GVN(functions, globals).run();
             new GCM(functions, globals).run();
+            new ConstantPropagation(functions, globals).run();
+            new DomainAnalysis(functions, globals).run();
             new DeadCodeElimination(functions, globals).run();
         }
         new PhiResolution(functions, globals).run();

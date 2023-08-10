@@ -1,9 +1,6 @@
 package ir;
 
-import ir.type.ArrayType;
-import ir.type.FloatType;
-import ir.type.Int32Type;
-import ir.type.Type;
+import ir.type.*;
 import util.MyList;
 
 import java.util.ArrayList;
@@ -50,6 +47,22 @@ public class Variable extends Value {
         public String toString() {
             String out = String.format("0x%x", Double.doubleToRawLongBits((floatVal)));
             return out;
+        }
+    }
+
+    public static class ConstI1 extends Variable{
+        boolean boolVal;
+        public ConstI1(boolean boolVal) {
+            super(Int1Type.getInstance());
+            this.boolVal = boolVal;
+            this.name = ((Boolean)boolVal).toString();
+        }
+        public boolean getBoolVal() {
+            return boolVal;
+        }
+        @Override
+        public String toString() {
+            return boolVal?"1":"0";
         }
     }
 

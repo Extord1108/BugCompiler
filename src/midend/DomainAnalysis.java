@@ -21,6 +21,7 @@ public class DomainAnalysis extends Pass {
             if(function.isExternal()) {
                 continue;
             }
+            function.cleanDomInfo();
             new ControlFlowGraph(function).run();
             new RemoveDeadBB(function).run();
             new DominatorTree(function).run();
