@@ -18,7 +18,7 @@ public class RegAllocate {
     private int K = 32; // 着色数
     private String type = "Float"; // 寄存器分配类型
     public McFunction curMcFunc;
-    private int MAX_DEGREE = Integer.MAX_VALUE >> 2;
+    private int MAX_DEGREE = (Integer.MAX_VALUE >> 2);
     Set<McInstr> workListMoves;
     Set<Edge> adjSet;
     Set<Operand> preColored;
@@ -141,7 +141,7 @@ public class RegAllocate {
         curMcFunc = mcFunction;
         while(true) {
             // 生存周期分析
-//            if(mcFunction.getName().equals("my_sin")) {
+//            if(mcFunction.getName().equals("main")) {
 //                System.out.println(t);
 //                OutputStream out = OutputHandler.getOutputFile("bug" + t++);
 //                OutputHandler.output2Stream(mcFunction.toString(),out);
@@ -153,32 +153,33 @@ public class RegAllocate {
             turnInit(curMcFunc);
             adjSet = new LinkedHashSet<>();
             if(type == "Integer") {
-                for(int i = 0; i < K; i++) {
-                    Operand.PhyReg.getPhyReg(i).degree = MAX_DEGREE;
-                    Operand.PhyReg.getPhyReg(i).setAlias(null);
-                    Operand.PhyReg.getPhyReg(i).adjOpdSet = new LinkedHashSet<>();
-                    Operand.PhyReg.getPhyReg(i).moveList = new LinkedHashSet<>();
-                }
                 for(Operand operand: curMcFunc.vrList) {
                     operand.degree = 0;
                     operand.setAlias(null);
                     operand.adjOpdSet = new LinkedHashSet<>();
                     operand.moveList = new LinkedHashSet<>();
                 }
+                for(int i = 0; i < K; i++) {
+                    Operand.PhyReg.getPhyReg(i).degree = MAX_DEGREE;
+                    Operand.PhyReg.getPhyReg(i).setAlias(null);
+                    Operand.PhyReg.getPhyReg(i).adjOpdSet = new LinkedHashSet<>();
+                    Operand.PhyReg.getPhyReg(i).moveList = new LinkedHashSet<>();
+                }
+
             }
             else {
                 assert type == "Float";
-                for(int i = 0; i < K; i++) {
-                    Operand.FPhyReg.getFPhyReg(i).degree = MAX_DEGREE;
-                    Operand.FPhyReg.getFPhyReg(i).setAlias(null);
-                    Operand.FPhyReg.getFPhyReg(i).adjOpdSet = new LinkedHashSet<>();
-                    Operand.FPhyReg.getFPhyReg(i).moveList = new LinkedHashSet<>();
-                }
                 for(Operand operand: curMcFunc.svrList) {
                     operand.degree = 0;
                     operand.setAlias(null);
                     operand.adjOpdSet = new LinkedHashSet<>();
                     operand.moveList = new LinkedHashSet<>();
+                }
+                for(int i = 0; i < K; i++) {
+                    Operand.FPhyReg.getFPhyReg(i).degree = MAX_DEGREE;
+                    Operand.FPhyReg.getFPhyReg(i).setAlias(null);
+                    Operand.FPhyReg.getFPhyReg(i).adjOpdSet = new LinkedHashSet<>();
+                    Operand.FPhyReg.getFPhyReg(i).moveList = new LinkedHashSet<>();
                 }
             }
 
@@ -374,10 +375,7 @@ public class RegAllocate {
 //    int t = 0;
     private void coalesce() {
         McMove mcMove = (McMove) workListMoves.iterator().next();
-//        if(mcMove.getSrcOp().toString().equals("v95") && mcMove.getDstOp().toString().equals("v64")){
-//            System.out.println(mcMove);
-//            System.out.println("*******************" + t);
-//        }
+
         Operand u = getAlias(mcMove.defOperands.get(0));
         Operand v = getAlias(mcMove.useOperands.get(0));
         if(preColored.contains(v)) {
@@ -387,15 +385,17 @@ public class RegAllocate {
         }
         workListMoves.remove(mcMove);
         if(u.equals(v)) {
-
             coalescedMoves.add(mcMove);
             addWorkList(u);
         } else if(preColored.contains(v) || adjSet.contains(new Edge(u, v))) {
+
             constrainedMoves.add(mcMove);
             addWorkList(u);
             addWorkList(v);
         } else {
+
             if(preColored.contains(u)) {
+
                 boolean flag = true;
                 for(Operand adj: getAdjacent(v)) {
                     if(adj.degree >= K && !preColored.contains(adj) && !adjSet.contains(new Edge(adj, v))){
@@ -441,7 +441,6 @@ public class RegAllocate {
         } else {
             spillWorkList.remove(v);
         }
-
         coalescedNodes.add(v);
         v.setAlias(u);
         u.moveList.addAll(v.moveList);
@@ -470,6 +469,7 @@ public class RegAllocate {
     private void addWorkList(Operand opd) {
         if(!preColored.contains(opd) && !isMoveRelated(opd) && opd.degree < K) {
             freezeWorkList.remove(opd);
+
             simplifyWorkList.add(opd);
         }
     }
@@ -493,6 +493,7 @@ public class RegAllocate {
             if(activeMoves.contains(mcMove) || workListMoves.contains(mcMove)) {
                 if (activeMoves.contains(mcMove)) {
                     activeMoves.remove(mcMove);
+
                 } else {
                     workListMoves.remove(mcMove);
                 }
@@ -500,15 +501,24 @@ public class RegAllocate {
                 Operand v;
                 if (getAlias(mcMove.useOperands.get(0)).equals(getAlias(u))) {
                     v = getAlias(mcMove.defOperands.get(0));
+
                 } else {
                     v = getAlias(mcMove.useOperands.get(0));
                 }
                 Set<McMove> vMcMove =  v.moveList.stream()
                         .filter(move -> activeMoves.contains(move) || workListMoves.contains(move))
                         .collect(Collectors.toSet());
+//                if(v.toString().equals("s12")){
+//                    System.out.println(mcMove);
+//                    System.out.println(v);
+//                    System.out.println(v.degree);
+//                    System.out.println(MAX_DEGREE);
+//                    System.out.println("bug");
+//                }
                 if(vMcMove.size() == 0 && v.degree < K) {
                     freezeWorkList.remove(v);
                     simplifyWorkList.add(v);
+
                 }
             }
         }
@@ -695,6 +705,8 @@ public class RegAllocate {
         colorMap = new HashMap<>();
         while(selectStack.size() > 0) {
             Operand toBeColored = selectStack.pop();
+//            if(preColored.contains(toBeColored) || toBeColored.isAllocated)
+//                continue;
             TreeSet<Operand> okColorSet;
             if(type == "Integer") {
                 okColorSet = Operand.PhyReg.getOkColorList();
@@ -702,7 +714,6 @@ public class RegAllocate {
                 assert type == "Float";
                 okColorSet = Operand.FPhyReg.getOkColorList();
             }
-
             // 待分配节点的邻近节点的颜色不能选
             for(Operand adj: toBeColored.adjOpdSet) {
 
@@ -728,6 +739,7 @@ public class RegAllocate {
     }
 
     private void decrementDegree(Operand opd) {
+
         opd.degree --;
         if(opd.degree == K - 1) {
             for(McMove mcMove: opd.moveList) {
@@ -762,9 +774,6 @@ public class RegAllocate {
                 simplifyWorkList.add(opd);
             }
         }
-//        for(Operand operand: freezeWorkList) {
-//            System.out.println(operand);
-//        }
     }
 
     private boolean isMoveRelated(Operand opd) {
@@ -797,11 +806,9 @@ public class RegAllocate {
                     mcMove.getDstOp().moveList.add(mcMove);
                     mcMove.getSrcOp().moveList.add(mcMove);
                     workListMoves.add(mcMove);
+
                 }
                 dealDefUse(live, mcInstr, mcBlock);
-                if(mcInstr instanceof McMove && ((McMove) mcInstr).getDstOp().toString().equals("v90")) {
-//                    System.out.println("--------end----------");
-                }
             }
         }
     }

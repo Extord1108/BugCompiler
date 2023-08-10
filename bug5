@@ -1,0 +1,1730 @@
+
+
+.global	main
+main:
+
+main_b23:
+	vpush	{s16, s17, s18, s19, s20, s21, s22, s23, s24, s25, s26, s27, s28, s29, s30, s31}
+	push	{lr}
+	sub	sp,	sp,	#0
+	add	v0,	sp,	#0
+	add	v1,	sp,	#288
+	bl	getint
+	mov	v2,	r0
+	movw	v3,	:lower16:global_k
+	movt	v3,	:upper16:global_k
+	str	v2,	[v3]
+	mov	v4,	#0
+	b	main_b24
+main_b24:
+	cmp	v4,	#40
+	bge	main_b26
+	b	main_b25
+main_b25:
+	mov	v8,	#12
+	mul	v7,	v4,	v8
+	add	v9,	v1,	v7
+	mov	v6,	v9
+	mov	v10,	v6
+	mov	r0,	v10
+	bl	getfarray
+	mov	v11,	r0
+	add	v12,	v4,	#1
+	mov	v4,	v12
+	b	main_b24
+main_b26:
+	mov	v13,	#0
+	b	main_b27
+main_b27:
+	cmp	v13,	#24
+	bge	main_b29
+	b	main_b28
+main_b28:
+	mov	v17,	#12
+	mul	v16,	v13,	v17
+	add	v18,	v0,	v16
+	mov	v15,	v18
+	mov	v19,	v15
+	mov	r0,	v19
+	bl	getarray
+	mov	v20,	r0
+	add	v21,	v13,	#1
+	mov	v13,	v21
+	b	main_b27
+main_b29:
+	mov	r0,	#1
+	bl	putint
+	mov	r0,	#10
+	bl	putch
+	movw	v23,	:lower16:global_k
+	movt	v23,	:upper16:global_k
+	ldr	v22,	[v23]
+	mov	v26,	#4
+	mul	v25,	v22,	v26
+	add	v27,	v1,	v25
+	mov	v24,	v27
+	vldr.F32	s0,	[v24]
+	movw	v30,	:lower16:global_k
+	movt	v30,	:upper16:global_k
+	ldr	v29,	[v30]
+	mov	v33,	#4
+	mul	v32,	v29,	v33
+	add	v34,	v1,	v32
+	add	v31,	v34,	#12
+	vldr.F32	s1,	[v31]
+	movw	v37,	:lower16:global_k
+	movt	v37,	:upper16:global_k
+	ldr	v36,	[v37]
+	mov	v40,	#4
+	mul	v39,	v36,	v40
+	add	v41,	v1,	v39
+	add	v38,	v41,	#24
+	vldr.F32	s2,	[v38]
+	movw	v44,	:lower16:global_k
+	movt	v44,	:upper16:global_k
+	ldr	v43,	[v44]
+	mov	v47,	#4
+	mul	v46,	v43,	v47
+	add	v48,	v1,	v46
+	add	v45,	v48,	#36
+	vldr.F32	s3,	[v45]
+	movw	v51,	:lower16:global_k
+	movt	v51,	:upper16:global_k
+	ldr	v50,	[v51]
+	mov	v54,	#4
+	mul	v53,	v50,	v54
+	add	v55,	v1,	v53
+	add	v52,	v55,	#48
+	vldr.F32	s4,	[v52]
+	movw	v58,	:lower16:global_k
+	movt	v58,	:upper16:global_k
+	ldr	v57,	[v58]
+	mov	v61,	#4
+	mul	v60,	v57,	v61
+	add	v62,	v1,	v60
+	add	v59,	v62,	#60
+	vldr.F32	s5,	[v59]
+	movw	v65,	:lower16:global_k
+	movt	v65,	:upper16:global_k
+	ldr	v64,	[v65]
+	mov	v68,	#4
+	mul	v67,	v64,	v68
+	add	v69,	v1,	v67
+	add	v66,	v69,	#72
+	vldr.F32	s6,	[v66]
+	movw	v72,	:lower16:global_k
+	movt	v72,	:upper16:global_k
+	ldr	v71,	[v72]
+	mov	v75,	#4
+	mul	v74,	v71,	v75
+	add	v76,	v1,	v74
+	add	v73,	v76,	#84
+	vldr.F32	s7,	[v73]
+	movw	v79,	:lower16:global_k
+	movt	v79,	:upper16:global_k
+	ldr	v78,	[v79]
+	mov	v82,	#4
+	mul	v81,	v78,	v82
+	add	v83,	v1,	v81
+	add	v80,	v83,	#96
+	vldr.F32	s8,	[v80]
+	movw	v86,	:lower16:global_k
+	movt	v86,	:upper16:global_k
+	ldr	v85,	[v86]
+	mov	v89,	#4
+	mul	v88,	v85,	v89
+	add	v90,	v1,	v88
+	add	v87,	v90,	#108
+	vldr.F32	s9,	[v87]
+	movw	v93,	:lower16:global_k
+	movt	v93,	:upper16:global_k
+	ldr	v92,	[v93]
+	mov	v96,	#4
+	mul	v95,	v92,	v96
+	add	v97,	v1,	v95
+	add	v94,	v97,	#120
+	vldr.F32	s10,	[v94]
+	movw	v100,	:lower16:global_k
+	movt	v100,	:upper16:global_k
+	ldr	v99,	[v100]
+	mov	v103,	#4
+	mul	v102,	v99,	v103
+	add	v104,	v1,	v102
+	add	v101,	v104,	#132
+	vldr.F32	s11,	[v101]
+	movw	v107,	:lower16:global_k
+	movt	v107,	:upper16:global_k
+	ldr	v106,	[v107]
+	mov	v110,	#4
+	mul	v109,	v106,	v110
+	add	v111,	v1,	v109
+	add	v108,	v111,	#144
+	vldr.F32	s12,	[v108]
+	movw	v114,	:lower16:global_k
+	movt	v114,	:upper16:global_k
+	ldr	v113,	[v114]
+	mov	v117,	#4
+	mul	v116,	v113,	v117
+	add	v118,	v1,	v116
+	add	v115,	v118,	#156
+	vldr.F32	s13,	[v115]
+	movw	v121,	:lower16:global_k
+	movt	v121,	:upper16:global_k
+	ldr	v120,	[v121]
+	mov	v124,	#4
+	mul	v123,	v120,	v124
+	add	v125,	v1,	v123
+	add	v122,	v125,	#168
+	vldr.F32	s14,	[v122]
+	movw	v128,	:lower16:global_k
+	movt	v128,	:upper16:global_k
+	ldr	v127,	[v128]
+	mov	v131,	#4
+	mul	v130,	v127,	v131
+	add	v132,	v1,	v130
+	add	v129,	v132,	#180
+	vldr.F32	s15,	[v129]
+	movw	v135,	:lower16:global_k
+	movt	v135,	:upper16:global_k
+	ldr	v134,	[v135]
+	mov	v138,	#4
+	mul	v137,	v134,	v138
+	add	v139,	v1,	v137
+	add	v136,	v139,	#192
+	vldr.F32	s16,	[v136]
+	vstr.F32	s16,	[sp,	#768]
+	movw	v142,	:lower16:global_k
+	movt	v142,	:upper16:global_k
+	ldr	v141,	[v142]
+	mov	v145,	#4
+	mul	v144,	v141,	v145
+	add	v146,	v1,	v144
+	add	v143,	v146,	#204
+	vldr.F32	s16,	[v143]
+	vstr.F32	s16,	[sp,	#772]
+	movw	v149,	:lower16:global_k
+	movt	v149,	:upper16:global_k
+	ldr	v148,	[v149]
+	mov	v152,	#4
+	mul	v151,	v148,	v152
+	add	v153,	v1,	v151
+	add	v150,	v153,	#216
+	vldr.F32	s16,	[v150]
+	vstr.F32	s16,	[sp,	#776]
+	movw	v156,	:lower16:global_k
+	movt	v156,	:upper16:global_k
+	ldr	v155,	[v156]
+	mov	v159,	#4
+	mul	v158,	v155,	v159
+	add	v160,	v1,	v158
+	add	v157,	v160,	#228
+	vldr.F32	s16,	[v157]
+	vstr.F32	s16,	[sp,	#780]
+	movw	v163,	:lower16:global_k
+	movt	v163,	:upper16:global_k
+	ldr	v162,	[v163]
+	mov	v166,	#4
+	mul	v165,	v162,	v166
+	add	v167,	v1,	v165
+	add	v164,	v167,	#240
+	vldr.F32	s16,	[v164]
+	vstr.F32	s16,	[sp,	#784]
+	movw	v170,	:lower16:global_k
+	movt	v170,	:upper16:global_k
+	ldr	v169,	[v170]
+	mov	v173,	#4
+	mul	v172,	v169,	v173
+	add	v174,	v1,	v172
+	add	v171,	v174,	#252
+	vldr.F32	s16,	[v171]
+	vstr.F32	s16,	[sp,	#788]
+	movw	v177,	:lower16:global_k
+	movt	v177,	:upper16:global_k
+	ldr	v176,	[v177]
+	mov	v180,	#4
+	mul	v179,	v176,	v180
+	add	v181,	v1,	v179
+	add	v178,	v181,	#264
+	vldr.F32	s16,	[v178]
+	vstr.F32	s16,	[sp,	#792]
+	movw	v184,	:lower16:global_k
+	movt	v184,	:upper16:global_k
+	ldr	v183,	[v184]
+	mov	v187,	#4
+	mul	v186,	v183,	v187
+	add	v188,	v1,	v186
+	add	v185,	v188,	#276
+	vldr.F32	s16,	[v185]
+	vstr.F32	s16,	[sp,	#796]
+	movw	v191,	:lower16:global_k
+	movt	v191,	:upper16:global_k
+	ldr	v190,	[v191]
+	mov	v194,	#4
+	mul	v193,	v190,	v194
+	add	v195,	v1,	v193
+	add	v192,	v195,	#288
+	vldr.F32	s16,	[v192]
+	vstr.F32	s16,	[sp,	#836]
+	movw	v198,	:lower16:global_k
+	movt	v198,	:upper16:global_k
+	ldr	v197,	[v198]
+	mov	v201,	#4
+	mul	v200,	v197,	v201
+	add	v202,	v1,	v200
+	add	v199,	v202,	#300
+	vldr.F32	s30,	[v199]
+	movw	v205,	:lower16:global_k
+	movt	v205,	:upper16:global_k
+	ldr	v204,	[v205]
+	mov	v208,	#4
+	mul	v207,	v204,	v208
+	add	v209,	v1,	v207
+	add	v206,	v209,	#312
+	vldr.F32	s29,	[v206]
+	movw	v212,	:lower16:global_k
+	movt	v212,	:upper16:global_k
+	ldr	v211,	[v212]
+	mov	v215,	#4
+	mul	v214,	v211,	v215
+	add	v216,	v1,	v214
+	add	v213,	v216,	#324
+	vldr.F32	s28,	[v213]
+	movw	v219,	:lower16:global_k
+	movt	v219,	:upper16:global_k
+	ldr	v218,	[v219]
+	mov	v222,	#4
+	mul	v221,	v218,	v222
+	add	v223,	v1,	v221
+	add	v220,	v223,	#336
+	vldr.F32	s27,	[v220]
+	movw	v226,	:lower16:global_k
+	movt	v226,	:upper16:global_k
+	ldr	v225,	[v226]
+	mov	v229,	#4
+	mul	v228,	v225,	v229
+	add	v230,	v1,	v228
+	add	v227,	v230,	#348
+	vldr.F32	s26,	[v227]
+	movw	v233,	:lower16:global_k
+	movt	v233,	:upper16:global_k
+	ldr	v232,	[v233]
+	mov	v236,	#4
+	mul	v235,	v232,	v236
+	add	v237,	v1,	v235
+	add	v234,	v237,	#360
+	vldr.F32	s25,	[v234]
+	movw	v240,	:lower16:global_k
+	movt	v240,	:upper16:global_k
+	ldr	v239,	[v240]
+	mov	v243,	#4
+	mul	v242,	v239,	v243
+	add	v244,	v1,	v242
+	add	v241,	v244,	#372
+	vldr.F32	s24,	[v241]
+	movw	v247,	:lower16:global_k
+	movt	v247,	:upper16:global_k
+	ldr	v246,	[v247]
+	mov	v250,	#4
+	mul	v249,	v246,	v250
+	add	v251,	v1,	v249
+	add	v248,	v251,	#384
+	vldr.F32	s23,	[v248]
+	movw	v254,	:lower16:global_k
+	movt	v254,	:upper16:global_k
+	ldr	v253,	[v254]
+	mov	v257,	#4
+	mul	v256,	v253,	v257
+	add	v258,	v1,	v256
+	add	v255,	v258,	#396
+	vldr.F32	s22,	[v255]
+	movw	v261,	:lower16:global_k
+	movt	v261,	:upper16:global_k
+	ldr	v260,	[v261]
+	mov	v264,	#4
+	mul	v263,	v260,	v264
+	add	v265,	v1,	v263
+	add	v262,	v265,	#408
+	vldr.F32	s21,	[v262]
+	movw	v268,	:lower16:global_k
+	movt	v268,	:upper16:global_k
+	ldr	v267,	[v268]
+	mov	v271,	#4
+	mul	v270,	v267,	v271
+	add	v272,	v1,	v270
+	add	v269,	v272,	#420
+	vldr.F32	s20,	[v269]
+	movw	v275,	:lower16:global_k
+	movt	v275,	:upper16:global_k
+	ldr	v274,	[v275]
+	mov	v278,	#4
+	mul	v277,	v274,	v278
+	add	v279,	v1,	v277
+	add	v276,	v279,	#432
+	vldr.F32	s19,	[v276]
+	movw	v282,	:lower16:global_k
+	movt	v282,	:upper16:global_k
+	ldr	v281,	[v282]
+	mov	v285,	#4
+	mul	v284,	v281,	v285
+	add	v286,	v1,	v284
+	add	v283,	v286,	#444
+	vldr.F32	s18,	[v283]
+	movw	v289,	:lower16:global_k
+	movt	v289,	:upper16:global_k
+	ldr	v288,	[v289]
+	mov	v292,	#4
+	mul	v291,	v288,	v292
+	add	v293,	v1,	v291
+	add	v290,	v293,	#456
+	vldr.F32	s17,	[v290]
+	movw	v296,	:lower16:global_k
+	movt	v296,	:upper16:global_k
+	ldr	v295,	[v296]
+	mov	v299,	#4
+	mul	v298,	v295,	v299
+	add	v300,	v1,	v298
+	add	v297,	v300,	#468
+	vldr.F32	s16,	[v297]
+	vldr.F32	s31,	[sp,	#768]
+	vstr.F32	s31,	[sp,	#-4]
+	vldr.F32	s31,	[sp,	#772]
+	vstr.F32	s31,	[sp,	#-8]
+	vldr.F32	s31,	[sp,	#776]
+	vstr.F32	s31,	[sp,	#-12]
+	vldr.F32	s31,	[sp,	#780]
+	vstr.F32	s31,	[sp,	#-16]
+	vldr.F32	s31,	[sp,	#784]
+	vstr.F32	s31,	[sp,	#-20]
+	vldr.F32	s31,	[sp,	#788]
+	vstr.F32	s31,	[sp,	#-24]
+	vldr.F32	s31,	[sp,	#792]
+	vstr.F32	s31,	[sp,	#-28]
+	vldr.F32	s31,	[sp,	#796]
+	vstr.F32	s31,	[sp,	#-32]
+	vldr.F32	s31,	[sp,	#836]
+	vstr.F32	s31,	[sp,	#-36]
+	vstr.F32	s30,	[sp,	#-40]
+	vstr.F32	s29,	[sp,	#-44]
+	vstr.F32	s28,	[sp,	#-48]
+	vstr.F32	s27,	[sp,	#-52]
+	vstr.F32	s26,	[sp,	#-56]
+	vstr.F32	s25,	[sp,	#-60]
+	vstr.F32	s24,	[sp,	#-64]
+	vstr.F32	s23,	[sp,	#-68]
+	vstr.F32	s22,	[sp,	#-72]
+	vstr.F32	s21,	[sp,	#-76]
+	vstr.F32	s20,	[sp,	#-80]
+	vstr.F32	s19,	[sp,	#-84]
+	vstr.F32	s18,	[sp,	#-88]
+	vstr.F32	s17,	[sp,	#-92]
+	vstr.F32	s16,	[sp,	#-96]
+	sub	sp,	sp,	#96
+	bl	params_f40
+	add	sp,	sp,	#96
+	vstr.F32	s0,	[sp,	#800]
+	mov	r0,	#2
+	bl	putint
+	mov	r0,	#10
+	bl	putch
+	movw	v304,	:lower16:global_k
+	movt	v304,	:upper16:global_k
+	ldr	v303,	[v304]
+	mov	v307,	#4
+	mul	v306,	v303,	v307
+	add	v308,	v0,	v306
+	add	v305,	v308,	#276
+	ldr	v2382,	[v305]
+	str	v2382,	[sp,	#844]
+	movw	v311,	:lower16:global_k
+	movt	v311,	:upper16:global_k
+	ldr	v310,	[v311]
+	mov	v314,	#4
+	mul	v313,	v310,	v314
+	add	v315,	v0,	v313
+	add	v312,	v315,	#24
+	ldr	v2383,	[v312]
+	str	v2383,	[sp,	#848]
+	movw	v318,	:lower16:global_k
+	movt	v318,	:upper16:global_k
+	ldr	v317,	[v318]
+	mov	v321,	#4
+	mul	v320,	v317,	v321
+	add	v322,	v0,	v320
+	add	v319,	v322,	#72
+	ldr	v323,	[v319]
+	movw	v325,	:lower16:global_k
+	movt	v325,	:upper16:global_k
+	ldr	v324,	[v325]
+	mov	v328,	#4
+	mul	v327,	v324,	v328
+	add	v329,	v1,	v327
+	add	v326,	v329,	#48
+	vldr.F32	s0,	[v326]
+	movw	v332,	:lower16:global_k
+	movt	v332,	:upper16:global_k
+	ldr	v331,	[v332]
+	mov	v335,	#4
+	mul	v334,	v331,	v335
+	add	v336,	v0,	v334
+	add	v333,	v336,	#12
+	ldr	v337,	[v333]
+	movw	v339,	:lower16:global_k
+	movt	v339,	:upper16:global_k
+	ldr	v338,	[v339]
+	mov	v342,	#4
+	mul	v341,	v338,	v342
+	add	v343,	v0,	v341
+	add	v340,	v343,	#48
+	ldr	v2384,	[v340]
+	str	v2384,	[sp,	#852]
+	movw	v346,	:lower16:global_k
+	movt	v346,	:upper16:global_k
+	ldr	v345,	[v346]
+	mov	v349,	#4
+	mul	v348,	v345,	v349
+	add	v350,	v0,	v348
+	add	v347,	v350,	#60
+	ldr	v2385,	[v347]
+	str	v2385,	[sp,	#856]
+	movw	v353,	:lower16:global_k
+	movt	v353,	:upper16:global_k
+	ldr	v352,	[v353]
+	mov	v356,	#4
+	mul	v355,	v352,	v356
+	add	v357,	v1,	v355
+	add	v354,	v357,	#96
+	vldr.F32	s1,	[v354]
+	movw	v360,	:lower16:global_k
+	movt	v360,	:upper16:global_k
+	ldr	v359,	[v360]
+	mov	v363,	#4
+	mul	v362,	v359,	v363
+	add	v364,	v1,	v362
+	add	v361,	v364,	#180
+	vldr.F32	s2,	[v361]
+	movw	v367,	:lower16:global_k
+	movt	v367,	:upper16:global_k
+	ldr	v366,	[v367]
+	mov	v370,	#4
+	mul	v369,	v366,	v370
+	add	v371,	v1,	v369
+	add	v368,	v371,	#84
+	vldr.F32	s3,	[v368]
+	movw	v374,	:lower16:global_k
+	movt	v374,	:upper16:global_k
+	ldr	v373,	[v374]
+	mov	v377,	#4
+	mul	v376,	v373,	v377
+	add	v378,	v0,	v376
+	add	v375,	v378,	#264
+	ldr	v2386,	[v375]
+	str	v2386,	[sp,	#860]
+	movw	v381,	:lower16:global_k
+	movt	v381,	:upper16:global_k
+	ldr	v380,	[v381]
+	mov	v384,	#4
+	mul	v383,	v380,	v384
+	add	v385,	v1,	v383
+	add	v382,	v385,	#36
+	vldr.F32	s4,	[v382]
+	movw	v388,	:lower16:global_k
+	movt	v388,	:upper16:global_k
+	ldr	v387,	[v388]
+	mov	v391,	#4
+	mul	v390,	v387,	v391
+	add	v392,	v1,	v390
+	add	v389,	v392,	#336
+	vldr.F32	s5,	[v389]
+	movw	v395,	:lower16:global_k
+	movt	v395,	:upper16:global_k
+	ldr	v394,	[v395]
+	mov	v398,	#4
+	mul	v397,	v394,	v398
+	add	v399,	v0,	v397
+	mov	v396,	v399
+	ldr	v2387,	[v396]
+	str	v2387,	[sp,	#864]
+	movw	v402,	:lower16:global_k
+	movt	v402,	:upper16:global_k
+	ldr	v401,	[v402]
+	mov	v405,	#4
+	mul	v404,	v401,	v405
+	add	v406,	v1,	v404
+	add	v403,	v406,	#444
+	vldr.F32	s6,	[v403]
+	movw	v409,	:lower16:global_k
+	movt	v409,	:upper16:global_k
+	ldr	v408,	[v409]
+	mov	v412,	#4
+	mul	v411,	v408,	v412
+	add	v413,	v0,	v411
+	add	v410,	v413,	#228
+	ldr	v2388,	[v410]
+	str	v2388,	[sp,	#868]
+	movw	v416,	:lower16:global_k
+	movt	v416,	:upper16:global_k
+	ldr	v415,	[v416]
+	mov	v419,	#4
+	mul	v418,	v415,	v419
+	add	v420,	v1,	v418
+	add	v417,	v420,	#360
+	vldr.F32	s7,	[v417]
+	movw	v423,	:lower16:global_k
+	movt	v423,	:upper16:global_k
+	ldr	v422,	[v423]
+	mov	v426,	#4
+	mul	v425,	v422,	v426
+	add	v427,	v1,	v425
+	add	v424,	v427,	#144
+	vldr.F32	s8,	[v424]
+	movw	v430,	:lower16:global_k
+	movt	v430,	:upper16:global_k
+	ldr	v429,	[v430]
+	mov	v433,	#4
+	mul	v432,	v429,	v433
+	add	v434,	v1,	v432
+	add	v431,	v434,	#12
+	vldr.F32	s9,	[v431]
+	movw	v437,	:lower16:global_k
+	movt	v437,	:upper16:global_k
+	ldr	v436,	[v437]
+	mov	v440,	#4
+	mul	v439,	v436,	v440
+	add	v441,	v1,	v439
+	add	v438,	v441,	#132
+	vldr.F32	s10,	[v438]
+	movw	v444,	:lower16:global_k
+	movt	v444,	:upper16:global_k
+	ldr	v443,	[v444]
+	mov	v447,	#4
+	mul	v446,	v443,	v447
+	add	v448,	v1,	v446
+	add	v445,	v448,	#456
+	vldr.F32	s11,	[v445]
+	movw	v451,	:lower16:global_k
+	movt	v451,	:upper16:global_k
+	ldr	v450,	[v451]
+	mov	v454,	#4
+	mul	v453,	v450,	v454
+	add	v455,	v1,	v453
+	add	v452,	v455,	#72
+	vldr.F32	s12,	[v452]
+	movw	v458,	:lower16:global_k
+	movt	v458,	:upper16:global_k
+	ldr	v457,	[v458]
+	mov	v461,	#4
+	mul	v460,	v457,	v461
+	add	v462,	v0,	v460
+	add	v459,	v462,	#84
+	ldr	v2389,	[v459]
+	str	v2389,	[sp,	#872]
+	movw	v465,	:lower16:global_k
+	movt	v465,	:upper16:global_k
+	ldr	v464,	[v465]
+	mov	v468,	#4
+	mul	v467,	v464,	v468
+	add	v469,	v1,	v467
+	add	v466,	v469,	#384
+	vldr.F32	s13,	[v466]
+	movw	v472,	:lower16:global_k
+	movt	v472,	:upper16:global_k
+	ldr	v471,	[v472]
+	mov	v475,	#4
+	mul	v474,	v471,	v475
+	add	v476,	v0,	v474
+	add	v473,	v476,	#120
+	ldr	v2390,	[v473]
+	str	v2390,	[sp,	#876]
+	movw	v479,	:lower16:global_k
+	movt	v479,	:upper16:global_k
+	ldr	v478,	[v479]
+	mov	v482,	#4
+	mul	v481,	v478,	v482
+	add	v483,	v0,	v481
+	add	v480,	v483,	#156
+	ldr	v2391,	[v480]
+	str	v2391,	[sp,	#880]
+	movw	v486,	:lower16:global_k
+	movt	v486,	:upper16:global_k
+	ldr	v485,	[v486]
+	mov	v489,	#4
+	mul	v488,	v485,	v489
+	add	v490,	v1,	v488
+	add	v487,	v490,	#240
+	vldr.F32	s14,	[v487]
+	movw	v493,	:lower16:global_k
+	movt	v493,	:upper16:global_k
+	ldr	v492,	[v493]
+	mov	v496,	#4
+	mul	v495,	v492,	v496
+	add	v497,	v1,	v495
+	add	v494,	v497,	#396
+	vldr.F32	s15,	[v494]
+	movw	v500,	:lower16:global_k
+	movt	v500,	:upper16:global_k
+	ldr	v499,	[v500]
+	mov	v503,	#4
+	mul	v502,	v499,	v503
+	add	v504,	v1,	v502
+	add	v501,	v504,	#276
+	vldr.F32	s16,	[v501]
+	vstr.F32	s16,	[sp,	#804]
+	movw	v507,	:lower16:global_k
+	movt	v507,	:upper16:global_k
+	ldr	v506,	[v507]
+	mov	v510,	#4
+	mul	v509,	v506,	v510
+	add	v511,	v1,	v509
+	add	v508,	v511,	#108
+	vldr.F32	s16,	[v508]
+	vstr.F32	s16,	[sp,	#808]
+	movw	v514,	:lower16:global_k
+	movt	v514,	:upper16:global_k
+	ldr	v513,	[v514]
+	mov	v517,	#4
+	mul	v516,	v513,	v517
+	add	v518,	v1,	v516
+	add	v515,	v518,	#300
+	vldr.F32	s16,	[v515]
+	vstr.F32	s16,	[sp,	#812]
+	movw	v521,	:lower16:global_k
+	movt	v521,	:upper16:global_k
+	ldr	v520,	[v521]
+	mov	v524,	#4
+	mul	v523,	v520,	v524
+	add	v525,	v0,	v523
+	add	v522,	v525,	#96
+	ldr	v2392,	[v522]
+	str	v2392,	[sp,	#884]
+	movw	v528,	:lower16:global_k
+	movt	v528,	:upper16:global_k
+	ldr	v527,	[v528]
+	mov	v531,	#4
+	mul	v530,	v527,	v531
+	add	v532,	v1,	v530
+	add	v529,	v532,	#468
+	vldr.F32	s16,	[v529]
+	vstr.F32	s16,	[sp,	#816]
+	movw	v535,	:lower16:global_k
+	movt	v535,	:upper16:global_k
+	ldr	v534,	[v535]
+	mov	v538,	#4
+	mul	v537,	v534,	v538
+	add	v539,	v0,	v537
+	add	v536,	v539,	#204
+	ldr	v2393,	[v536]
+	str	v2393,	[sp,	#888]
+	movw	v542,	:lower16:global_k
+	movt	v542,	:upper16:global_k
+	ldr	v541,	[v542]
+	mov	v545,	#4
+	mul	v544,	v541,	v545
+	add	v546,	v1,	v544
+	add	v543,	v546,	#252
+	vldr.F32	s16,	[v543]
+	vstr.F32	s16,	[sp,	#820]
+	movw	v549,	:lower16:global_k
+	movt	v549,	:upper16:global_k
+	ldr	v548,	[v549]
+	mov	v552,	#4
+	mul	v551,	v548,	v552
+	add	v553,	v1,	v551
+	add	v550,	v553,	#192
+	vldr.F32	s16,	[v550]
+	vstr.F32	s16,	[sp,	#824]
+	movw	v556,	:lower16:global_k
+	movt	v556,	:upper16:global_k
+	ldr	v555,	[v556]
+	mov	v559,	#4
+	mul	v558,	v555,	v559
+	add	v560,	v1,	v558
+	add	v557,	v560,	#60
+	vldr.F32	s16,	[v557]
+	vstr.F32	s16,	[sp,	#828]
+	movw	v563,	:lower16:global_k
+	movt	v563,	:upper16:global_k
+	ldr	v562,	[v563]
+	mov	v566,	#4
+	mul	v565,	v562,	v566
+	add	v567,	v1,	v565
+	add	v564,	v567,	#408
+	vldr.F32	s16,	[v564]
+	vstr.F32	s16,	[sp,	#832]
+	movw	v570,	:lower16:global_k
+	movt	v570,	:upper16:global_k
+	ldr	v569,	[v570]
+	mov	v573,	#4
+	mul	v572,	v569,	v573
+	add	v574,	v0,	v572
+	add	v571,	v574,	#216
+	ldr	v2394,	[v571]
+	str	v2394,	[sp,	#892]
+	movw	v577,	:lower16:global_k
+	movt	v577,	:upper16:global_k
+	ldr	v576,	[v577]
+	mov	v580,	#4
+	mul	v579,	v576,	v580
+	add	v581,	v0,	v579
+	add	v578,	v581,	#108
+	ldr	v2395,	[v578]
+	str	v2395,	[sp,	#896]
+	movw	v584,	:lower16:global_k
+	movt	v584,	:upper16:global_k
+	ldr	v583,	[v584]
+	mov	v587,	#4
+	mul	v586,	v583,	v587
+	add	v588,	v1,	v586
+	add	v585,	v588,	#168
+	vldr.F32	s16,	[v585]
+	vstr.F32	s16,	[sp,	#840]
+	movw	v591,	:lower16:global_k
+	movt	v591,	:upper16:global_k
+	ldr	v590,	[v591]
+	mov	v594,	#4
+	mul	v593,	v590,	v594
+	add	v595,	v1,	v593
+	add	v592,	v595,	#120
+	vldr.F32	s30,	[v592]
+	movw	v598,	:lower16:global_k
+	movt	v598,	:upper16:global_k
+	ldr	v597,	[v598]
+	mov	v601,	#4
+	mul	v600,	v597,	v601
+	add	v602,	v1,	v600
+	mov	v599,	v602
+	vldr.F32	s29,	[v599]
+	movw	v605,	:lower16:global_k
+	movt	v605,	:upper16:global_k
+	ldr	v604,	[v605]
+	mov	v608,	#4
+	mul	v607,	v604,	v608
+	add	v609,	v0,	v607
+	add	v606,	v609,	#144
+	ldr	v2530,	[v606]
+	str	v2530,	[sp,	#1140]
+	movw	v612,	:lower16:global_k
+	movt	v612,	:upper16:global_k
+	ldr	v611,	[v612]
+	mov	v615,	#4
+	mul	v614,	v611,	v615
+	add	v616,	v1,	v614
+	add	v613,	v616,	#372
+	vldr.F32	s28,	[v613]
+	movw	v619,	:lower16:global_k
+	movt	v619,	:upper16:global_k
+	ldr	v618,	[v619]
+	mov	v622,	#4
+	mul	v621,	v618,	v622
+	add	v623,	v0,	v621
+	add	v620,	v623,	#132
+	ldr	v624,	[v620]
+	movw	v626,	:lower16:global_k
+	movt	v626,	:upper16:global_k
+	ldr	v625,	[v626]
+	mov	v629,	#4
+	mul	v628,	v625,	v629
+	add	v630,	v0,	v628
+	add	v627,	v630,	#192
+	ldr	v631,	[v627]
+	movw	v633,	:lower16:global_k
+	movt	v633,	:upper16:global_k
+	ldr	v632,	[v633]
+	mov	v636,	#4
+	mul	v635,	v632,	v636
+	add	v637,	v1,	v635
+	add	v634,	v637,	#324
+	vldr.F32	s27,	[v634]
+	movw	v640,	:lower16:global_k
+	movt	v640,	:upper16:global_k
+	ldr	v639,	[v640]
+	mov	v643,	#4
+	mul	v642,	v639,	v643
+	add	v644,	v1,	v642
+	add	v641,	v644,	#288
+	vldr.F32	s26,	[v641]
+	movw	v647,	:lower16:global_k
+	movt	v647,	:upper16:global_k
+	ldr	v646,	[v647]
+	mov	v650,	#4
+	mul	v649,	v646,	v650
+	add	v651,	v1,	v649
+	add	v648,	v651,	#156
+	vldr.F32	s25,	[v648]
+	movw	v654,	:lower16:global_k
+	movt	v654,	:upper16:global_k
+	ldr	v653,	[v654]
+	mov	v657,	#4
+	mul	v656,	v653,	v657
+	add	v658,	v1,	v656
+	add	v655,	v658,	#348
+	vldr.F32	s24,	[v655]
+	movw	v661,	:lower16:global_k
+	movt	v661,	:upper16:global_k
+	ldr	v660,	[v661]
+	mov	v664,	#4
+	mul	v663,	v660,	v664
+	add	v665,	v0,	v663
+	add	v662,	v665,	#36
+	ldr	v666,	[v662]
+	movw	v668,	:lower16:global_k
+	movt	v668,	:upper16:global_k
+	ldr	v667,	[v668]
+	mov	v671,	#4
+	mul	v670,	v667,	v671
+	add	v672,	v0,	v670
+	add	v669,	v672,	#252
+	ldr	v673,	[v669]
+	movw	v675,	:lower16:global_k
+	movt	v675,	:upper16:global_k
+	ldr	v674,	[v675]
+	mov	v678,	#4
+	mul	v677,	v674,	v678
+	add	v679,	v0,	v677
+	add	v676,	v679,	#240
+	ldr	v680,	[v676]
+	movw	v682,	:lower16:global_k
+	movt	v682,	:upper16:global_k
+	ldr	v681,	[v682]
+	mov	v685,	#4
+	mul	v684,	v681,	v685
+	add	v686,	v1,	v684
+	add	v683,	v686,	#216
+	vldr.F32	s23,	[v683]
+	movw	v689,	:lower16:global_k
+	movt	v689,	:upper16:global_k
+	ldr	v688,	[v689]
+	mov	v692,	#4
+	mul	v691,	v688,	v692
+	add	v693,	v1,	v691
+	add	v690,	v693,	#228
+	vldr.F32	s22,	[v690]
+	movw	v696,	:lower16:global_k
+	movt	v696,	:upper16:global_k
+	ldr	v695,	[v696]
+	mov	v699,	#4
+	mul	v698,	v695,	v699
+	add	v700,	v1,	v698
+	add	v697,	v700,	#264
+	vldr.F32	s21,	[v697]
+	movw	v703,	:lower16:global_k
+	movt	v703,	:upper16:global_k
+	ldr	v702,	[v703]
+	mov	v706,	#4
+	mul	v705,	v702,	v706
+	add	v707,	v1,	v705
+	add	v704,	v707,	#312
+	vldr.F32	s20,	[v704]
+	movw	v710,	:lower16:global_k
+	movt	v710,	:upper16:global_k
+	ldr	v709,	[v710]
+	mov	v713,	#4
+	mul	v712,	v709,	v713
+	add	v714,	v1,	v712
+	add	v711,	v714,	#432
+	vldr.F32	s19,	[v711]
+	movw	v717,	:lower16:global_k
+	movt	v717,	:upper16:global_k
+	ldr	v716,	[v717]
+	mov	v720,	#4
+	mul	v719,	v716,	v720
+	add	v721,	v1,	v719
+	add	v718,	v721,	#204
+	vldr.F32	s18,	[v718]
+	movw	v724,	:lower16:global_k
+	movt	v724,	:upper16:global_k
+	ldr	v723,	[v724]
+	mov	v727,	#4
+	mul	v726,	v723,	v727
+	add	v728,	v0,	v726
+	add	v725,	v728,	#180
+	ldr	v729,	[v725]
+	movw	v731,	:lower16:global_k
+	movt	v731,	:upper16:global_k
+	ldr	v730,	[v731]
+	mov	v734,	#4
+	mul	v733,	v730,	v734
+	add	v735,	v1,	v733
+	add	v732,	v735,	#24
+	vldr.F32	s17,	[v732]
+	movw	v738,	:lower16:global_k
+	movt	v738,	:upper16:global_k
+	ldr	v737,	[v738]
+	mov	v741,	#4
+	mul	v740,	v737,	v741
+	add	v742,	v0,	v740
+	add	v739,	v742,	#168
+	ldr	v743,	[v739]
+	movw	v745,	:lower16:global_k
+	movt	v745,	:upper16:global_k
+	ldr	v744,	[v745]
+	mov	v748,	#4
+	mul	v747,	v744,	v748
+	add	v749,	v1,	v747
+	add	v746,	v749,	#420
+	vldr.F32	s16,	[v746]
+	ldr	v2396,	[sp,	#844]
+	mov	r0,	v2396
+	ldr	v2397,	[sp,	#848]
+	mov	r1,	v2397
+	mov	r2,	v323
+	mov	r3,	v337
+	ldr	v2398,	[sp,	#852]
+	str	v2398,	[sp,	#-4]
+	ldr	v2399,	[sp,	#856]
+	str	v2399,	[sp,	#-8]
+	ldr	v2400,	[sp,	#860]
+	str	v2400,	[sp,	#-12]
+	ldr	v2401,	[sp,	#864]
+	str	v2401,	[sp,	#-16]
+	ldr	v2402,	[sp,	#868]
+	str	v2402,	[sp,	#-20]
+	ldr	v2403,	[sp,	#872]
+	str	v2403,	[sp,	#-24]
+	ldr	v2404,	[sp,	#876]
+	str	v2404,	[sp,	#-28]
+	ldr	v2405,	[sp,	#880]
+	str	v2405,	[sp,	#-32]
+	vldr.F32	s31,	[sp,	#804]
+	vstr.F32	s31,	[sp,	#-36]
+	vldr.F32	s31,	[sp,	#808]
+	vstr.F32	s31,	[sp,	#-40]
+	vldr.F32	s31,	[sp,	#812]
+	vstr.F32	s31,	[sp,	#-44]
+	ldr	v2406,	[sp,	#884]
+	str	v2406,	[sp,	#-48]
+	vldr.F32	s31,	[sp,	#816]
+	vstr.F32	s31,	[sp,	#-52]
+	ldr	v2407,	[sp,	#888]
+	str	v2407,	[sp,	#-56]
+	vldr.F32	s31,	[sp,	#820]
+	vstr.F32	s31,	[sp,	#-60]
+	vldr.F32	s31,	[sp,	#824]
+	vstr.F32	s31,	[sp,	#-64]
+	vldr.F32	s31,	[sp,	#828]
+	vstr.F32	s31,	[sp,	#-68]
+	vldr.F32	s31,	[sp,	#832]
+	vstr.F32	s31,	[sp,	#-72]
+	ldr	v2408,	[sp,	#892]
+	str	v2408,	[sp,	#-76]
+	ldr	v2409,	[sp,	#896]
+	str	v2409,	[sp,	#-80]
+	vldr.F32	s31,	[sp,	#840]
+	vstr.F32	s31,	[sp,	#-84]
+	vstr.F32	s30,	[sp,	#-88]
+	vstr.F32	s29,	[sp,	#-92]
+	ldr	v2531,	[sp,	#1140]
+	str	v2531,	[sp,	#-96]
+	vstr.F32	s28,	[sp,	#-100]
+	str	v624,	[sp,	#-104]
+	str	v631,	[sp,	#-108]
+	vstr.F32	s27,	[sp,	#-112]
+	vstr.F32	s26,	[sp,	#-116]
+	vstr.F32	s25,	[sp,	#-120]
+	vstr.F32	s24,	[sp,	#-124]
+	str	v666,	[sp,	#-128]
+	str	v673,	[sp,	#-132]
+	str	v680,	[sp,	#-136]
+	vstr.F32	s23,	[sp,	#-140]
+	vstr.F32	s22,	[sp,	#-144]
+	vstr.F32	s21,	[sp,	#-148]
+	vstr.F32	s20,	[sp,	#-152]
+	vstr.F32	s19,	[sp,	#-156]
+	vstr.F32	s18,	[sp,	#-160]
+	str	v729,	[sp,	#-164]
+	vstr.F32	s17,	[sp,	#-168]
+	str	v743,	[sp,	#-172]
+	vstr.F32	s16,	[sp,	#-176]
+	sub	sp,	sp,	#176
+	bl	params_f40_i24
+	add	sp,	sp,	#176
+	vmov.F32	s17,	s0
+	mov	r0,	#3
+	bl	putint
+	mov	r0,	#10
+	bl	putch
+	mov	v752,	v1
+	mov	v753,	v752
+	add	v754,	v1,	#12
+	mov	v755,	v754
+	add	v756,	v1,	#24
+	mov	v757,	v756
+	add	v758,	v1,	#36
+	mov	v759,	v758
+	add	v760,	v1,	#48
+	mov	v2410,	v760
+	str	v2410,	[sp,	#900]
+	add	v762,	v1,	#60
+	mov	v2411,	v762
+	str	v2411,	[sp,	#904]
+	add	v764,	v1,	#72
+	mov	v2412,	v764
+	str	v2412,	[sp,	#908]
+	add	v766,	v1,	#84
+	mov	v2413,	v766
+	str	v2413,	[sp,	#912]
+	add	v768,	v1,	#96
+	mov	v2414,	v768
+	str	v2414,	[sp,	#916]
+	add	v770,	v1,	#108
+	mov	v2415,	v770
+	str	v2415,	[sp,	#920]
+	add	v772,	v1,	#120
+	mov	v2416,	v772
+	str	v2416,	[sp,	#924]
+	add	v774,	v1,	#132
+	mov	v2417,	v774
+	str	v2417,	[sp,	#928]
+	add	v776,	v1,	#144
+	mov	v2418,	v776
+	str	v2418,	[sp,	#932]
+	add	v778,	v1,	#156
+	mov	v2419,	v778
+	str	v2419,	[sp,	#936]
+	add	v780,	v1,	#168
+	mov	v2420,	v780
+	str	v2420,	[sp,	#940]
+	add	v782,	v1,	#180
+	mov	v2421,	v782
+	str	v2421,	[sp,	#944]
+	add	v784,	v1,	#192
+	mov	v2422,	v784
+	str	v2422,	[sp,	#948]
+	add	v786,	v1,	#204
+	mov	v2423,	v786
+	str	v2423,	[sp,	#952]
+	add	v788,	v1,	#216
+	mov	v2424,	v788
+	str	v2424,	[sp,	#956]
+	add	v790,	v1,	#228
+	mov	v2425,	v790
+	str	v2425,	[sp,	#960]
+	add	v792,	v1,	#240
+	mov	v2426,	v792
+	str	v2426,	[sp,	#964]
+	add	v794,	v1,	#252
+	mov	v2427,	v794
+	str	v2427,	[sp,	#968]
+	add	v796,	v1,	#264
+	mov	v2428,	v796
+	str	v2428,	[sp,	#972]
+	add	v798,	v1,	#276
+	mov	v2429,	v798
+	str	v2429,	[sp,	#976]
+	add	v800,	v1,	#288
+	mov	v2430,	v800
+	str	v2430,	[sp,	#980]
+	add	v802,	v1,	#300
+	mov	v2431,	v802
+	str	v2431,	[sp,	#984]
+	add	v804,	v1,	#312
+	mov	v2432,	v804
+	str	v2432,	[sp,	#988]
+	add	v806,	v1,	#324
+	mov	v2433,	v806
+	str	v2433,	[sp,	#992]
+	add	v808,	v1,	#336
+	mov	v2434,	v808
+	str	v2434,	[sp,	#996]
+	add	v810,	v1,	#348
+	mov	v2435,	v810
+	str	v2435,	[sp,	#1000]
+	add	v812,	v1,	#360
+	mov	v2436,	v812
+	str	v2436,	[sp,	#1004]
+	add	v814,	v1,	#372
+	mov	v2437,	v814
+	str	v2437,	[sp,	#1008]
+	add	v816,	v1,	#384
+	mov	v2532,	v816
+	str	v2532,	[sp,	#1144]
+	add	v818,	v1,	#396
+	mov	v819,	v818
+	add	v820,	v1,	#408
+	mov	v821,	v820
+	add	v822,	v1,	#420
+	mov	v823,	v822
+	add	v824,	v1,	#432
+	mov	v825,	v824
+	add	v826,	v1,	#444
+	mov	v827,	v826
+	add	v828,	v1,	#456
+	mov	v829,	v828
+	add	v830,	v1,	#468
+	mov	v831,	v830
+	mov	r0,	v753
+	mov	r1,	v755
+	mov	r2,	v757
+	mov	r3,	v759
+	ldr	v2438,	[sp,	#900]
+	str	v2438,	[sp,	#-4]
+	ldr	v2439,	[sp,	#904]
+	str	v2439,	[sp,	#-8]
+	ldr	v2440,	[sp,	#908]
+	str	v2440,	[sp,	#-12]
+	ldr	v2441,	[sp,	#912]
+	str	v2441,	[sp,	#-16]
+	ldr	v2442,	[sp,	#916]
+	str	v2442,	[sp,	#-20]
+	ldr	v2443,	[sp,	#920]
+	str	v2443,	[sp,	#-24]
+	ldr	v2444,	[sp,	#924]
+	str	v2444,	[sp,	#-28]
+	ldr	v2445,	[sp,	#928]
+	str	v2445,	[sp,	#-32]
+	ldr	v2446,	[sp,	#932]
+	str	v2446,	[sp,	#-36]
+	ldr	v2447,	[sp,	#936]
+	str	v2447,	[sp,	#-40]
+	ldr	v2448,	[sp,	#940]
+	str	v2448,	[sp,	#-44]
+	ldr	v2449,	[sp,	#944]
+	str	v2449,	[sp,	#-48]
+	ldr	v2450,	[sp,	#948]
+	str	v2450,	[sp,	#-52]
+	ldr	v2451,	[sp,	#952]
+	str	v2451,	[sp,	#-56]
+	ldr	v2452,	[sp,	#956]
+	str	v2452,	[sp,	#-60]
+	ldr	v2453,	[sp,	#960]
+	str	v2453,	[sp,	#-64]
+	ldr	v2454,	[sp,	#964]
+	str	v2454,	[sp,	#-68]
+	ldr	v2455,	[sp,	#968]
+	str	v2455,	[sp,	#-72]
+	ldr	v2456,	[sp,	#972]
+	str	v2456,	[sp,	#-76]
+	ldr	v2457,	[sp,	#976]
+	str	v2457,	[sp,	#-80]
+	ldr	v2458,	[sp,	#980]
+	str	v2458,	[sp,	#-84]
+	ldr	v2459,	[sp,	#984]
+	str	v2459,	[sp,	#-88]
+	ldr	v2460,	[sp,	#988]
+	str	v2460,	[sp,	#-92]
+	ldr	v2461,	[sp,	#992]
+	str	v2461,	[sp,	#-96]
+	ldr	v2462,	[sp,	#996]
+	str	v2462,	[sp,	#-100]
+	ldr	v2463,	[sp,	#1000]
+	str	v2463,	[sp,	#-104]
+	ldr	v2464,	[sp,	#1004]
+	str	v2464,	[sp,	#-108]
+	ldr	v2465,	[sp,	#1008]
+	str	v2465,	[sp,	#-112]
+	ldr	v2533,	[sp,	#1144]
+	str	v2533,	[sp,	#-116]
+	str	v819,	[sp,	#-120]
+	str	v821,	[sp,	#-124]
+	str	v823,	[sp,	#-128]
+	str	v825,	[sp,	#-132]
+	str	v827,	[sp,	#-136]
+	str	v829,	[sp,	#-140]
+	str	v831,	[sp,	#-144]
+	sub	sp,	sp,	#144
+	bl	params_fa40
+	add	sp,	sp,	#144
+	vmov.F32	s16,	s0
+	mov	r0,	#4
+	bl	putint
+	mov	r0,	#10
+	bl	putch
+	movw	v834,	:lower16:global_k
+	movt	v834,	:upper16:global_k
+	ldr	v833,	[v834]
+	mov	r0,	v833
+	bl	putint
+	mov	r0,	#32
+	bl	putch
+	movw	v836,	:lower16:global_k
+	movt	v836,	:upper16:global_k
+	ldr	v835,	[v836]
+	mov	v839,	#4
+	mul	v838,	v835,	v839
+	add	v840,	v1,	v838
+	mov	v837,	v840
+	vldr.F32	s0,	[v837]
+	bl	putfloat
+	mov	r0,	#10
+	bl	putch
+	movw	v843,	:lower16:global_k
+	movt	v843,	:upper16:global_k
+	ldr	v842,	[v843]
+	mov	v846,	#4
+	mul	v845,	v842,	v846
+	add	v847,	v1,	v845
+	mov	v844,	v847
+	vldr.F32	s0,	[v844]
+	mov	v849,	v0
+	mov	v2534,	v849
+	str	v2534,	[sp,	#1148]
+	movw	v852,	:lower16:global_k
+	movt	v852,	:upper16:global_k
+	ldr	v851,	[v852]
+	mov	v855,	#4
+	mul	v854,	v851,	v855
+	add	v856,	v0,	v854
+	add	v853,	v856,	#12
+	ldr	v857,	[v853]
+	add	v858,	v1,	#12
+	mov	v859,	v858
+	movw	v861,	:lower16:global_k
+	movt	v861,	:upper16:global_k
+	ldr	v860,	[v861]
+	mov	v864,	#4
+	mul	v863,	v860,	v864
+	add	v865,	v1,	v863
+	add	v862,	v865,	#24
+	vldr.F32	s1,	[v862]
+	movw	v868,	:lower16:global_k
+	movt	v868,	:upper16:global_k
+	ldr	v867,	[v868]
+	mov	v871,	#4
+	mul	v870,	v867,	v871
+	add	v872,	v0,	v870
+	add	v869,	v872,	#24
+	ldr	v873,	[v869]
+	movw	v875,	:lower16:global_k
+	movt	v875,	:upper16:global_k
+	ldr	v874,	[v875]
+	mov	v878,	#4
+	mul	v877,	v874,	v878
+	add	v879,	v1,	v877
+	add	v876,	v879,	#36
+	vldr.F32	s2,	[v876]
+	movw	v882,	:lower16:global_k
+	movt	v882,	:upper16:global_k
+	ldr	v881,	[v882]
+	mov	v885,	#4
+	mul	v884,	v881,	v885
+	add	v886,	v1,	v884
+	add	v883,	v886,	#48
+	vldr.F32	s3,	[v883]
+	add	v888,	v1,	#60
+	mov	v2466,	v888
+	str	v2466,	[sp,	#1012]
+	add	v890,	v0,	#36
+	mov	v2467,	v890
+	str	v2467,	[sp,	#1016]
+	movw	v893,	:lower16:global_k
+	movt	v893,	:upper16:global_k
+	ldr	v892,	[v893]
+	mov	v896,	#4
+	mul	v895,	v892,	v896
+	add	v897,	v0,	v895
+	add	v894,	v897,	#48
+	ldr	v2468,	[v894]
+	str	v2468,	[sp,	#1020]
+	movw	v900,	:lower16:global_k
+	movt	v900,	:upper16:global_k
+	ldr	v899,	[v900]
+	mov	v903,	#4
+	mul	v902,	v899,	v903
+	add	v904,	v0,	v902
+	add	v901,	v904,	#60
+	ldr	v2469,	[v901]
+	str	v2469,	[sp,	#1024]
+	add	v906,	v1,	#72
+	mov	v2470,	v906
+	str	v2470,	[sp,	#1028]
+	add	v908,	v0,	#72
+	mov	v2471,	v908
+	str	v2471,	[sp,	#1032]
+	add	v910,	v0,	#84
+	mov	v2472,	v910
+	str	v2472,	[sp,	#1036]
+	movw	v913,	:lower16:global_k
+	movt	v913,	:upper16:global_k
+	ldr	v912,	[v913]
+	mov	v916,	#4
+	mul	v915,	v912,	v916
+	add	v917,	v0,	v915
+	add	v914,	v917,	#96
+	ldr	v2473,	[v914]
+	str	v2473,	[sp,	#1040]
+	add	v919,	v1,	#84
+	mov	v2474,	v919
+	str	v2474,	[sp,	#1044]
+	add	v921,	v1,	#96
+	mov	v2475,	v921
+	str	v2475,	[sp,	#1048]
+	movw	v924,	:lower16:global_k
+	movt	v924,	:upper16:global_k
+	ldr	v923,	[v924]
+	mov	v927,	#4
+	mul	v926,	v923,	v927
+	add	v928,	v1,	v926
+	add	v925,	v928,	#108
+	vldr.F32	s4,	[v925]
+	movw	v931,	:lower16:global_k
+	movt	v931,	:upper16:global_k
+	ldr	v930,	[v931]
+	mov	v934,	#4
+	mul	v933,	v930,	v934
+	add	v935,	v1,	v933
+	add	v932,	v935,	#120
+	vldr.F32	s5,	[v932]
+	movw	v938,	:lower16:global_k
+	movt	v938,	:upper16:global_k
+	ldr	v937,	[v938]
+	mov	v941,	#4
+	mul	v940,	v937,	v941
+	add	v942,	v1,	v940
+	add	v939,	v942,	#132
+	vldr.F32	s6,	[v939]
+	add	v944,	v1,	#144
+	mov	v2476,	v944
+	str	v2476,	[sp,	#1052]
+	movw	v947,	:lower16:global_k
+	movt	v947,	:upper16:global_k
+	ldr	v946,	[v947]
+	mov	v950,	#4
+	mul	v949,	v946,	v950
+	add	v951,	v0,	v949
+	add	v948,	v951,	#108
+	ldr	v2477,	[v948]
+	str	v2477,	[sp,	#1056]
+	movw	v954,	:lower16:global_k
+	movt	v954,	:upper16:global_k
+	ldr	v953,	[v954]
+	mov	v957,	#4
+	mul	v956,	v953,	v957
+	add	v958,	v1,	v956
+	add	v955,	v958,	#156
+	vldr.F32	s7,	[v955]
+	movw	v961,	:lower16:global_k
+	movt	v961,	:upper16:global_k
+	ldr	v960,	[v961]
+	mov	v964,	#4
+	mul	v963,	v960,	v964
+	add	v965,	v1,	v963
+	add	v962,	v965,	#168
+	vldr.F32	s8,	[v962]
+	movw	v968,	:lower16:global_k
+	movt	v968,	:upper16:global_k
+	ldr	v967,	[v968]
+	mov	v971,	#4
+	mul	v970,	v967,	v971
+	add	v972,	v1,	v970
+	add	v969,	v972,	#180
+	vldr.F32	s9,	[v969]
+	add	v974,	v0,	#120
+	mov	v2478,	v974
+	str	v2478,	[sp,	#1060]
+	add	v976,	v1,	#192
+	mov	v2479,	v976
+	str	v2479,	[sp,	#1064]
+	add	v978,	v0,	#132
+	mov	v2480,	v978
+	str	v2480,	[sp,	#1068]
+	add	v980,	v0,	#144
+	mov	v2481,	v980
+	str	v2481,	[sp,	#1072]
+	add	v982,	v1,	#204
+	mov	v2482,	v982
+	str	v2482,	[sp,	#1076]
+	movw	v985,	:lower16:global_k
+	movt	v985,	:upper16:global_k
+	ldr	v984,	[v985]
+	mov	v988,	#4
+	mul	v987,	v984,	v988
+	add	v989,	v1,	v987
+	add	v986,	v989,	#216
+	vldr.F32	s10,	[v986]
+	movw	v992,	:lower16:global_k
+	movt	v992,	:upper16:global_k
+	ldr	v991,	[v992]
+	mov	v995,	#4
+	mul	v994,	v991,	v995
+	add	v996,	v1,	v994
+	add	v993,	v996,	#228
+	vldr.F32	s11,	[v993]
+	add	v998,	v0,	#156
+	mov	v2483,	v998
+	str	v2483,	[sp,	#1080]
+	movw	v1001,	:lower16:global_k
+	movt	v1001,	:upper16:global_k
+	ldr	v1000,	[v1001]
+	mov	v1004,	#4
+	mul	v1003,	v1000,	v1004
+	add	v1005,	v0,	v1003
+	add	v1002,	v1005,	#168
+	ldr	v2484,	[v1002]
+	str	v2484,	[sp,	#1084]
+	add	v1007,	v1,	#240
+	mov	v2485,	v1007
+	str	v2485,	[sp,	#1088]
+	add	v1009,	v1,	#252
+	mov	v2486,	v1009
+	str	v2486,	[sp,	#1092]
+	movw	v1012,	:lower16:global_k
+	movt	v1012,	:upper16:global_k
+	ldr	v1011,	[v1012]
+	mov	v1015,	#4
+	mul	v1014,	v1011,	v1015
+	add	v1016,	v1,	v1014
+	add	v1013,	v1016,	#264
+	vldr.F32	s12,	[v1013]
+	movw	v1019,	:lower16:global_k
+	movt	v1019,	:upper16:global_k
+	ldr	v1018,	[v1019]
+	mov	v1022,	#4
+	mul	v1021,	v1018,	v1022
+	add	v1023,	v1,	v1021
+	add	v1020,	v1023,	#276
+	vldr.F32	s13,	[v1020]
+	add	v1025,	v0,	#180
+	mov	v2487,	v1025
+	str	v2487,	[sp,	#1096]
+	add	v1027,	v0,	#192
+	mov	v2488,	v1027
+	str	v2488,	[sp,	#1100]
+	movw	v1030,	:lower16:global_k
+	movt	v1030,	:upper16:global_k
+	ldr	v1029,	[v1030]
+	mov	v1033,	#4
+	mul	v1032,	v1029,	v1033
+	add	v1034,	v0,	v1032
+	add	v1031,	v1034,	#204
+	ldr	v2489,	[v1031]
+	str	v2489,	[sp,	#1104]
+	movw	v1037,	:lower16:global_k
+	movt	v1037,	:upper16:global_k
+	ldr	v1036,	[v1037]
+	mov	v1040,	#4
+	mul	v1039,	v1036,	v1040
+	add	v1041,	v0,	v1039
+	add	v1038,	v1041,	#216
+	ldr	v2490,	[v1038]
+	str	v2490,	[sp,	#1108]
+	movw	v1044,	:lower16:global_k
+	movt	v1044,	:upper16:global_k
+	ldr	v1043,	[v1044]
+	mov	v1047,	#4
+	mul	v1046,	v1043,	v1047
+	add	v1048,	v1,	v1046
+	add	v1045,	v1048,	#288
+	vldr.F32	s14,	[v1045]
+	movw	v1051,	:lower16:global_k
+	movt	v1051,	:upper16:global_k
+	ldr	v1050,	[v1051]
+	mov	v1054,	#4
+	mul	v1053,	v1050,	v1054
+	add	v1055,	v1,	v1053
+	add	v1052,	v1055,	#300
+	vldr.F32	s15,	[v1052]
+	add	v1057,	v0,	#228
+	mov	v2491,	v1057
+	str	v2491,	[sp,	#1112]
+	movw	v1060,	:lower16:global_k
+	movt	v1060,	:upper16:global_k
+	ldr	v1059,	[v1060]
+	mov	v1063,	#4
+	mul	v1062,	v1059,	v1063
+	add	v1064,	v0,	v1062
+	add	v1061,	v1064,	#240
+	ldr	v2492,	[v1061]
+	str	v2492,	[sp,	#1116]
+	add	v1066,	v1,	#312
+	mov	v2493,	v1066
+	str	v2493,	[sp,	#1120]
+	movw	v1069,	:lower16:global_k
+	movt	v1069,	:upper16:global_k
+	ldr	v1068,	[v1069]
+	mov	v1072,	#4
+	mul	v1071,	v1068,	v1072
+	add	v1073,	v0,	v1071
+	add	v1070,	v1073,	#252
+	ldr	v2494,	[v1070]
+	str	v2494,	[sp,	#1124]
+	add	v1075,	v0,	#264
+	mov	v2495,	v1075
+	str	v2495,	[sp,	#1128]
+	add	v1077,	v0,	#276
+	mov	v2496,	v1077
+	str	v2496,	[sp,	#1132]
+	movw	v1080,	:lower16:global_k
+	movt	v1080,	:upper16:global_k
+	ldr	v1079,	[v1080]
+	mov	v1083,	#4
+	mul	v1082,	v1079,	v1083
+	add	v1084,	v1,	v1082
+	add	v1081,	v1084,	#324
+	vldr.F32	s18,	[v1081]
+	movw	v1087,	:lower16:global_k
+	movt	v1087,	:upper16:global_k
+	ldr	v1086,	[v1087]
+	mov	v1090,	#4
+	mul	v1089,	v1086,	v1090
+	add	v1091,	v1,	v1089
+	add	v1088,	v1091,	#336
+	vldr.F32	s19,	[v1088]
+	add	v1093,	v1,	#348
+	mov	v2497,	v1093
+	str	v2497,	[sp,	#1136]
+	movw	v1096,	:lower16:global_k
+	movt	v1096,	:upper16:global_k
+	ldr	v1095,	[v1096]
+	mov	v1099,	#4
+	mul	v1098,	v1095,	v1099
+	add	v1100,	v0,	v1098
+	mov	v1097,	v1100
+	ldr	v1101,	[v1097]
+	add	v1102,	v0,	#12
+	mov	v1103,	v1102
+	add	v1104,	v1,	#360
+	mov	v1105,	v1104
+	movw	v1107,	:lower16:global_k
+	movt	v1107,	:upper16:global_k
+	ldr	v1106,	[v1107]
+	mov	v1110,	#4
+	mul	v1109,	v1106,	v1110
+	add	v1111,	v1,	v1109
+	add	v1108,	v1111,	#372
+	vldr.F32	s20,	[v1108]
+	movw	v1114,	:lower16:global_k
+	movt	v1114,	:upper16:global_k
+	ldr	v1113,	[v1114]
+	mov	v1117,	#4
+	mul	v1116,	v1113,	v1117
+	add	v1118,	v0,	v1116
+	add	v1115,	v1118,	#24
+	ldr	v1119,	[v1115]
+	movw	v1121,	:lower16:global_k
+	movt	v1121,	:upper16:global_k
+	ldr	v1120,	[v1121]
+	mov	v1124,	#4
+	mul	v1123,	v1120,	v1124
+	add	v1125,	v1,	v1123
+	add	v1122,	v1125,	#384
+	vldr.F32	s21,	[v1122]
+	add	v1127,	v1,	#396
+	mov	v1128,	v1127
+	add	v1129,	v1,	#408
+	mov	v1130,	v1129
+	movw	v1132,	:lower16:global_k
+	movt	v1132,	:upper16:global_k
+	ldr	v1131,	[v1132]
+	mov	v1135,	#4
+	mul	v1134,	v1131,	v1135
+	add	v1136,	v1,	v1134
+	add	v1133,	v1136,	#420
+	vldr.F32	s22,	[v1133]
+	movw	v1139,	:lower16:global_k
+	movt	v1139,	:upper16:global_k
+	ldr	v1138,	[v1139]
+	mov	v1142,	#4
+	mul	v1141,	v1138,	v1142
+	add	v1143,	v0,	v1141
+	add	v1140,	v1143,	#36
+	ldr	v1144,	[v1140]
+	ldr	v2535,	[sp,	#1148]
+	mov	r0,	v2535
+	mov	r1,	v857
+	mov	r2,	v859
+	mov	r3,	v873
+	ldr	v2498,	[sp,	#1012]
+	str	v2498,	[sp,	#-4]
+	ldr	v2499,	[sp,	#1016]
+	str	v2499,	[sp,	#-8]
+	ldr	v2500,	[sp,	#1020]
+	str	v2500,	[sp,	#-12]
+	ldr	v2501,	[sp,	#1024]
+	str	v2501,	[sp,	#-16]
+	ldr	v2502,	[sp,	#1028]
+	str	v2502,	[sp,	#-20]
+	ldr	v2503,	[sp,	#1032]
+	str	v2503,	[sp,	#-24]
+	ldr	v2504,	[sp,	#1036]
+	str	v2504,	[sp,	#-28]
+	ldr	v2505,	[sp,	#1040]
+	str	v2505,	[sp,	#-32]
+	ldr	v2506,	[sp,	#1044]
+	str	v2506,	[sp,	#-36]
+	ldr	v2507,	[sp,	#1048]
+	str	v2507,	[sp,	#-40]
+	ldr	v2508,	[sp,	#1052]
+	str	v2508,	[sp,	#-44]
+	ldr	v2509,	[sp,	#1056]
+	str	v2509,	[sp,	#-48]
+	ldr	v2510,	[sp,	#1060]
+	str	v2510,	[sp,	#-52]
+	ldr	v2511,	[sp,	#1064]
+	str	v2511,	[sp,	#-56]
+	ldr	v2512,	[sp,	#1068]
+	str	v2512,	[sp,	#-60]
+	ldr	v2513,	[sp,	#1072]
+	str	v2513,	[sp,	#-64]
+	ldr	v2514,	[sp,	#1076]
+	str	v2514,	[sp,	#-68]
+	ldr	v2515,	[sp,	#1080]
+	str	v2515,	[sp,	#-72]
+	ldr	v2516,	[sp,	#1084]
+	str	v2516,	[sp,	#-76]
+	ldr	v2517,	[sp,	#1088]
+	str	v2517,	[sp,	#-80]
+	ldr	v2518,	[sp,	#1092]
+	str	v2518,	[sp,	#-84]
+	ldr	v2519,	[sp,	#1096]
+	str	v2519,	[sp,	#-88]
+	ldr	v2520,	[sp,	#1100]
+	str	v2520,	[sp,	#-92]
+	ldr	v2521,	[sp,	#1104]
+	str	v2521,	[sp,	#-96]
+	ldr	v2522,	[sp,	#1108]
+	str	v2522,	[sp,	#-100]
+	ldr	v2523,	[sp,	#1112]
+	str	v2523,	[sp,	#-104]
+	ldr	v2524,	[sp,	#1116]
+	str	v2524,	[sp,	#-108]
+	ldr	v2525,	[sp,	#1120]
+	str	v2525,	[sp,	#-112]
+	ldr	v2526,	[sp,	#1124]
+	str	v2526,	[sp,	#-116]
+	ldr	v2527,	[sp,	#1128]
+	str	v2527,	[sp,	#-120]
+	ldr	v2528,	[sp,	#1132]
+	str	v2528,	[sp,	#-124]
+	vstr.F32	s18,	[sp,	#-128]
+	vstr.F32	s19,	[sp,	#-132]
+	ldr	v2529,	[sp,	#1136]
+	str	v2529,	[sp,	#-136]
+	str	v1101,	[sp,	#-140]
+	str	v1103,	[sp,	#-144]
+	str	v1105,	[sp,	#-148]
+	vstr.F32	s20,	[sp,	#-152]
+	str	v1119,	[sp,	#-156]
+	vstr.F32	s21,	[sp,	#-160]
+	str	v1128,	[sp,	#-164]
+	str	v1130,	[sp,	#-168]
+	vstr.F32	s22,	[sp,	#-172]
+	str	v1144,	[sp,	#-176]
+	sub	sp,	sp,	#176
+	bl	params_mix
+	add	sp,	sp,	#176
+	mov	v1145,	r0
+	mov	r0,	#5
+	bl	putint
+	mov	r0,	#10
+	bl	putch
+	vldr.F32	s0,	[sp,	#800]
+	bl	putfloat
+	mov	r0,	#10
+	bl	putch
+	vmov.F32	s0,	s17
+	bl	putfloat
+	mov	r0,	#10
+	bl	putch
+	vmov.F32	s0,	s16
+	bl	putfloat
+	mov	r0,	#10
+	bl	putch
+	mov	r0,	v1145
+	bl	putint
+	mov	r0,	#10
+	bl	putch
+	mov	r0,	#0
+	add	sp,	sp,	#0
+	pop	{lr}
+	vpop	{s16, s17, s18, s19, s20, s21, s22, s23, s24, s25, s26, s27, s28, s29, s30, s31}
+	bx	lr
+
