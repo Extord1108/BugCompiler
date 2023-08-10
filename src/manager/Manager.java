@@ -35,10 +35,10 @@ public class Manager {
         public static final Function PUT_ARR = new Function("putarray",Function.packParamTypes(Int32Type.getInstance(),new PointerType(Int32Type.getInstance())),VoidType.getInstance());
         public static final Function PUT_FARR = new Function("putfarray", Function.packParamTypes(Int32Type.getInstance(), new PointerType(FloatType.getInstance())), VoidType.getInstance());
         public static final Function MEM_SET = new Function("memset", Function.packParamTypes(new PointerType(Int32Type.getInstance()), Int32Type.getInstance(), Int32Type.getInstance()), VoidType.getInstance());
-        public static final Function START_TIME = new Function( "starttime", Function.packParamTypes(Int32Type.getInstance()), VoidType.getInstance());
-        public static final Function STOP_TIME = new Function("stoptime", Function.packParamTypes(Int32Type.getInstance()), VoidType.getInstance());
-        public static final Function PARALLEL_START = new Function("parallel_start", new ArrayList<>(), Int32Type.getInstance());
-        public static final Function PARALLEL_END = new Function("parallel_end", Function.packParamTypes(Int32Type.getInstance()), VoidType.getInstance());
+        public static final Function START_TIME = new Function( "starttime", new ArrayList<>(), VoidType.getInstance());
+        public static final Function STOP_TIME = new Function("stoptime", new ArrayList<>(), VoidType.getInstance());
+        public static final Function SYSY_START_TIME = new Function( "_sysy_starttime", Function.packParamTypes(Int32Type.getInstance()), VoidType.getInstance());
+        public static final Function SYSY_STOP_TIME = new Function("_sysy_stoptime", Function.packParamTypes(Int32Type.getInstance()), VoidType.getInstance());
     }
 
     private Manager() {

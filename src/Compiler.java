@@ -1,4 +1,5 @@
 import backend.CodeGen;
+import backend.PeepHole;
 import backend.RegAllocate;
 import frontend.parser.SysYLexer;
 import frontend.parser.SysYParser;
@@ -53,6 +54,11 @@ public class Compiler {
           var regAllocate = new RegAllocate(Manager.getMcFunclist());
           regAllocate.alloc();
           System.out.println("Alloc end");
+
+            if(arg.opt){
+                PeepHole peepHole = new PeepHole(Manager.getMcFunclist());
+                peepHole.run();
+            }
 
             // 输出 机器代码arm
             if (!arg.targetFile.isEmpty()) {
