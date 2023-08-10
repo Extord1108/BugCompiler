@@ -24,6 +24,18 @@ public class McLdr extends McInstr{
         useOperands.add(offset);
     }
 
+    public Operand getAddr() {
+        return useOperands.get(0);
+    }
+
+    public Operand getOffset() {
+        return useOperands.get(1);
+    }
+
+    public Operand getData() {
+        return defOperands.get(0);
+    }
+
     public boolean useVFP() {
         return defOperands.get(0).isFloat();
     }

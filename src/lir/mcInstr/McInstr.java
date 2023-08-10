@@ -13,6 +13,13 @@ public class McInstr extends MyNode {
 
     public McBlock mcBlock;
 
+    public static final McInstr nop = new McInstr(null,false) {
+        @Override
+        public String toString() {
+            return "nop";
+        }
+    };
+
     public McInstr(McBlock mcBlock){
         this.mcBlock = mcBlock;
         mcBlock.addInstr(this);
@@ -24,5 +31,13 @@ public class McInstr extends MyNode {
 
     public boolean isType(String type) {
         return false;
+    }
+
+    public void remove(){
+        mcBlock.getMcInstrs().remove(this);
+    }
+
+    public boolean isCond(){
+        return cond != Cond.Any;
     }
 }
