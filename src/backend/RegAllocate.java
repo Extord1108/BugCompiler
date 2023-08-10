@@ -72,9 +72,9 @@ public class RegAllocate {
     public RegAllocate(ArrayList<McFunction> mcFunctions){
         this.mcFunctions = mcFunctions;
     }
-
+    int t = 0;
     public void alloc(){
-        int t = 0;
+
         for(McFunction mcFunction: mcFunctions) {
             if(mcFunction.getSvrList().size() > 0) {
                 K = 32;
@@ -137,13 +137,11 @@ public class RegAllocate {
         spilledNodes = new LinkedHashSet<>();
 
     }
-
     private void allocate(McFunction mcFunction) {
         curMcFunc = mcFunction;
-        int t = 0;
         while(true) {
             // 生存周期分析
-//            if(mcFunction.getName().equals("heap_ajust")) {
+//            if(mcFunction.getName().equals("my_sin")) {
 //                System.out.println(t);
 //                OutputStream out = OutputHandler.getOutputFile("bug" + t++);
 //                OutputHandler.output2Stream(mcFunction.toString(),out);
@@ -376,8 +374,6 @@ public class RegAllocate {
 //    int t = 0;
     private void coalesce() {
         McMove mcMove = (McMove) workListMoves.iterator().next();
-
-        t++;
 //        if(mcMove.getSrcOp().toString().equals("v95") && mcMove.getDstOp().toString().equals("v64")){
 //            System.out.println(mcMove);
 //            System.out.println("*******************" + t);
@@ -484,8 +480,6 @@ public class RegAllocate {
         }
         return p;
     }
-
-    int t = 0;
     private void freeze() {
 //        System.out.println("---------------------------" + t);
         Operand opd = freezeWorkList.iterator().next();
@@ -545,6 +539,7 @@ public class RegAllocate {
     private void assignColors() {
         preAssignColors();
         if(spilledNodes.size() > 0){
+//            System.out.println("spilled");
             return;
         }
 
@@ -637,15 +632,34 @@ public class RegAllocate {
 
     private void fixStack(ArrayList<McBinary> needFixed) {
 //        System.out.println(curMcFunc.getStackSize());
+        int offset = curMcFunc.getStackSize() + curMcFunc.getParamSize();
+        int idx = 0;
+        int size = 0;
+        for(Operand reg: curMcFunc.usedPhyRegs) {
+            idx ++;
+            if(((Operand.PhyReg)reg).getIdx() > 3 && !reg.equals(Operand.PhyReg.getPhyReg("sp"))){
+                size++;
+            }
+        }
+        idx = 0;
+        for(Operand reg: curMcFunc.usedFPhyRegs) {
+            idx ++;
+            if(((Operand.FPhyReg)reg).getIdx() > 15) {
+                size ++;
+            }
+        }
+        offset = offset + size * 4;
+        if(offset % 8 != 0) {
+            curMcFunc.addStackSize(4);
+        }
         for(McBinary mcBinary: needFixed) {
-            int offset;
             if(mcBinary.fixType.equals(McBinary.FixType.VAR_STACK)) {
                 offset = curMcFunc.getStackSize();
             } else {
                 assert mcBinary.fixType.equals(McBinary.FixType.PARAM_STACK);
                 offset = curMcFunc.getStackSize() + mcBinary.getOffset() + curMcFunc.getParamSize();
-                int idx = 0;
-                int size = 0;
+                idx = 0;
+                size = 0;
                 for(Operand reg: curMcFunc.usedPhyRegs) {
                     idx ++;
                     if(((Operand.PhyReg)reg).getIdx() > 3 && !reg.equals(Operand.PhyReg.getPhyReg("sp"))){
@@ -689,10 +703,11 @@ public class RegAllocate {
                 okColorSet = Operand.FPhyReg.getOkColorList();
             }
 
-
             // 待分配节点的邻近节点的颜色不能选
             for(Operand adj: toBeColored.adjOpdSet) {
-                Operand opd = adj.getAlias();
+
+                Operand opd = getAlias(adj);
+
                 if(opd.needColor(type) && (opd.hasReg() || preColored.contains(opd))) {
                     okColorSet.remove(opd.getPhyReg());
                 } else {
@@ -702,11 +717,11 @@ public class RegAllocate {
                     }
                 }
             }
+
             if(okColorSet.isEmpty()) {
                 spilledNodes.add(toBeColored);
             } else {
                 Operand color = okColorSet.pollFirst();
-
                 colorMap.put(toBeColored, color);
             }
         }
@@ -775,23 +790,18 @@ public class RegAllocate {
             for(MyNode myNode = mcBlock.getMcLastInstr(); myNode !=
                     mcBlock.getMcInstrs().head; myNode = myNode.getPrev()) {
                 McInstr mcInstr = (McInstr) myNode;
-//                if(mcInstr instanceof McMove && ((McMove) mcInstr).getDstOp().toString().equals("v12")) {
-//                    System.out.println(mcBlock.getName());
-//                    System.out.println(mcInstr);
-//                    for(Operand li: live) {
-//                        System.out.println(li);
-//                    }
-//                }
                 if(mcInstr instanceof McMove && ((McMove) mcInstr).getSrcOp().needColor(type)
                         && ((McMove) mcInstr).getDstOp().needColor(type)) {
                     McMove mcMove = (McMove) mcInstr;
                     live.remove(mcMove.getSrcOp());
                     mcMove.getDstOp().moveList.add(mcMove);
                     mcMove.getSrcOp().moveList.add(mcMove);
-//                    System.out.println(mcMove);
                     workListMoves.add(mcMove);
                 }
                 dealDefUse(live, mcInstr, mcBlock);
+                if(mcInstr instanceof McMove && ((McMove) mcInstr).getDstOp().toString().equals("v90")) {
+//                    System.out.println("--------end----------");
+                }
             }
         }
     }
@@ -799,8 +809,6 @@ public class RegAllocate {
     private void dealDefUse(HashSet<Operand> live, McInstr mcInstr, McBlock mcBlock) {
         ArrayList<Operand> defs = mcInstr.defOperands;
         ArrayList<Operand> uses = mcInstr.useOperands;
-
-
 
         for(Operand def: defs) {
             if(def.needColor(type)) {
@@ -896,6 +904,7 @@ public class RegAllocate {
 
     private void addEdge(Operand u, Operand v) {
         Edge edge = new Edge( u, v);
+
 
         if(!adjSet.contains(edge) && !u.equals(v)) {
             adjSet.add(edge);

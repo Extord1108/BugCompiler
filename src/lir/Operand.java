@@ -66,7 +66,7 @@ public class Operand {
     public Operand getAlias() {
         if(alias == null)
             return this;
-        return alias;
+        return alias.getAlias();
     }
 
     public void setAlias(Operand alias) {

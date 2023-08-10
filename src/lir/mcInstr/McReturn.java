@@ -46,15 +46,16 @@ public class McReturn extends McInstr{
             }
         }
         boolean needT = false;
-        if(!popFRegs.toString().equals("")) {
-            stb.append("vpop\t{"+ popFRegs.toString()+"}\n");
+        if(!popRegs.toString().equals("")) {
+            stb.append("pop\t{"+ popRegs.toString()+ "}\n");
             needT = true;
         }
-        if(!popRegs.toString().equals("")) {
+        if(!popFRegs.toString().equals("")) {
             if(needT) {
                 stb.append("\t");
             }
-            stb.append("pop\t{"+ popRegs.toString()+ "}\n");
+            stb.append("vpop\t{"+ popFRegs.toString()+"}\n");
+
         }
         if(needT) {
             stb.append("\t");

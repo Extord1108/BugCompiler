@@ -17,8 +17,10 @@ public class McCmp extends McInstr {
     }
     @Override
     public String toString() {
-        if(useVFP())
-            return "vcmp.F32\t" + useOperands.get(0) + ",\t" + useOperands.get(1);
+        if(useVFP()){
+            return "vcmpe.F32\t" + useOperands.get(0) + ",\t" + useOperands.get(1)
+                    + "\n" + "\tvmrs\tAPSR_nzcv,\tFPSCR";
+        }
         return "cmp\t" + useOperands.get(0) + ",\t" + useOperands.get(1);
     }
 }

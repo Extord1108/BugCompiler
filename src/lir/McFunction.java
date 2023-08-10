@@ -37,8 +37,11 @@ public class McFunction {
     }
 
     public void setUseLr() {
+//        if(useLr == false) {
+            usedPhyRegs.add(Operand.PhyReg.getPhyReg("lr"));
+//            addStackSize(4);
+//        }
         useLr = true;
-        usedPhyRegs.add(Operand.PhyReg.getPhyReg("lr"));
     }
     public McBlock getMcLastBlock() {
         return mcBlocks.getLast();

@@ -1,6 +1,11 @@
-@M = dso_local global i32 0
-@L = dso_local global i32 0
-@N = dso_local global i32 0
+@MAX_DIM_X = dso_local global i32 8
+@MAX_DIM_Y = dso_local global i32 8
+@test_block = dso_local global [8 x [8 x float]] zeroinitializer
+@test_dct = dso_local global [8 x [8 x float]] zeroinitializer
+@test_idct = dso_local global [8 x [8 x float]] zeroinitializer
+@PI = dso_local global float 0x400921fb60000000
+@TWO_PI = dso_local global float 0x401921fb60000000
+@EPSILON = dso_local global float 0x3eb0c6f7a0000000
 declare i32 @getch()
 declare i32 @parallel_start()
 declare i32 @getfarray(float* )
@@ -16,149 +21,393 @@ declare void @putfloat(float )
 declare void @putch(i32 )
 declare float @getfloat()
 declare void @parallel_end(i32 )
-define dso_local i32 @add(float* %f0, float* %f1, float* %f2, float* %f3, float* %f4, float* %f5, float* %f6, float* %f7, float* %f8) 
+define dso_local float @my_cos(float %f83) 
 {
-b1:
-	move i32 %r203<- 0
-	br label %b2
-b2:
-	%r31 = load i32, i32* @M
-	%r32 = icmp slt i32 %r203, %r31
-	br i1 %r32, label %b3, label %b4
-b3:
-	%r36 = getelementptr inbounds float, float* %f6, i32 %r203
-	%r39 = getelementptr inbounds float, float* %f0, i32 %r203
-	%r40 = load float, float* %r39
-	%r43 = getelementptr inbounds float, float* %f3, i32 %r203
-	%r44 = load float, float* %r43
-	%r45 = fadd float %r40, %r44
-	store float %r45, float* %r36
-	%r49 = getelementptr inbounds float, float* %f7, i32 %r203
-	%r52 = getelementptr inbounds float, float* %f1, i32 %r203
-	%r53 = load float, float* %r52
-	%r56 = getelementptr inbounds float, float* %f4, i32 %r203
-	%r57 = load float, float* %r56
-	%r58 = fadd float %r53, %r57
-	store float %r58, float* %r49
-	%r62 = getelementptr inbounds float, float* %f8, i32 %r203
-	%r65 = getelementptr inbounds float, float* %f2, i32 %r203
-	%r66 = load float, float* %r65
-	%r69 = getelementptr inbounds float, float* %f5, i32 %r203
-	%r70 = load float, float* %r69
-	%r71 = fadd float %r66, %r70
-	store float %r71, float* %r62
-	%r74 = add i32 %r203, 1
-	move i32 %r203<- %r74
-	br label %b2
-b4:
-	ret i32 0
+b16:
+	%r87 = sitofp i32 2 to float
+	%r88 = fdiv float 0x400921fb60000000, %r87
+	%r89 = fadd float %f83, %r88
+	%r90 = call float @my_sin(float %r89)
+	ret float %r90
+}
+define dso_local float @my_sin_impl(float %f28) 
+{
+b5:
+	%r32 = call float @my_fabs(float %f28)
+	%r33 = fcmp ole float %r32, 0x3eb0c6f7a0000000
+	br i1 %r33, label %b6, label %b7
+b6:
+	ret float %f28
+b7:
+	%r39 = fdiv float %f28, 0x4008000000000000
+	%r40 = call float @my_sin_impl(float %r39)
+	%r41 = call float @p(float %r40)
+	ret float %r41
 }
 define dso_local i32 @main() 
 {
-b5:
-	%r89 = alloca [3 x float]
-	%r88 = alloca [3 x float]
-	%r87 = alloca [6 x float]
-	%r86 = alloca [3 x float]
-	%r85 = alloca [3 x float]
-	%r84 = alloca [3 x float]
-	%r83 = alloca [3 x float]
-	%r82 = alloca [3 x float]
-	%r81 = alloca [3 x float]
-	store i32 3, i32* @N
-	store i32 3, i32* @M
-	store i32 3, i32* @L
-	move i32 %r209<- 0
-	br label %b6
-b6:
-	%r94 = load i32, i32* @M
-	%r95 = icmp slt i32 %r209, %r94
-	br i1 %r95, label %b7, label %b8
-b7:
-	%r98 = getelementptr inbounds [3 x float], [3 x float]* %r81, i32 0, i32 %r209
-	%r100 = sitofp i32 %r209 to float
-	store float %r100, float* %r98
-	%r103 = getelementptr inbounds [3 x float], [3 x float]* %r82, i32 0, i32 %r209
-	%r105 = sitofp i32 %r209 to float
-	store float %r105, float* %r103
-	%r108 = getelementptr inbounds [3 x float], [3 x float]* %r83, i32 0, i32 %r209
-	%r110 = sitofp i32 %r209 to float
-	store float %r110, float* %r108
-	%r113 = getelementptr inbounds [3 x float], [3 x float]* %r84, i32 0, i32 %r209
-	%r115 = sitofp i32 %r209 to float
-	store float %r115, float* %r113
-	%r118 = getelementptr inbounds [3 x float], [3 x float]* %r85, i32 0, i32 %r209
-	%r120 = sitofp i32 %r209 to float
-	store float %r120, float* %r118
-	%r123 = getelementptr inbounds [3 x float], [3 x float]* %r86, i32 0, i32 %r209
-	%r125 = sitofp i32 %r209 to float
-	store float %r125, float* %r123
-	%r128 = add i32 %r209, 1
-	move i32 %r209<- %r128
-	br label %b6
+b56:
+	%r427 = call i32 @getint()
+	%r430 = call i32 @getint()
+	move i32 %r481<- 0
+	br label %b57
+b57:
+	%r438 = icmp slt i32 %r481, %r427
+	br i1 %r438, label %b58, label %b59
+b58:
+	move i32 %r480<- 0
+	br label %b60
+b59:
+	%r460 = getelementptr inbounds [8 x [8 x float]], [8 x [8 x float]]* @test_dct, i32 0, i32 0
+	%r461 = getelementptr inbounds [8 x [8 x float]], [8 x [8 x float]]* @test_block, i32 0, i32 0
+	call void @dct([8 x float]* %r460, [8 x float]* %r461, i32 %r427, i32 %r430)
+	%r465 = getelementptr inbounds [8 x [8 x float]], [8 x [8 x float]]* @test_dct, i32 0, i32 0
+	call void @write_mat([8 x float]* %r465, i32 %r427, i32 %r430)
+	%r469 = getelementptr inbounds [8 x [8 x float]], [8 x [8 x float]]* @test_idct, i32 0, i32 0
+	%r470 = getelementptr inbounds [8 x [8 x float]], [8 x [8 x float]]* @test_dct, i32 0, i32 0
+	call void @idct([8 x float]* %r469, [8 x float]* %r470, i32 %r427, i32 %r430)
+	%r474 = getelementptr inbounds [8 x [8 x float]], [8 x [8 x float]]* @test_idct, i32 0, i32 0
+	call void @write_mat([8 x float]* %r474, i32 %r427, i32 %r430)
+	ret i32 0
+b60:
+	%r445 = icmp slt i32 %r480, %r430
+	br i1 %r445, label %b61, label %b62
+b61:
+	%r449 = getelementptr inbounds [8 x [8 x float]], [8 x [8 x float]]* @test_block, i32 0, i32 %r481, i32 %r480
+	%r450 = call float @getfloat()
+	store float %r450, float* %r449
+	%r453 = add i32 %r480, 1
+	move i32 %r480<- %r453
+	br label %b60
+b62:
+	%r457 = add i32 %r481, 1
+	move i32 %r481<- %r457
+	move i32 %r479<- %r480
+	br label %b57
+}
+define dso_local float @p(float %f13) 
+{
+b4:
+	%r17 = sitofp i32 3 to float
+	%r18 = fmul float %r17, %f13
+	%r20 = sitofp i32 4 to float
+	%r21 = fmul float %r20, %f13
+	%r23 = fmul float %r21, %f13
+	%r25 = fmul float %r23, %f13
+	%r26 = fsub float %r18, %r25
+	ret float %r26
+}
+define dso_local void @write_mat([8 x float]* %f92, i32 %f93, i32 %f94) 
+{
+b17:
+	move i32 %r484<- 0
+	br label %b18
+b18:
+	%r106 = icmp slt i32 %r484, %f93
+	br i1 %r106, label %b19, label %b20
+b19:
+	%r110 = getelementptr inbounds [8 x float], [8 x float]* %f92, i32 %r484, i32 0
+	%r111 = load float, float* %r110
+	call void @putfloat(float %r111)
+	move i32 %r482<- 1
+	br label %b21
+b20:
+	call void @putch(i32 10)
+	ret void
+b21:
+	%r118 = icmp slt i32 %r482, %f94
+	br i1 %r118, label %b22, label %b23
+b22:
+	call void @putch(i32 32)
+	%r124 = getelementptr inbounds [8 x float], [8 x float]* %f92, i32 %r484, i32 %r482
+	%r125 = load float, float* %r124
+	call void @putfloat(float %r125)
+	%r128 = add i32 %r482, 1
+	move i32 %r482<- %r128
+	br label %b21
+b23:
+	call void @putch(i32 10)
+	%r133 = add i32 %r484, 1
+	move i32 %r484<- %r133
+	move i32 %r483<- %r482
+	br label %b18
+}
+define dso_local float @my_fabs(float %f0) 
+{
+b1:
+	%r4 = sitofp i32 0 to float
+	%r5 = fcmp ogt float %f0, %r4
+	br i1 %r5, label %b2, label %b3
+b2:
+	ret float %f0
+b3:
+	%r11 = fneg float %f0
+	ret float %r11
+}
+define dso_local float @my_sin(float %f43) 
+{
 b8:
-	%r131 = getelementptr inbounds [3 x float], [3 x float]* %r81, i32 0, i32 0
-	%r132 = getelementptr inbounds [3 x float], [3 x float]* %r82, i32 0, i32 0
-	%r133 = getelementptr inbounds [3 x float], [3 x float]* %r83, i32 0, i32 0
-	%r134 = getelementptr inbounds [3 x float], [3 x float]* %r84, i32 0, i32 0
-	%r135 = getelementptr inbounds [3 x float], [3 x float]* %r85, i32 0, i32 0
-	%r136 = getelementptr inbounds [3 x float], [3 x float]* %r86, i32 0, i32 0
-	%r137 = getelementptr inbounds [6 x float], [6 x float]* %r87, i32 0, i32 0
-	%r138 = getelementptr inbounds [3 x float], [3 x float]* %r88, i32 0, i32 0
-	%r139 = getelementptr inbounds [3 x float], [3 x float]* %r89, i32 0, i32 0
-	%r140 = call i32 @add(float* %r131, float* %r132, float* %r133, float* %r134, float* %r135, float* %r136, float* %r137, float* %r138, float* %r139)
-	move i32 %r208<- %r140
-	br label %b9
+	%r47 = fcmp ogt float %f43, 0x401921fb60000000
+	br i1 %r47, label %b9, label %b11
 b9:
-	%r145 = load i32, i32* @N
-	%r146 = icmp slt i32 %r208, %r145
-	br i1 %r146, label %b10, label %b11
+	%r54 = fdiv float %f43, 0x401921fb60000000
+	%r56 = fptosi float %r54 to i32
+	%r60 = sitofp i32 %r56 to float
+	%r61 = fmul float %r60, 0x401921fb60000000
+	%r62 = fsub float %f43, %r61
+	move float %r487<- %r62
+	br label %b10
 b10:
-	%r149 = getelementptr inbounds [6 x float], [6 x float]* %r87, i32 0, i32 %r208
-	%r150 = load float, float* %r149
-	%r151 = fptosi float %r150 to i32
-	call void @putint(i32 %r151)
-	%r156 = add i32 %r208, 1
-	move i32 %r208<- %r156
-	move i32 %r205<- %r151
-	br label %b9
+	%r66 = fcmp ogt float %r487, 0x400921fb60000000
+	br i1 %r66, label %b12, label %b64
 b11:
-	call void @putch(i32 10)
-	move i32 %r210<- 0
-	move i32 %r206<- 10
-	br label %b12
+	%r50 = fneg float 0x401921fb60000000
+	%r51 = fcmp olt float %f43, %r50
+	br i1 %r51, label %b9, label %b63
 b12:
-	%r165 = load i32, i32* @N
-	%r166 = icmp slt i32 %r210, %r165
-	br i1 %r166, label %b13, label %b14
+	%r69 = fsub float %r487, 0x401921fb60000000
+	move float %r485<- %r69
+	br label %b13
 b13:
-	%r169 = getelementptr inbounds [3 x float], [3 x float]* %r88, i32 0, i32 %r210
-	%r170 = load float, float* %r169
-	%r171 = fptosi float %r170 to i32
-	call void @putint(i32 %r171)
-	%r176 = add i32 %r210, 1
-	move i32 %r210<- %r176
-	move i32 %r206<- %r171
-	br label %b12
+	%r73 = fneg float 0x400921fb60000000
+	%r74 = fcmp olt float %r485, %r73
+	br i1 %r74, label %b14, label %b65
 b14:
-	call void @putch(i32 10)
-	move i32 %r207<- 0
-	move i32 %r204<- 10
+	%r77 = fadd float %r485, 0x401921fb60000000
+	move float %r486<- %r77
 	br label %b15
 b15:
-	%r185 = load i32, i32* @N
-	%r186 = icmp slt i32 %r207, %r185
-	br i1 %r186, label %b16, label %b17
-b16:
-	%r189 = getelementptr inbounds [3 x float], [3 x float]* %r89, i32 0, i32 %r207
-	%r190 = load float, float* %r189
-	%r191 = fptosi float %r190 to i32
-	call void @putint(i32 %r191)
-	%r196 = add i32 %r207, 1
-	move i32 %r207<- %r196
-	move i32 %r204<- %r191
+	%r81 = call float @my_sin_impl(float %r486)
+	ret float %r81
+b63:
+	move float %r487<- %f43
+	br label %b10
+b64:
+	move float %r485<- %r487
+	br label %b13
+b65:
+	move float %r486<- %r485
 	br label %b15
-b17:
-	call void @putch(i32 10)
-	ret i32 0
+}
+define dso_local void @dct([8 x float]* %f138, [8 x float]* %f139, i32 %f140, i32 %f141) 
+{
+b24:
+	move i32 %r497<- 0
+	br label %b25
+b25:
+	%r155 = icmp slt i32 %r497, %f140
+	br i1 %r155, label %b26, label %b27
+b26:
+	move i32 %r495<- 0
+	move i32 %r492<- %r493
+	move i32 %r490<- %r491
+	br label %b28
+b27:
+	ret void
+b28:
+	%r162 = icmp slt i32 %r495, %f141
+	br i1 %r162, label %b29, label %b30
+b29:
+	%r167 = getelementptr inbounds [8 x float], [8 x float]* %f138, i32 %r497, i32 %r495
+	%r168 = sitofp i32 0 to float
+	store float %r168, float* %r167
+	move i32 %r494<- 0
+	move i32 %r489<- %r490
+	br label %b31
+b30:
+	%r239 = add i32 %r497, 1
+	move i32 %r497<- %r239
+	move i32 %r496<- %r495
+	move i32 %r493<- %r492
+	move i32 %r491<- %r490
+	br label %b25
+b31:
+	%r175 = icmp slt i32 %r494, %f140
+	br i1 %r175, label %b32, label %b33
+b32:
+	move i32 %r488<- 0
+	br label %b34
+b33:
+	%r235 = add i32 %r495, 1
+	move i32 %r495<- %r235
+	move i32 %r492<- %r494
+	move i32 %r490<- %r489
+	br label %b28
+b34:
+	%r182 = icmp slt i32 %r488, %f141
+	br i1 %r182, label %b35, label %b36
+b35:
+	%r187 = getelementptr inbounds [8 x float], [8 x float]* %f138, i32 %r497, i32 %r495
+	%r191 = getelementptr inbounds [8 x float], [8 x float]* %f138, i32 %r497, i32 %r495
+	%r192 = load float, float* %r191
+	%r196 = getelementptr inbounds [8 x float], [8 x float]* %f139, i32 %r494, i32 %r488
+	%r197 = load float, float* %r196
+	%r199 = sitofp i32 %f140 to float
+	%r200 = fdiv float 0x400921fb60000000, %r199
+	%r202 = fdiv float 0x3ff0000000000000, 0x4000000000000000
+	%r203 = sitofp i32 %r494 to float
+	%r204 = fadd float %r203, %r202
+	%r205 = fmul float %r200, %r204
+	%r207 = sitofp i32 %r497 to float
+	%r208 = fmul float %r205, %r207
+	%r209 = call float @my_cos(float %r208)
+	%r210 = fmul float %r197, %r209
+	%r212 = sitofp i32 %f141 to float
+	%r213 = fdiv float 0x400921fb60000000, %r212
+	%r215 = fdiv float 0x3ff0000000000000, 0x4000000000000000
+	%r216 = sitofp i32 %r488 to float
+	%r217 = fadd float %r216, %r215
+	%r218 = fmul float %r213, %r217
+	%r220 = sitofp i32 %r495 to float
+	%r221 = fmul float %r218, %r220
+	%r222 = call float @my_cos(float %r221)
+	%r223 = fmul float %r210, %r222
+	%r224 = fadd float %r192, %r223
+	store float %r224, float* %r187
+	%r227 = add i32 %r488, 1
+	move i32 %r488<- %r227
+	br label %b34
+b36:
+	%r231 = add i32 %r494, 1
+	move i32 %r494<- %r231
+	move i32 %r489<- %r488
+	br label %b31
+}
+define dso_local void @idct([8 x float]* %f243, [8 x float]* %f244, i32 %f245, i32 %f246) 
+{
+b37:
+	move i32 %r509<- 0
+	br label %b38
+b38:
+	%r260 = icmp slt i32 %r509, %f245
+	br i1 %r260, label %b39, label %b40
+b39:
+	move i32 %r508<- 0
+	move i32 %r503<- %r505
+	move i32 %r500<- %r502
+	br label %b41
+b40:
+	ret void
+b41:
+	%r267 = icmp slt i32 %r508, %f246
+	br i1 %r267, label %b42, label %b43
+b42:
+	%r272 = getelementptr inbounds [8 x float], [8 x float]* %f243, i32 %r509, i32 %r508
+	%r273 = sitofp i32 1 to float
+	%r274 = fdiv float %r273, 0x4010000000000000
+	%r276 = getelementptr inbounds [8 x float], [8 x float]* %f244, i32 0, i32 0
+	%r277 = load float, float* %r276
+	%r278 = fmul float %r274, %r277
+	store float %r278, float* %r272
+	move i32 %r504<- 1
+	br label %b44
+b43:
+	%r423 = add i32 %r509, 1
+	move i32 %r509<- %r423
+	move i32 %r507<- %r508
+	move i32 %r505<- %r503
+	move i32 %r502<- %r500
+	br label %b38
+b44:
+	%r286 = icmp slt i32 %r504, %f245
+	br i1 %r286, label %b45, label %b46
+b45:
+	%r291 = getelementptr inbounds [8 x float], [8 x float]* %f243, i32 %r509, i32 %r508
+	%r295 = getelementptr inbounds [8 x float], [8 x float]* %f243, i32 %r509, i32 %r508
+	%r296 = load float, float* %r295
+	%r297 = sitofp i32 1 to float
+	%r298 = fdiv float %r297, 0x4000000000000000
+	%r301 = getelementptr inbounds [8 x float], [8 x float]* %f244, i32 %r504, i32 0
+	%r302 = load float, float* %r301
+	%r303 = fmul float %r298, %r302
+	%r304 = fadd float %r296, %r303
+	store float %r304, float* %r291
+	%r307 = add i32 %r504, 1
+	move i32 %r504<- %r307
+	br label %b44
+b46:
+	move i32 %r499<- 1
+	br label %b47
+b47:
+	%r314 = icmp slt i32 %r499, %f246
+	br i1 %r314, label %b48, label %b49
+b48:
+	%r319 = getelementptr inbounds [8 x float], [8 x float]* %f243, i32 %r509, i32 %r508
+	%r323 = getelementptr inbounds [8 x float], [8 x float]* %f243, i32 %r509, i32 %r508
+	%r324 = load float, float* %r323
+	%r325 = sitofp i32 1 to float
+	%r326 = fdiv float %r325, 0x4000000000000000
+	%r329 = getelementptr inbounds [8 x float], [8 x float]* %f244, i32 0, i32 %r499
+	%r330 = load float, float* %r329
+	%r331 = fmul float %r326, %r330
+	%r332 = fadd float %r324, %r331
+	store float %r332, float* %r319
+	%r335 = add i32 %r499, 1
+	move i32 %r499<- %r335
+	br label %b47
+b49:
+	move i32 %r506<- 1
+	move i32 %r501<- %r499
+	br label %b50
+b50:
+	%r342 = icmp slt i32 %r506, %f245
+	br i1 %r342, label %b51, label %b52
+b51:
+	move i32 %r498<- 1
+	br label %b53
+b52:
+	%r403 = getelementptr inbounds [8 x float], [8 x float]* %f243, i32 %r509, i32 %r508
+	%r407 = getelementptr inbounds [8 x float], [8 x float]* %f243, i32 %r509, i32 %r508
+	%r408 = load float, float* %r407
+	%r409 = fmul float %r408, 0x4000000000000000
+	%r411 = sitofp i32 %f245 to float
+	%r412 = fdiv float %r409, %r411
+	%r413 = fmul float %r412, 0x4000000000000000
+	%r415 = sitofp i32 %f246 to float
+	%r416 = fdiv float %r413, %r415
+	store float %r416, float* %r403
+	%r419 = add i32 %r508, 1
+	move i32 %r508<- %r419
+	move i32 %r503<- %r506
+	move i32 %r500<- %r501
+	br label %b41
+b53:
+	%r348 = icmp slt i32 %r498, %f246
+	br i1 %r348, label %b54, label %b55
+b54:
+	%r353 = getelementptr inbounds [8 x float], [8 x float]* %f243, i32 %r509, i32 %r508
+	%r357 = getelementptr inbounds [8 x float], [8 x float]* %f243, i32 %r509, i32 %r508
+	%r358 = load float, float* %r357
+	%r362 = getelementptr inbounds [8 x float], [8 x float]* %f244, i32 %r506, i32 %r498
+	%r363 = load float, float* %r362
+	%r365 = sitofp i32 %f245 to float
+	%r366 = fdiv float 0x400921fb60000000, %r365
+	%r368 = fdiv float 0x3ff0000000000000, 0x4000000000000000
+	%r369 = sitofp i32 %r509 to float
+	%r370 = fadd float %r369, %r368
+	%r371 = fmul float %r366, %r370
+	%r373 = sitofp i32 %r506 to float
+	%r374 = fmul float %r371, %r373
+	%r375 = call float @my_cos(float %r374)
+	%r376 = fmul float %r363, %r375
+	%r378 = sitofp i32 %f246 to float
+	%r379 = fdiv float 0x400921fb60000000, %r378
+	%r381 = fdiv float 0x3ff0000000000000, 0x4000000000000000
+	%r382 = sitofp i32 %r508 to float
+	%r383 = fadd float %r382, %r381
+	%r384 = fmul float %r379, %r383
+	%r386 = sitofp i32 %r498 to float
+	%r387 = fmul float %r384, %r386
+	%r388 = call float @my_cos(float %r387)
+	%r389 = fmul float %r376, %r388
+	%r390 = fadd float %r358, %r389
+	store float %r390, float* %r353
+	%r393 = add i32 %r498, 1
+	move i32 %r498<- %r393
+	br label %b53
+b55:
+	%r397 = add i32 %r506, 1
+	move i32 %r506<- %r397
+	move i32 %r501<- %r498
+	br label %b50
 }

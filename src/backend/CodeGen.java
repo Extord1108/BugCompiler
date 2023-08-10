@@ -775,6 +775,7 @@ public class CodeGen {
             }
             else if(value instanceof Variable.ConstFloat) {
                 float floatVal = ((Variable.ConstFloat)value).getFloatVal();
+//                System.out.println(floatVal);
                 opd = getFloatImm(value);
             }
             else {
@@ -804,10 +805,11 @@ public class CodeGen {
     public Operand getFloatImm(Value value) {
         float f = ((Variable.ConstFloat)value).getFloatVal();
         Operand dst = new Operand.VirtualReg(true, curMcFunc);
-        if(canFImmSaved(f)) {
-            Operand imm = new Operand.Imm(f);
-            new McMove(dst, imm, curMcBlock);
-        } else {
+//        if(canFImmSaved(f)) {
+//            Operand imm = new Operand.Imm(f);
+//            new McMove(dst, imm, curMcBlock);
+//        } else {
+//            System.out.println(((Variable.ConstFloat) value).getFloatVal());
             Operand tmp;
             int bitFloat = Float.floatToRawIntBits(f);
             Operand imm = getIntImm(new Variable.ConstInt(bitFloat));
@@ -818,7 +820,7 @@ public class CodeGen {
                 tmp = imm;
             }
             new McMove(dst, tmp, curMcBlock);
-        }
+//        }
         return dst;
     }
 
