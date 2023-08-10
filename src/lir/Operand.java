@@ -269,7 +269,6 @@ public class Operand {
     public static class FPhyReg extends Operand implements Comparable<FPhyReg>{
         int idx;
         String name;
-        public int degree = 0;
         private static HashMap<String, FPhyReg> name2reg = new HashMap<>();
         private static HashMap<Integer, FPhyReg> idx2reg = new HashMap<>();
         private static ArrayList<Operand> colorList = new ArrayList<>();

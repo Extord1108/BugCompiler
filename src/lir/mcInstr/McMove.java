@@ -74,7 +74,7 @@ public class McMove extends McInstr{
                             append(defOperands.get(0)).append(",\t#").append(highImm);
                 }
             } else {
-                stb.append("mov\t" + defOperands.get(0) + ",\t" + useOperands.get(0));
+                stb.append("mov" + cond  + "\t"+ defOperands.get(0) + ",\t" + useOperands.get(0));
             }
         }
         return stb.toString();
