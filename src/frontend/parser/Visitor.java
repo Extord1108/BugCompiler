@@ -7,6 +7,7 @@ import frontend.semantic.OpTreeHandler;
 import frontend.semantic.symbol.SymTable;
 import frontend.semantic.symbol.Symbol;
 import ir.*;
+import ir.Variable.ConstInt;
 import ir.instruction.*;
 import ir.type.*;
 import manager.Manager;
@@ -737,6 +738,14 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
             current = opTree;
             if(ctx.funcRParams()!= null){
                 visit(ctx.funcRParams());
+            }
+            if(function.getName().equals("starttime") || function.getName().equals("stoptime")){
+                //获取行号
+                int line = ctx.getStart().getLine();
+                //插入function的param中
+                OpTree lineNumber = new OpTree(current, OpTree.OpType.number);
+                lineNumber.setNumber(line);
+                current.addChild(lineNumber);
             }
             current = current.getParent();
         } else {

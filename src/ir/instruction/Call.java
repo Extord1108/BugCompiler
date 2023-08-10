@@ -40,10 +40,10 @@ public class Call extends Instr{
             if(i != this.getParams().size() - 1)
                 params += ", ";
         }
-        if(getFunction().getName().equals("starttime") || getFunction().getName().equals("stoptime"))
-        {
-            return prefix + "call " + returnType + " @_sysy_" + getFunction().getName() + "( i32 0 )";
-        }
+        // if(getFunction().getName().equals("starttime") || getFunction().getName().equals("stoptime"))
+        // {
+        //     return prefix + "call " + returnType + " @_sysy_" + getFunction().getName() + "( i32 0 )";
+        // }
         return prefix + "call " + returnType + " @" + getFunction().getName() + "(" + params + ")";
     }
 
