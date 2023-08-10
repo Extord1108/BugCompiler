@@ -85,7 +85,7 @@ public class GVN extends Pass{
             return (!call.getFunction().isExternal()) && call.getFunction().canGVN();
         }
         else{
-            return instr instanceof Binary || instr instanceof Icmp || instr instanceof GetElementPtr || instr instanceof Fptosi || instr instanceof Sitofp;
+            return instr instanceof Binary || instr instanceof GetElementPtr || instr instanceof Fptosi || instr instanceof Sitofp;
         }
     }
 
@@ -146,10 +146,6 @@ public class GVN extends Pass{
             else{
                 return binary.getOp().getfName() + binary.getLeft().getName() + binary.getRight().getName();
             }
-        }
-        else if(instr instanceof Icmp){
-            Icmp icmp = (Icmp) instr;
-            return icmp.getOp().toString() + icmp.getLhs().getName() + icmp.getRhs().getName();
         }
         else if(instr instanceof GetElementPtr){
             GetElementPtr getElementPtr = (GetElementPtr) instr;
