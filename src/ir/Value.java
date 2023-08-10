@@ -19,6 +19,10 @@ public class Value extends MyNode {
         return type;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public String getName() {
         return name;
     }

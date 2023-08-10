@@ -1,145 +1,67 @@
-const int TOKEN_NUM = 0, TOKEN_OTHER = 1;
-int last_char = 32, num, other;
-int cur_token;
+int set(int a[], int pos, int d){
+    const int bitcount = 30;
+    int x[bitcount + 1] = {};
 
-int next_char() {
-  last_char = getch();
-  return last_char;
-}
-
-int is_space(int c) {
-  if (c == 32 || c == 10) {
-    return 1;
-  }
-  else {
-    return 0;
-  }
-}
-
-int is_num(int c) {
-  if (c >= 48 && c <= 57) {
-    return 1;
-  }
-  else {
-    return 0;
-  }
-}
-
-int next_token() {
-  while (is_space(last_char)) next_char();
-  if (is_num(last_char)) {
-    num = last_char - 48;
-    while (is_num(next_char())) {
-      num = num * 10 + last_char - 48;
+    x[0] = 1;
+    x[1] = x[0] * 2;
+    x[2] = x[1] * 2;
+    x[3] = x[2] * 2;
+    x[4] = x[3] * 2;
+    x[5] = x[4] * 2;
+    x[6] = x[5] * 2;
+    x[7] = x[6] * 2;
+    x[8] = x[7] * 2;
+    x[9] = x[8] * 2;
+    x[10] = x[9] * 2;
+    
+    int i = 10;
+    while (i < bitcount){
+        i = i + 1;
+        x[i] = x[i - 1] * 2;
     }
-    cur_token = TOKEN_NUM;
-  }
-  else {
-    other = last_char;
-    next_char();
-    cur_token = TOKEN_OTHER;
-  }
-  return cur_token;
-}
 
-int panic() {
-  putch(112);
-  putch(97);
-  putch(110);
-  putch(105);
-  putch(99);
-  putch(33);
-  putch(10);
-  return -1;
-}
+    int v = 0;
 
-int get_op_prec(int op) {
-  // +, -
-  if (op == 43 || op == 45) return 10;
-  // *, /, %
-  if (op == 42 || op == 47 || op == 37) return 20;
-  // other
-  return 0;
-}
-
-void stack_push(int s[], int v) {
-  s[0] = s[0] + 1;
-  s[s[0]] = v;
-}
-
-int stack_pop(int s[]) {
-  int last = s[s[0]];
-  s[0] = s[0] - 1;
-  return last;
-}
-
-int stack_peek(int s[]) {
-  return s[s[0]];
-}
-
-int stack_size(int s[]) {
-  return s[0];
-}
-
-int eval_op(int op, int lhs, int rhs) {
-  // +
-  if (op == 43) return lhs + rhs;
-  // -
-  if (op == 45) return lhs - rhs;
-  // *
-  if (op == 42) return lhs * rhs;
-  // /
-  if (op == 47) return lhs / rhs;
-  // %
-  if (op == 37) return lhs % rhs;
-  // other
-  return 0;
-}
-
-int eval() {
-  int oprs[256] = {}, ops[256] = {};
-  // get the first value
-  if (cur_token != TOKEN_NUM) return panic();
-  stack_push(oprs, num);
-  next_token();
-  // evaluate
-  while (cur_token == TOKEN_OTHER) {
-    // get operator
-    int op = other;
-    if (!get_op_prec(op)) break;
-    next_token();
-    // handle operator
-    while (stack_size(ops) && get_op_prec(stack_peek(ops)) >= get_op_prec(op)) {
-      // evaluate the current operation
-      int cur_op = stack_pop(ops);
-      int rhs = stack_pop(oprs), lhs = stack_pop(oprs);
-      stack_push(oprs, eval_op(cur_op, lhs, rhs));
+    if (pos / bitcount >= 10000) return 0;
+    
+    if (a[pos / bitcount] / (x[pos % bitcount]) % 2 != d){
+        if (a[pos / bitcount] / (x[pos % bitcount]) % 2 == 0)
+            if (d == 1)
+                v = x[pos % bitcount];
+        
+        if (a[pos / bitcount] / x[pos % bitcount] % 2 == 1)
+            if (d == 0)
+                v = v - x[pos % bitcount];
     }
-    stack_push(ops, op);
-    // get next expression
-    if (cur_token != TOKEN_NUM) return panic();
-    stack_push(oprs, num);
-    next_token();
-  }
-  // eat ';'
-  next_token();
-  // clear the operator stack
-  while (stack_size(ops)) {
-    int cur_op = stack_pop(ops);
-    int rhs = stack_pop(oprs), lhs = stack_pop(oprs);
-    stack_push(oprs, eval_op(cur_op, lhs, rhs));
-  }
-  return stack_peek(oprs);
+
+    a[pos / bitcount] = a[pos / bitcount] + v;
+    return 0;
 }
 
-int main() {
-  int count = getint();
-  getch();
-  next_token();
-  while (count) {
-    putint(eval());
-    putch(10);
-    count = count - 1;
-  }
-  return 0;
+int seed[3] = {19971231, 19981013, 1000000000 + 7};
+int staticvalue = 0;
+
+int rand(){
+    staticvalue = staticvalue * seed[0] + seed[1];
+    staticvalue = staticvalue % seed[2];
+    if (staticvalue < 0) staticvalue = seed[2] + staticvalue;
+    return staticvalue;
+}
+
+int a[10000] = {};
+int main(){
+    
+    int n = getint();
+    staticvalue = getint();
+    starttime();
+    int x, y;
+    while (n > 0){
+        n = n - 1;
+        x = rand() % 300000;
+        y = rand() % 2;
+        set(a, x, y);
+    }
+    stoptime();
+    putarray(10000, a);
+    return 0;
 }

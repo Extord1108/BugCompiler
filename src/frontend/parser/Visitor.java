@@ -739,8 +739,15 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
             if(ctx.funcRParams()!= null){
                 visit(ctx.funcRParams());
             }
-            if(function.getName().equals("starttime") || function.getName().equals("stoptime")){
+            if(function.getName().equals("starttime") || function.getName().equals("stoptime")
+                || function.getName().equals("_sysy_starttime") || function.getName().equals("_sysy_stoptime")){
                 //获取行号
+                if(function.getName().equals("starttime")) {
+                    function.setName("_sysy_starttime");
+                }
+                if(function.getName().equals("stoptime")) {
+                    function.setName("_sysy_stoptime");
+                }
                 int line = ctx.getStart().getLine();
                 //插入function的param中
                 OpTree lineNumber = new OpTree(current, OpTree.OpType.number);

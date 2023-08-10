@@ -5,7 +5,7 @@ public class Arg {
     public final String srcFile;
     public final String targetFile;
     public final String llvmFile;
-    public static boolean opt = true;
+    public static boolean opt = false;
 
     public Arg (String srcFile,String targetFile,String llvmFile){
         this.srcFile =srcFile;
