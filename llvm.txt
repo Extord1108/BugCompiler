@@ -1,11 +1,4 @@
-@MAX_DIM_X = dso_local global i32 8
-@MAX_DIM_Y = dso_local global i32 8
-@test_block = dso_local global [8 x [8 x float]] zeroinitializer
-@test_dct = dso_local global [8 x [8 x float]] zeroinitializer
-@test_idct = dso_local global [8 x [8 x float]] zeroinitializer
-@PI = dso_local global float 0x400921fb60000000
-@TWO_PI = dso_local global float 0x401921fb60000000
-@EPSILON = dso_local global float 0x3eb0c6f7a0000000
+@k = dso_local global i32 0
 declare i32 @getch()
 declare i32 @parallel_start()
 declare i32 @getfarray(float* )
@@ -21,393 +14,1217 @@ declare void @putfloat(float )
 declare void @putch(i32 )
 declare float @getfloat()
 declare void @parallel_end(i32 )
-define dso_local float @my_cos(float %f83) 
-{
-b16:
-	%r87 = sitofp i32 2 to float
-	%r88 = fdiv float 0x400921fb60000000, %r87
-	%r89 = fadd float %f83, %r88
-	%r90 = call float @my_sin(float %r89)
-	ret float %r90
-}
-define dso_local float @my_sin_impl(float %f28) 
-{
-b5:
-	%r32 = call float @my_fabs(float %f28)
-	%r33 = fcmp ole float %r32, 0x3eb0c6f7a0000000
-	br i1 %r33, label %b6, label %b7
-b6:
-	ret float %f28
-b7:
-	%r39 = fdiv float %f28, 0x4008000000000000
-	%r40 = call float @my_sin_impl(float %r39)
-	%r41 = call float @p(float %r40)
-	ret float %r41
-}
 define dso_local i32 @main() 
 {
-b56:
-	%r427 = call i32 @getint()
-	%r430 = call i32 @getint()
-	move i32 %r481<- 0
-	br label %b57
-b57:
-	%r438 = icmp slt i32 %r481, %r427
-	br i1 %r438, label %b58, label %b59
-b58:
-	move i32 %r480<- 0
-	br label %b60
-b59:
-	%r460 = getelementptr inbounds [8 x [8 x float]], [8 x [8 x float]]* @test_dct, i32 0, i32 0
-	%r461 = getelementptr inbounds [8 x [8 x float]], [8 x [8 x float]]* @test_block, i32 0, i32 0
-	call void @dct([8 x float]* %r460, [8 x float]* %r461, i32 %r427, i32 %r430)
-	%r465 = getelementptr inbounds [8 x [8 x float]], [8 x [8 x float]]* @test_dct, i32 0, i32 0
-	call void @write_mat([8 x float]* %r465, i32 %r427, i32 %r430)
-	%r469 = getelementptr inbounds [8 x [8 x float]], [8 x [8 x float]]* @test_idct, i32 0, i32 0
-	%r470 = getelementptr inbounds [8 x [8 x float]], [8 x [8 x float]]* @test_dct, i32 0, i32 0
-	call void @idct([8 x float]* %r469, [8 x float]* %r470, i32 %r427, i32 %r430)
-	%r474 = getelementptr inbounds [8 x [8 x float]], [8 x [8 x float]]* @test_idct, i32 0, i32 0
-	call void @write_mat([8 x float]* %r474, i32 %r427, i32 %r430)
-	ret i32 0
-b60:
-	%r445 = icmp slt i32 %r480, %r430
-	br i1 %r445, label %b61, label %b62
-b61:
-	%r449 = getelementptr inbounds [8 x [8 x float]], [8 x [8 x float]]* @test_block, i32 0, i32 %r481, i32 %r480
-	%r450 = call float @getfloat()
-	store float %r450, float* %r449
-	%r453 = add i32 %r480, 1
-	move i32 %r480<- %r453
-	br label %b60
-b62:
-	%r457 = add i32 %r481, 1
-	move i32 %r481<- %r457
-	move i32 %r479<- %r480
-	br label %b57
-}
-define dso_local float @p(float %f13) 
-{
-b4:
-	%r17 = sitofp i32 3 to float
-	%r18 = fmul float %r17, %f13
-	%r20 = sitofp i32 4 to float
-	%r21 = fmul float %r20, %f13
-	%r23 = fmul float %r21, %f13
-	%r25 = fmul float %r23, %f13
-	%r26 = fsub float %r18, %r25
-	ret float %r26
-}
-define dso_local void @write_mat([8 x float]* %f92, i32 %f93, i32 %f94) 
-{
-b17:
-	move i32 %r484<- 0
-	br label %b18
-b18:
-	%r106 = icmp slt i32 %r484, %f93
-	br i1 %r106, label %b19, label %b20
-b19:
-	%r110 = getelementptr inbounds [8 x float], [8 x float]* %f92, i32 %r484, i32 0
-	%r111 = load float, float* %r110
-	call void @putfloat(float %r111)
-	move i32 %r482<- 1
-	br label %b21
-b20:
-	call void @putch(i32 10)
-	ret void
-b21:
-	%r118 = icmp slt i32 %r482, %f94
-	br i1 %r118, label %b22, label %b23
-b22:
-	call void @putch(i32 32)
-	%r124 = getelementptr inbounds [8 x float], [8 x float]* %f92, i32 %r484, i32 %r482
-	%r125 = load float, float* %r124
-	call void @putfloat(float %r125)
-	%r128 = add i32 %r482, 1
-	move i32 %r482<- %r128
-	br label %b21
 b23:
+	%r1650 = alloca [24 x [3 x i32]]
+	%r1649 = alloca [40 x [3 x float]]
+	%r1652 = call i32 @getint()
+	store i32 %r1652, i32* @k
+	move i32 %r2261<- 0
+	br label %b24
+b24:
+	%r1657 = icmp slt i32 %r2261, 40
+	br i1 %r1657, label %b25, label %b26
+b25:
+	%r1660 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 %r2261
+	%r1661 = getelementptr inbounds [3 x float], [3 x float]* %r1660, i32 0, i32 0
+	%r1662 = call i32 @getfarray(float* %r1661)
+	%r1664 = add i32 %r2261, 1
+	move i32 %r2261<- %r1664
+	br label %b24
+b26:
+	move i32 %r2260<- 0
+	br label %b27
+b27:
+	%r1670 = icmp slt i32 %r2260, 24
+	br i1 %r1670, label %b28, label %b29
+b28:
+	%r1673 = getelementptr inbounds [24 x [3 x i32]], [24 x [3 x i32]]* %r1650, i32 0, i32 %r2260
+	%r1674 = getelementptr inbounds [3 x i32], [3 x i32]* %r1673, i32 0, i32 0
+	%r1675 = call i32 @getarray(i32* %r1674)
+	%r1677 = add i32 %r2260, 1
+	move i32 %r2260<- %r1677
+	br label %b27
+b29:
+	%r1680 = load i32, i32* @k
+	%r1681 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 0, i32 %r1680
+	%r1682 = load float, float* %r1681
+	%r1683 = load i32, i32* @k
+	%r1684 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 1, i32 %r1683
+	%r1685 = load float, float* %r1684
+	%r1686 = load i32, i32* @k
+	%r1687 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 2, i32 %r1686
+	%r1688 = load float, float* %r1687
+	%r1689 = load i32, i32* @k
+	%r1690 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 3, i32 %r1689
+	%r1691 = load float, float* %r1690
+	%r1692 = load i32, i32* @k
+	%r1693 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 4, i32 %r1692
+	%r1694 = load float, float* %r1693
+	%r1695 = load i32, i32* @k
+	%r1696 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 5, i32 %r1695
+	%r1697 = load float, float* %r1696
+	%r1698 = load i32, i32* @k
+	%r1699 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 6, i32 %r1698
+	%r1700 = load float, float* %r1699
+	%r1701 = load i32, i32* @k
+	%r1702 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 7, i32 %r1701
+	%r1703 = load float, float* %r1702
+	%r1704 = load i32, i32* @k
+	%r1705 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 8, i32 %r1704
+	%r1706 = load float, float* %r1705
+	%r1707 = load i32, i32* @k
+	%r1708 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 9, i32 %r1707
+	%r1709 = load float, float* %r1708
+	%r1710 = load i32, i32* @k
+	%r1711 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 10, i32 %r1710
+	%r1712 = load float, float* %r1711
+	%r1713 = load i32, i32* @k
+	%r1714 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 11, i32 %r1713
+	%r1715 = load float, float* %r1714
+	%r1716 = load i32, i32* @k
+	%r1717 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 12, i32 %r1716
+	%r1718 = load float, float* %r1717
+	%r1719 = load i32, i32* @k
+	%r1720 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 13, i32 %r1719
+	%r1721 = load float, float* %r1720
+	%r1722 = load i32, i32* @k
+	%r1723 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 14, i32 %r1722
+	%r1724 = load float, float* %r1723
+	%r1725 = load i32, i32* @k
+	%r1726 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 15, i32 %r1725
+	%r1727 = load float, float* %r1726
+	%r1728 = load i32, i32* @k
+	%r1729 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 16, i32 %r1728
+	%r1730 = load float, float* %r1729
+	%r1731 = load i32, i32* @k
+	%r1732 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 17, i32 %r1731
+	%r1733 = load float, float* %r1732
+	%r1734 = load i32, i32* @k
+	%r1735 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 18, i32 %r1734
+	%r1736 = load float, float* %r1735
+	%r1737 = load i32, i32* @k
+	%r1738 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 19, i32 %r1737
+	%r1739 = load float, float* %r1738
+	%r1740 = load i32, i32* @k
+	%r1741 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 20, i32 %r1740
+	%r1742 = load float, float* %r1741
+	%r1743 = load i32, i32* @k
+	%r1744 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 21, i32 %r1743
+	%r1745 = load float, float* %r1744
+	%r1746 = load i32, i32* @k
+	%r1747 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 22, i32 %r1746
+	%r1748 = load float, float* %r1747
+	%r1749 = load i32, i32* @k
+	%r1750 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 23, i32 %r1749
+	%r1751 = load float, float* %r1750
+	%r1752 = load i32, i32* @k
+	%r1753 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 24, i32 %r1752
+	%r1754 = load float, float* %r1753
+	%r1755 = load i32, i32* @k
+	%r1756 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 25, i32 %r1755
+	%r1757 = load float, float* %r1756
+	%r1758 = load i32, i32* @k
+	%r1759 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 26, i32 %r1758
+	%r1760 = load float, float* %r1759
+	%r1761 = load i32, i32* @k
+	%r1762 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 27, i32 %r1761
+	%r1763 = load float, float* %r1762
+	%r1764 = load i32, i32* @k
+	%r1765 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 28, i32 %r1764
+	%r1766 = load float, float* %r1765
+	%r1767 = load i32, i32* @k
+	%r1768 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 29, i32 %r1767
+	%r1769 = load float, float* %r1768
+	%r1770 = load i32, i32* @k
+	%r1771 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 30, i32 %r1770
+	%r1772 = load float, float* %r1771
+	%r1773 = load i32, i32* @k
+	%r1774 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 31, i32 %r1773
+	%r1775 = load float, float* %r1774
+	%r1776 = load i32, i32* @k
+	%r1777 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 32, i32 %r1776
+	%r1778 = load float, float* %r1777
+	%r1779 = load i32, i32* @k
+	%r1780 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 33, i32 %r1779
+	%r1781 = load float, float* %r1780
+	%r1782 = load i32, i32* @k
+	%r1783 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 34, i32 %r1782
+	%r1784 = load float, float* %r1783
+	%r1785 = load i32, i32* @k
+	%r1786 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 35, i32 %r1785
+	%r1787 = load float, float* %r1786
+	%r1788 = load i32, i32* @k
+	%r1789 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 36, i32 %r1788
+	%r1790 = load float, float* %r1789
+	%r1791 = load i32, i32* @k
+	%r1792 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 37, i32 %r1791
+	%r1793 = load float, float* %r1792
+	%r1794 = load i32, i32* @k
+	%r1795 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 38, i32 %r1794
+	%r1796 = load float, float* %r1795
+	%r1797 = load i32, i32* @k
+	%r1798 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 39, i32 %r1797
+	%r1799 = load float, float* %r1798
+	%r1800 = call float @params_f40(float %r1682, float %r1685, float %r1688, float %r1691, float %r1694, float %r1697, float %r1700, float %r1703, float %r1706, float %r1709, float %r1712, float %r1715, float %r1718, float %r1721, float %r1724, float %r1727, float %r1730, float %r1733, float %r1736, float %r1739, float %r1742, float %r1745, float %r1748, float %r1751, float %r1754, float %r1757, float %r1760, float %r1763, float %r1766, float %r1769, float %r1772, float %r1775, float %r1778, float %r1781, float %r1784, float %r1787, float %r1790, float %r1793, float %r1796, float %r1799)
+	%r1803 = load i32, i32* @k
+	%r1804 = getelementptr inbounds [24 x [3 x i32]], [24 x [3 x i32]]* %r1650, i32 0, i32 23, i32 %r1803
+	%r1805 = load i32, i32* %r1804
+	%r1806 = load i32, i32* @k
+	%r1807 = getelementptr inbounds [24 x [3 x i32]], [24 x [3 x i32]]* %r1650, i32 0, i32 2, i32 %r1806
+	%r1808 = load i32, i32* %r1807
+	%r1809 = load i32, i32* @k
+	%r1810 = getelementptr inbounds [24 x [3 x i32]], [24 x [3 x i32]]* %r1650, i32 0, i32 6, i32 %r1809
+	%r1811 = load i32, i32* %r1810
+	%r1812 = load i32, i32* @k
+	%r1813 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 4, i32 %r1812
+	%r1814 = load float, float* %r1813
+	%r1815 = load i32, i32* @k
+	%r1816 = getelementptr inbounds [24 x [3 x i32]], [24 x [3 x i32]]* %r1650, i32 0, i32 1, i32 %r1815
+	%r1817 = load i32, i32* %r1816
+	%r1818 = load i32, i32* @k
+	%r1819 = getelementptr inbounds [24 x [3 x i32]], [24 x [3 x i32]]* %r1650, i32 0, i32 4, i32 %r1818
+	%r1820 = load i32, i32* %r1819
+	%r1821 = load i32, i32* @k
+	%r1822 = getelementptr inbounds [24 x [3 x i32]], [24 x [3 x i32]]* %r1650, i32 0, i32 5, i32 %r1821
+	%r1823 = load i32, i32* %r1822
+	%r1824 = load i32, i32* @k
+	%r1825 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 8, i32 %r1824
+	%r1826 = load float, float* %r1825
+	%r1827 = load i32, i32* @k
+	%r1828 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 15, i32 %r1827
+	%r1829 = load float, float* %r1828
+	%r1830 = load i32, i32* @k
+	%r1831 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 7, i32 %r1830
+	%r1832 = load float, float* %r1831
+	%r1833 = load i32, i32* @k
+	%r1834 = getelementptr inbounds [24 x [3 x i32]], [24 x [3 x i32]]* %r1650, i32 0, i32 22, i32 %r1833
+	%r1835 = load i32, i32* %r1834
+	%r1836 = load i32, i32* @k
+	%r1837 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 3, i32 %r1836
+	%r1838 = load float, float* %r1837
+	%r1839 = load i32, i32* @k
+	%r1840 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 28, i32 %r1839
+	%r1841 = load float, float* %r1840
+	%r1842 = load i32, i32* @k
+	%r1843 = getelementptr inbounds [24 x [3 x i32]], [24 x [3 x i32]]* %r1650, i32 0, i32 0, i32 %r1842
+	%r1844 = load i32, i32* %r1843
+	%r1845 = load i32, i32* @k
+	%r1846 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 37, i32 %r1845
+	%r1847 = load float, float* %r1846
+	%r1848 = load i32, i32* @k
+	%r1849 = getelementptr inbounds [24 x [3 x i32]], [24 x [3 x i32]]* %r1650, i32 0, i32 19, i32 %r1848
+	%r1850 = load i32, i32* %r1849
+	%r1851 = load i32, i32* @k
+	%r1852 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 30, i32 %r1851
+	%r1853 = load float, float* %r1852
+	%r1854 = load i32, i32* @k
+	%r1855 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 12, i32 %r1854
+	%r1856 = load float, float* %r1855
+	%r1857 = load i32, i32* @k
+	%r1858 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 1, i32 %r1857
+	%r1859 = load float, float* %r1858
+	%r1860 = load i32, i32* @k
+	%r1861 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 11, i32 %r1860
+	%r1862 = load float, float* %r1861
+	%r1863 = load i32, i32* @k
+	%r1864 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 38, i32 %r1863
+	%r1865 = load float, float* %r1864
+	%r1866 = load i32, i32* @k
+	%r1867 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 6, i32 %r1866
+	%r1868 = load float, float* %r1867
+	%r1869 = load i32, i32* @k
+	%r1870 = getelementptr inbounds [24 x [3 x i32]], [24 x [3 x i32]]* %r1650, i32 0, i32 7, i32 %r1869
+	%r1871 = load i32, i32* %r1870
+	%r1872 = load i32, i32* @k
+	%r1873 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 32, i32 %r1872
+	%r1874 = load float, float* %r1873
+	%r1875 = load i32, i32* @k
+	%r1876 = getelementptr inbounds [24 x [3 x i32]], [24 x [3 x i32]]* %r1650, i32 0, i32 10, i32 %r1875
+	%r1877 = load i32, i32* %r1876
+	%r1878 = load i32, i32* @k
+	%r1879 = getelementptr inbounds [24 x [3 x i32]], [24 x [3 x i32]]* %r1650, i32 0, i32 13, i32 %r1878
+	%r1880 = load i32, i32* %r1879
+	%r1881 = load i32, i32* @k
+	%r1882 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 20, i32 %r1881
+	%r1883 = load float, float* %r1882
+	%r1884 = load i32, i32* @k
+	%r1885 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 33, i32 %r1884
+	%r1886 = load float, float* %r1885
+	%r1887 = load i32, i32* @k
+	%r1888 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 23, i32 %r1887
+	%r1889 = load float, float* %r1888
+	%r1890 = load i32, i32* @k
+	%r1891 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 9, i32 %r1890
+	%r1892 = load float, float* %r1891
+	%r1893 = load i32, i32* @k
+	%r1894 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 25, i32 %r1893
+	%r1895 = load float, float* %r1894
+	%r1896 = load i32, i32* @k
+	%r1897 = getelementptr inbounds [24 x [3 x i32]], [24 x [3 x i32]]* %r1650, i32 0, i32 8, i32 %r1896
+	%r1898 = load i32, i32* %r1897
+	%r1899 = load i32, i32* @k
+	%r1900 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 39, i32 %r1899
+	%r1901 = load float, float* %r1900
+	%r1902 = load i32, i32* @k
+	%r1903 = getelementptr inbounds [24 x [3 x i32]], [24 x [3 x i32]]* %r1650, i32 0, i32 17, i32 %r1902
+	%r1904 = load i32, i32* %r1903
+	%r1905 = load i32, i32* @k
+	%r1906 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 21, i32 %r1905
+	%r1907 = load float, float* %r1906
+	%r1908 = load i32, i32* @k
+	%r1909 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 16, i32 %r1908
+	%r1910 = load float, float* %r1909
+	%r1911 = load i32, i32* @k
+	%r1912 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 5, i32 %r1911
+	%r1913 = load float, float* %r1912
+	%r1914 = load i32, i32* @k
+	%r1915 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 34, i32 %r1914
+	%r1916 = load float, float* %r1915
+	%r1917 = load i32, i32* @k
+	%r1918 = getelementptr inbounds [24 x [3 x i32]], [24 x [3 x i32]]* %r1650, i32 0, i32 18, i32 %r1917
+	%r1919 = load i32, i32* %r1918
+	%r1920 = load i32, i32* @k
+	%r1921 = getelementptr inbounds [24 x [3 x i32]], [24 x [3 x i32]]* %r1650, i32 0, i32 9, i32 %r1920
+	%r1922 = load i32, i32* %r1921
+	%r1923 = load i32, i32* @k
+	%r1924 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 14, i32 %r1923
+	%r1925 = load float, float* %r1924
+	%r1926 = load i32, i32* @k
+	%r1927 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 10, i32 %r1926
+	%r1928 = load float, float* %r1927
+	%r1929 = load i32, i32* @k
+	%r1930 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 0, i32 %r1929
+	%r1931 = load float, float* %r1930
+	%r1932 = load i32, i32* @k
+	%r1933 = getelementptr inbounds [24 x [3 x i32]], [24 x [3 x i32]]* %r1650, i32 0, i32 12, i32 %r1932
+	%r1934 = load i32, i32* %r1933
+	%r1935 = load i32, i32* @k
+	%r1936 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 31, i32 %r1935
+	%r1937 = load float, float* %r1936
+	%r1938 = load i32, i32* @k
+	%r1939 = getelementptr inbounds [24 x [3 x i32]], [24 x [3 x i32]]* %r1650, i32 0, i32 11, i32 %r1938
+	%r1940 = load i32, i32* %r1939
+	%r1941 = load i32, i32* @k
+	%r1942 = getelementptr inbounds [24 x [3 x i32]], [24 x [3 x i32]]* %r1650, i32 0, i32 16, i32 %r1941
+	%r1943 = load i32, i32* %r1942
+	%r1944 = load i32, i32* @k
+	%r1945 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 27, i32 %r1944
+	%r1946 = load float, float* %r1945
+	%r1947 = load i32, i32* @k
+	%r1948 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 24, i32 %r1947
+	%r1949 = load float, float* %r1948
+	%r1950 = load i32, i32* @k
+	%r1951 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 13, i32 %r1950
+	%r1952 = load float, float* %r1951
+	%r1953 = load i32, i32* @k
+	%r1954 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 29, i32 %r1953
+	%r1955 = load float, float* %r1954
+	%r1956 = load i32, i32* @k
+	%r1957 = getelementptr inbounds [24 x [3 x i32]], [24 x [3 x i32]]* %r1650, i32 0, i32 3, i32 %r1956
+	%r1958 = load i32, i32* %r1957
+	%r1959 = load i32, i32* @k
+	%r1960 = getelementptr inbounds [24 x [3 x i32]], [24 x [3 x i32]]* %r1650, i32 0, i32 21, i32 %r1959
+	%r1961 = load i32, i32* %r1960
+	%r1962 = load i32, i32* @k
+	%r1963 = getelementptr inbounds [24 x [3 x i32]], [24 x [3 x i32]]* %r1650, i32 0, i32 20, i32 %r1962
+	%r1964 = load i32, i32* %r1963
+	%r1965 = load i32, i32* @k
+	%r1966 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 18, i32 %r1965
+	%r1967 = load float, float* %r1966
+	%r1968 = load i32, i32* @k
+	%r1969 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 19, i32 %r1968
+	%r1970 = load float, float* %r1969
+	%r1971 = load i32, i32* @k
+	%r1972 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 22, i32 %r1971
+	%r1973 = load float, float* %r1972
+	%r1974 = load i32, i32* @k
+	%r1975 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 26, i32 %r1974
+	%r1976 = load float, float* %r1975
+	%r1977 = load i32, i32* @k
+	%r1978 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 36, i32 %r1977
+	%r1979 = load float, float* %r1978
+	%r1980 = load i32, i32* @k
+	%r1981 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 17, i32 %r1980
+	%r1982 = load float, float* %r1981
+	%r1983 = load i32, i32* @k
+	%r1984 = getelementptr inbounds [24 x [3 x i32]], [24 x [3 x i32]]* %r1650, i32 0, i32 15, i32 %r1983
+	%r1985 = load i32, i32* %r1984
+	%r1986 = load i32, i32* @k
+	%r1987 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 2, i32 %r1986
+	%r1988 = load float, float* %r1987
+	%r1989 = load i32, i32* @k
+	%r1990 = getelementptr inbounds [24 x [3 x i32]], [24 x [3 x i32]]* %r1650, i32 0, i32 14, i32 %r1989
+	%r1991 = load i32, i32* %r1990
+	%r1992 = load i32, i32* @k
+	%r1993 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 35, i32 %r1992
+	%r1994 = load float, float* %r1993
+	%r1995 = call float @params_f40_i24(i32 %r1805, i32 %r1808, i32 %r1811, float %r1814, i32 %r1817, i32 %r1820, i32 %r1823, float %r1826, float %r1829, float %r1832, i32 %r1835, float %r1838, float %r1841, i32 %r1844, float %r1847, i32 %r1850, float %r1853, float %r1856, float %r1859, float %r1862, float %r1865, float %r1868, i32 %r1871, float %r1874, i32 %r1877, i32 %r1880, float %r1883, float %r1886, float %r1889, float %r1892, float %r1895, i32 %r1898, float %r1901, i32 %r1904, float %r1907, float %r1910, float %r1913, float %r1916, i32 %r1919, i32 %r1922, float %r1925, float %r1928, float %r1931, i32 %r1934, float %r1937, i32 %r1940, i32 %r1943, float %r1946, float %r1949, float %r1952, float %r1955, i32 %r1958, i32 %r1961, i32 %r1964, float %r1967, float %r1970, float %r1973, float %r1976, float %r1979, float %r1982, i32 %r1985, float %r1988, i32 %r1991, float %r1994)
+	%r1998 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 0
+	%r1999 = getelementptr inbounds [3 x float], [3 x float]* %r1998, i32 0, i32 0
+	%r2000 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 1
+	%r2001 = getelementptr inbounds [3 x float], [3 x float]* %r2000, i32 0, i32 0
+	%r2002 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 2
+	%r2003 = getelementptr inbounds [3 x float], [3 x float]* %r2002, i32 0, i32 0
+	%r2004 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 3
+	%r2005 = getelementptr inbounds [3 x float], [3 x float]* %r2004, i32 0, i32 0
+	%r2006 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 4
+	%r2007 = getelementptr inbounds [3 x float], [3 x float]* %r2006, i32 0, i32 0
+	%r2008 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 5
+	%r2009 = getelementptr inbounds [3 x float], [3 x float]* %r2008, i32 0, i32 0
+	%r2010 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 6
+	%r2011 = getelementptr inbounds [3 x float], [3 x float]* %r2010, i32 0, i32 0
+	%r2012 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 7
+	%r2013 = getelementptr inbounds [3 x float], [3 x float]* %r2012, i32 0, i32 0
+	%r2014 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 8
+	%r2015 = getelementptr inbounds [3 x float], [3 x float]* %r2014, i32 0, i32 0
+	%r2016 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 9
+	%r2017 = getelementptr inbounds [3 x float], [3 x float]* %r2016, i32 0, i32 0
+	%r2018 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 10
+	%r2019 = getelementptr inbounds [3 x float], [3 x float]* %r2018, i32 0, i32 0
+	%r2020 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 11
+	%r2021 = getelementptr inbounds [3 x float], [3 x float]* %r2020, i32 0, i32 0
+	%r2022 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 12
+	%r2023 = getelementptr inbounds [3 x float], [3 x float]* %r2022, i32 0, i32 0
+	%r2024 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 13
+	%r2025 = getelementptr inbounds [3 x float], [3 x float]* %r2024, i32 0, i32 0
+	%r2026 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 14
+	%r2027 = getelementptr inbounds [3 x float], [3 x float]* %r2026, i32 0, i32 0
+	%r2028 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 15
+	%r2029 = getelementptr inbounds [3 x float], [3 x float]* %r2028, i32 0, i32 0
+	%r2030 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 16
+	%r2031 = getelementptr inbounds [3 x float], [3 x float]* %r2030, i32 0, i32 0
+	%r2032 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 17
+	%r2033 = getelementptr inbounds [3 x float], [3 x float]* %r2032, i32 0, i32 0
+	%r2034 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 18
+	%r2035 = getelementptr inbounds [3 x float], [3 x float]* %r2034, i32 0, i32 0
+	%r2036 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 19
+	%r2037 = getelementptr inbounds [3 x float], [3 x float]* %r2036, i32 0, i32 0
+	%r2038 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 20
+	%r2039 = getelementptr inbounds [3 x float], [3 x float]* %r2038, i32 0, i32 0
+	%r2040 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 21
+	%r2041 = getelementptr inbounds [3 x float], [3 x float]* %r2040, i32 0, i32 0
+	%r2042 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 22
+	%r2043 = getelementptr inbounds [3 x float], [3 x float]* %r2042, i32 0, i32 0
+	%r2044 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 23
+	%r2045 = getelementptr inbounds [3 x float], [3 x float]* %r2044, i32 0, i32 0
+	%r2046 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 24
+	%r2047 = getelementptr inbounds [3 x float], [3 x float]* %r2046, i32 0, i32 0
+	%r2048 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 25
+	%r2049 = getelementptr inbounds [3 x float], [3 x float]* %r2048, i32 0, i32 0
+	%r2050 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 26
+	%r2051 = getelementptr inbounds [3 x float], [3 x float]* %r2050, i32 0, i32 0
+	%r2052 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 27
+	%r2053 = getelementptr inbounds [3 x float], [3 x float]* %r2052, i32 0, i32 0
+	%r2054 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 28
+	%r2055 = getelementptr inbounds [3 x float], [3 x float]* %r2054, i32 0, i32 0
+	%r2056 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 29
+	%r2057 = getelementptr inbounds [3 x float], [3 x float]* %r2056, i32 0, i32 0
+	%r2058 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 30
+	%r2059 = getelementptr inbounds [3 x float], [3 x float]* %r2058, i32 0, i32 0
+	%r2060 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 31
+	%r2061 = getelementptr inbounds [3 x float], [3 x float]* %r2060, i32 0, i32 0
+	%r2062 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 32
+	%r2063 = getelementptr inbounds [3 x float], [3 x float]* %r2062, i32 0, i32 0
+	%r2064 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 33
+	%r2065 = getelementptr inbounds [3 x float], [3 x float]* %r2064, i32 0, i32 0
+	%r2066 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 34
+	%r2067 = getelementptr inbounds [3 x float], [3 x float]* %r2066, i32 0, i32 0
+	%r2068 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 35
+	%r2069 = getelementptr inbounds [3 x float], [3 x float]* %r2068, i32 0, i32 0
+	%r2070 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 36
+	%r2071 = getelementptr inbounds [3 x float], [3 x float]* %r2070, i32 0, i32 0
+	%r2072 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 37
+	%r2073 = getelementptr inbounds [3 x float], [3 x float]* %r2072, i32 0, i32 0
+	%r2074 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 38
+	%r2075 = getelementptr inbounds [3 x float], [3 x float]* %r2074, i32 0, i32 0
+	%r2076 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 39
+	%r2077 = getelementptr inbounds [3 x float], [3 x float]* %r2076, i32 0, i32 0
+	%r2078 = call float @params_fa40(float* %r1999, float* %r2001, float* %r2003, float* %r2005, float* %r2007, float* %r2009, float* %r2011, float* %r2013, float* %r2015, float* %r2017, float* %r2019, float* %r2021, float* %r2023, float* %r2025, float* %r2027, float* %r2029, float* %r2031, float* %r2033, float* %r2035, float* %r2037, float* %r2039, float* %r2041, float* %r2043, float* %r2045, float* %r2047, float* %r2049, float* %r2051, float* %r2053, float* %r2055, float* %r2057, float* %r2059, float* %r2061, float* %r2063, float* %r2065, float* %r2067, float* %r2069, float* %r2071, float* %r2073, float* %r2075, float* %r2077)
+	%r2081 = load i32, i32* @k
+	%r2082 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 0, i32 %r2081
+	%r2083 = load float, float* %r2082
+	%r2084 = getelementptr inbounds [24 x [3 x i32]], [24 x [3 x i32]]* %r1650, i32 0, i32 0
+	%r2085 = getelementptr inbounds [3 x i32], [3 x i32]* %r2084, i32 0, i32 0
+	%r2086 = load i32, i32* @k
+	%r2087 = getelementptr inbounds [24 x [3 x i32]], [24 x [3 x i32]]* %r1650, i32 0, i32 1, i32 %r2086
+	%r2088 = load i32, i32* %r2087
+	%r2089 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 1
+	%r2090 = getelementptr inbounds [3 x float], [3 x float]* %r2089, i32 0, i32 0
+	%r2091 = load i32, i32* @k
+	%r2092 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 2, i32 %r2091
+	%r2093 = load float, float* %r2092
+	%r2094 = load i32, i32* @k
+	%r2095 = getelementptr inbounds [24 x [3 x i32]], [24 x [3 x i32]]* %r1650, i32 0, i32 2, i32 %r2094
+	%r2096 = load i32, i32* %r2095
+	%r2097 = load i32, i32* @k
+	%r2098 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 3, i32 %r2097
+	%r2099 = load float, float* %r2098
+	%r2100 = load i32, i32* @k
+	%r2101 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 4, i32 %r2100
+	%r2102 = load float, float* %r2101
+	%r2103 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 5
+	%r2104 = getelementptr inbounds [3 x float], [3 x float]* %r2103, i32 0, i32 0
+	%r2105 = getelementptr inbounds [24 x [3 x i32]], [24 x [3 x i32]]* %r1650, i32 0, i32 3
+	%r2106 = getelementptr inbounds [3 x i32], [3 x i32]* %r2105, i32 0, i32 0
+	%r2107 = load i32, i32* @k
+	%r2108 = getelementptr inbounds [24 x [3 x i32]], [24 x [3 x i32]]* %r1650, i32 0, i32 4, i32 %r2107
+	%r2109 = load i32, i32* %r2108
+	%r2110 = load i32, i32* @k
+	%r2111 = getelementptr inbounds [24 x [3 x i32]], [24 x [3 x i32]]* %r1650, i32 0, i32 5, i32 %r2110
+	%r2112 = load i32, i32* %r2111
+	%r2113 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 6
+	%r2114 = getelementptr inbounds [3 x float], [3 x float]* %r2113, i32 0, i32 0
+	%r2115 = getelementptr inbounds [24 x [3 x i32]], [24 x [3 x i32]]* %r1650, i32 0, i32 6
+	%r2116 = getelementptr inbounds [3 x i32], [3 x i32]* %r2115, i32 0, i32 0
+	%r2117 = getelementptr inbounds [24 x [3 x i32]], [24 x [3 x i32]]* %r1650, i32 0, i32 7
+	%r2118 = getelementptr inbounds [3 x i32], [3 x i32]* %r2117, i32 0, i32 0
+	%r2119 = load i32, i32* @k
+	%r2120 = getelementptr inbounds [24 x [3 x i32]], [24 x [3 x i32]]* %r1650, i32 0, i32 8, i32 %r2119
+	%r2121 = load i32, i32* %r2120
+	%r2122 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 7
+	%r2123 = getelementptr inbounds [3 x float], [3 x float]* %r2122, i32 0, i32 0
+	%r2124 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 8
+	%r2125 = getelementptr inbounds [3 x float], [3 x float]* %r2124, i32 0, i32 0
+	%r2126 = load i32, i32* @k
+	%r2127 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 9, i32 %r2126
+	%r2128 = load float, float* %r2127
+	%r2129 = load i32, i32* @k
+	%r2130 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 10, i32 %r2129
+	%r2131 = load float, float* %r2130
+	%r2132 = load i32, i32* @k
+	%r2133 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 11, i32 %r2132
+	%r2134 = load float, float* %r2133
+	%r2135 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 12
+	%r2136 = getelementptr inbounds [3 x float], [3 x float]* %r2135, i32 0, i32 0
+	%r2137 = load i32, i32* @k
+	%r2138 = getelementptr inbounds [24 x [3 x i32]], [24 x [3 x i32]]* %r1650, i32 0, i32 9, i32 %r2137
+	%r2139 = load i32, i32* %r2138
+	%r2140 = load i32, i32* @k
+	%r2141 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 13, i32 %r2140
+	%r2142 = load float, float* %r2141
+	%r2143 = load i32, i32* @k
+	%r2144 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 14, i32 %r2143
+	%r2145 = load float, float* %r2144
+	%r2146 = load i32, i32* @k
+	%r2147 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 15, i32 %r2146
+	%r2148 = load float, float* %r2147
+	%r2149 = getelementptr inbounds [24 x [3 x i32]], [24 x [3 x i32]]* %r1650, i32 0, i32 10
+	%r2150 = getelementptr inbounds [3 x i32], [3 x i32]* %r2149, i32 0, i32 0
+	%r2151 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 16
+	%r2152 = getelementptr inbounds [3 x float], [3 x float]* %r2151, i32 0, i32 0
+	%r2153 = getelementptr inbounds [24 x [3 x i32]], [24 x [3 x i32]]* %r1650, i32 0, i32 11
+	%r2154 = getelementptr inbounds [3 x i32], [3 x i32]* %r2153, i32 0, i32 0
+	%r2155 = getelementptr inbounds [24 x [3 x i32]], [24 x [3 x i32]]* %r1650, i32 0, i32 12
+	%r2156 = getelementptr inbounds [3 x i32], [3 x i32]* %r2155, i32 0, i32 0
+	%r2157 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 17
+	%r2158 = getelementptr inbounds [3 x float], [3 x float]* %r2157, i32 0, i32 0
+	%r2159 = load i32, i32* @k
+	%r2160 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 18, i32 %r2159
+	%r2161 = load float, float* %r2160
+	%r2162 = load i32, i32* @k
+	%r2163 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 19, i32 %r2162
+	%r2164 = load float, float* %r2163
+	%r2165 = getelementptr inbounds [24 x [3 x i32]], [24 x [3 x i32]]* %r1650, i32 0, i32 13
+	%r2166 = getelementptr inbounds [3 x i32], [3 x i32]* %r2165, i32 0, i32 0
+	%r2167 = load i32, i32* @k
+	%r2168 = getelementptr inbounds [24 x [3 x i32]], [24 x [3 x i32]]* %r1650, i32 0, i32 14, i32 %r2167
+	%r2169 = load i32, i32* %r2168
+	%r2170 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 20
+	%r2171 = getelementptr inbounds [3 x float], [3 x float]* %r2170, i32 0, i32 0
+	%r2172 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 21
+	%r2173 = getelementptr inbounds [3 x float], [3 x float]* %r2172, i32 0, i32 0
+	%r2174 = load i32, i32* @k
+	%r2175 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 22, i32 %r2174
+	%r2176 = load float, float* %r2175
+	%r2177 = load i32, i32* @k
+	%r2178 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 23, i32 %r2177
+	%r2179 = load float, float* %r2178
+	%r2180 = getelementptr inbounds [24 x [3 x i32]], [24 x [3 x i32]]* %r1650, i32 0, i32 15
+	%r2181 = getelementptr inbounds [3 x i32], [3 x i32]* %r2180, i32 0, i32 0
+	%r2182 = getelementptr inbounds [24 x [3 x i32]], [24 x [3 x i32]]* %r1650, i32 0, i32 16
+	%r2183 = getelementptr inbounds [3 x i32], [3 x i32]* %r2182, i32 0, i32 0
+	%r2184 = load i32, i32* @k
+	%r2185 = getelementptr inbounds [24 x [3 x i32]], [24 x [3 x i32]]* %r1650, i32 0, i32 17, i32 %r2184
+	%r2186 = load i32, i32* %r2185
+	%r2187 = load i32, i32* @k
+	%r2188 = getelementptr inbounds [24 x [3 x i32]], [24 x [3 x i32]]* %r1650, i32 0, i32 18, i32 %r2187
+	%r2189 = load i32, i32* %r2188
+	%r2190 = load i32, i32* @k
+	%r2191 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 24, i32 %r2190
+	%r2192 = load float, float* %r2191
+	%r2193 = load i32, i32* @k
+	%r2194 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 25, i32 %r2193
+	%r2195 = load float, float* %r2194
+	%r2196 = getelementptr inbounds [24 x [3 x i32]], [24 x [3 x i32]]* %r1650, i32 0, i32 19
+	%r2197 = getelementptr inbounds [3 x i32], [3 x i32]* %r2196, i32 0, i32 0
+	%r2198 = load i32, i32* @k
+	%r2199 = getelementptr inbounds [24 x [3 x i32]], [24 x [3 x i32]]* %r1650, i32 0, i32 20, i32 %r2198
+	%r2200 = load i32, i32* %r2199
+	%r2201 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 26
+	%r2202 = getelementptr inbounds [3 x float], [3 x float]* %r2201, i32 0, i32 0
+	%r2203 = load i32, i32* @k
+	%r2204 = getelementptr inbounds [24 x [3 x i32]], [24 x [3 x i32]]* %r1650, i32 0, i32 21, i32 %r2203
+	%r2205 = load i32, i32* %r2204
+	%r2206 = getelementptr inbounds [24 x [3 x i32]], [24 x [3 x i32]]* %r1650, i32 0, i32 22
+	%r2207 = getelementptr inbounds [3 x i32], [3 x i32]* %r2206, i32 0, i32 0
+	%r2208 = getelementptr inbounds [24 x [3 x i32]], [24 x [3 x i32]]* %r1650, i32 0, i32 23
+	%r2209 = getelementptr inbounds [3 x i32], [3 x i32]* %r2208, i32 0, i32 0
+	%r2210 = load i32, i32* @k
+	%r2211 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 27, i32 %r2210
+	%r2212 = load float, float* %r2211
+	%r2213 = load i32, i32* @k
+	%r2214 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 28, i32 %r2213
+	%r2215 = load float, float* %r2214
+	%r2216 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 29
+	%r2217 = getelementptr inbounds [3 x float], [3 x float]* %r2216, i32 0, i32 0
+	%r2218 = load i32, i32* @k
+	%r2219 = getelementptr inbounds [24 x [3 x i32]], [24 x [3 x i32]]* %r1650, i32 0, i32 0, i32 %r2218
+	%r2220 = load i32, i32* %r2219
+	%r2221 = getelementptr inbounds [24 x [3 x i32]], [24 x [3 x i32]]* %r1650, i32 0, i32 1
+	%r2222 = getelementptr inbounds [3 x i32], [3 x i32]* %r2221, i32 0, i32 0
+	%r2223 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 30
+	%r2224 = getelementptr inbounds [3 x float], [3 x float]* %r2223, i32 0, i32 0
+	%r2225 = load i32, i32* @k
+	%r2226 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 31, i32 %r2225
+	%r2227 = load float, float* %r2226
+	%r2228 = load i32, i32* @k
+	%r2229 = getelementptr inbounds [24 x [3 x i32]], [24 x [3 x i32]]* %r1650, i32 0, i32 2, i32 %r2228
+	%r2230 = load i32, i32* %r2229
+	%r2231 = load i32, i32* @k
+	%r2232 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 32, i32 %r2231
+	%r2233 = load float, float* %r2232
+	%r2234 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 33
+	%r2235 = getelementptr inbounds [3 x float], [3 x float]* %r2234, i32 0, i32 0
+	%r2236 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 34
+	%r2237 = getelementptr inbounds [3 x float], [3 x float]* %r2236, i32 0, i32 0
+	%r2238 = load i32, i32* @k
+	%r2239 = getelementptr inbounds [40 x [3 x float]], [40 x [3 x float]]* %r1649, i32 0, i32 35, i32 %r2238
+	%r2240 = load float, float* %r2239
+	%r2241 = load i32, i32* @k
+	%r2242 = getelementptr inbounds [24 x [3 x i32]], [24 x [3 x i32]]* %r1650, i32 0, i32 3, i32 %r2241
+	%r2243 = load i32, i32* %r2242
+	%r2244 = call i32 @params_mix(float %r2083, i32* %r2085, i32 %r2088, float* %r2090, float %r2093, i32 %r2096, float %r2099, float %r2102, float* %r2104, i32* %r2106, i32 %r2109, i32 %r2112, float* %r2114, i32* %r2116, i32* %r2118, i32 %r2121, float* %r2123, float* %r2125, float %r2128, float %r2131, float %r2134, float* %r2136, i32 %r2139, float %r2142, float %r2145, float %r2148, i32* %r2150, float* %r2152, i32* %r2154, i32* %r2156, float* %r2158, float %r2161, float %r2164, i32* %r2166, i32 %r2169, float* %r2171, float* %r2173, float %r2176, float %r2179, i32* %r2181, i32* %r2183, i32 %r2186, i32 %r2189, float %r2192, float %r2195, i32* %r2197, i32 %r2200, float* %r2202, i32 %r2205, i32* %r2207, i32* %r2209, float %r2212, float %r2215, float* %r2217, i32 %r2220, i32* %r2222, float* %r2224, float %r2227, i32 %r2230, float %r2233, float* %r2235, float* %r2237, float %r2240, i32 %r2243)
+	call void @putfloat(float %r1800)
 	call void @putch(i32 10)
-	%r133 = add i32 %r484, 1
-	move i32 %r484<- %r133
-	move i32 %r483<- %r482
-	br label %b18
+	call void @putfloat(float %r1995)
+	call void @putch(i32 10)
+	call void @putfloat(float %r2078)
+	call void @putch(i32 10)
+	call void @putint(i32 %r2244)
+	call void @putch(i32 10)
+	ret i32 0
 }
-define dso_local float @my_fabs(float %f0) 
+define dso_local float @params_fa40(float* %f713, float* %f714, float* %f715, float* %f716, float* %f717, float* %f718, float* %f719, float* %f720, float* %f721, float* %f722, float* %f723, float* %f724, float* %f725, float* %f726, float* %f727, float* %f728, float* %f729, float* %f730, float* %f731, float* %f732, float* %f733, float* %f734, float* %f735, float* %f736, float* %f737, float* %f738, float* %f739, float* %f740, float* %f741, float* %f742, float* %f743, float* %f744, float* %f745, float* %f746, float* %f747, float* %f748, float* %f749, float* %f750, float* %f751, float* %f752) 
+{
+b12:
+	%r1023 = alloca [10 x float]
+	%r833 = load i32, i32* @k
+	%r835 = getelementptr inbounds float, float* %f713, i32 %r833
+	%r836 = load float, float* %r835
+	%r837 = load i32, i32* @k
+	%r839 = getelementptr inbounds float, float* %f714, i32 %r837
+	%r840 = load float, float* %r839
+	%r841 = fadd float %r836, %r840
+	%r842 = load i32, i32* @k
+	%r844 = getelementptr inbounds float, float* %f715, i32 %r842
+	%r845 = load float, float* %r844
+	%r846 = fadd float %r841, %r845
+	%r847 = load i32, i32* @k
+	%r849 = getelementptr inbounds float, float* %f716, i32 %r847
+	%r850 = load float, float* %r849
+	%r851 = fadd float %r846, %r850
+	%r852 = load i32, i32* @k
+	%r854 = getelementptr inbounds float, float* %f717, i32 %r852
+	%r855 = load float, float* %r854
+	%r856 = load i32, i32* @k
+	%r858 = getelementptr inbounds float, float* %f718, i32 %r856
+	%r859 = load float, float* %r858
+	%r860 = fadd float %r855, %r859
+	%r861 = load i32, i32* @k
+	%r863 = getelementptr inbounds float, float* %f719, i32 %r861
+	%r864 = load float, float* %r863
+	%r865 = fadd float %r860, %r864
+	%r866 = load i32, i32* @k
+	%r868 = getelementptr inbounds float, float* %f720, i32 %r866
+	%r869 = load float, float* %r868
+	%r870 = fadd float %r865, %r869
+	%r871 = load i32, i32* @k
+	%r873 = getelementptr inbounds float, float* %f721, i32 %r871
+	%r874 = load float, float* %r873
+	%r875 = load i32, i32* @k
+	%r877 = getelementptr inbounds float, float* %f722, i32 %r875
+	%r878 = load float, float* %r877
+	%r879 = fadd float %r874, %r878
+	%r880 = load i32, i32* @k
+	%r882 = getelementptr inbounds float, float* %f723, i32 %r880
+	%r883 = load float, float* %r882
+	%r884 = fadd float %r879, %r883
+	%r885 = load i32, i32* @k
+	%r887 = getelementptr inbounds float, float* %f724, i32 %r885
+	%r888 = load float, float* %r887
+	%r889 = fadd float %r884, %r888
+	%r890 = load i32, i32* @k
+	%r892 = getelementptr inbounds float, float* %f725, i32 %r890
+	%r893 = load float, float* %r892
+	%r894 = load i32, i32* @k
+	%r896 = getelementptr inbounds float, float* %f726, i32 %r894
+	%r897 = load float, float* %r896
+	%r898 = fadd float %r893, %r897
+	%r899 = load i32, i32* @k
+	%r901 = getelementptr inbounds float, float* %f727, i32 %r899
+	%r902 = load float, float* %r901
+	%r903 = fadd float %r898, %r902
+	%r904 = load i32, i32* @k
+	%r906 = getelementptr inbounds float, float* %f728, i32 %r904
+	%r907 = load float, float* %r906
+	%r908 = fadd float %r903, %r907
+	%r909 = load i32, i32* @k
+	%r911 = getelementptr inbounds float, float* %f729, i32 %r909
+	%r912 = load float, float* %r911
+	%r913 = load i32, i32* @k
+	%r915 = getelementptr inbounds float, float* %f730, i32 %r913
+	%r916 = load float, float* %r915
+	%r917 = fadd float %r912, %r916
+	%r918 = load i32, i32* @k
+	%r920 = getelementptr inbounds float, float* %f731, i32 %r918
+	%r921 = load float, float* %r920
+	%r922 = fadd float %r917, %r921
+	%r923 = load i32, i32* @k
+	%r925 = getelementptr inbounds float, float* %f732, i32 %r923
+	%r926 = load float, float* %r925
+	%r927 = fadd float %r922, %r926
+	%r928 = load i32, i32* @k
+	%r930 = getelementptr inbounds float, float* %f733, i32 %r928
+	%r931 = load float, float* %r930
+	%r932 = load i32, i32* @k
+	%r934 = getelementptr inbounds float, float* %f734, i32 %r932
+	%r935 = load float, float* %r934
+	%r936 = fadd float %r931, %r935
+	%r937 = load i32, i32* @k
+	%r939 = getelementptr inbounds float, float* %f735, i32 %r937
+	%r940 = load float, float* %r939
+	%r941 = fadd float %r936, %r940
+	%r942 = load i32, i32* @k
+	%r944 = getelementptr inbounds float, float* %f736, i32 %r942
+	%r945 = load float, float* %r944
+	%r946 = fadd float %r941, %r945
+	%r947 = load i32, i32* @k
+	%r949 = getelementptr inbounds float, float* %f737, i32 %r947
+	%r950 = load float, float* %r949
+	%r951 = load i32, i32* @k
+	%r953 = getelementptr inbounds float, float* %f738, i32 %r951
+	%r954 = load float, float* %r953
+	%r955 = fadd float %r950, %r954
+	%r956 = load i32, i32* @k
+	%r958 = getelementptr inbounds float, float* %f739, i32 %r956
+	%r959 = load float, float* %r958
+	%r960 = fadd float %r955, %r959
+	%r961 = load i32, i32* @k
+	%r963 = getelementptr inbounds float, float* %f740, i32 %r961
+	%r964 = load float, float* %r963
+	%r965 = fadd float %r960, %r964
+	%r966 = load i32, i32* @k
+	%r968 = getelementptr inbounds float, float* %f741, i32 %r966
+	%r969 = load float, float* %r968
+	%r970 = load i32, i32* @k
+	%r972 = getelementptr inbounds float, float* %f742, i32 %r970
+	%r973 = load float, float* %r972
+	%r974 = fadd float %r969, %r973
+	%r975 = load i32, i32* @k
+	%r977 = getelementptr inbounds float, float* %f743, i32 %r975
+	%r978 = load float, float* %r977
+	%r979 = fadd float %r974, %r978
+	%r980 = load i32, i32* @k
+	%r982 = getelementptr inbounds float, float* %f744, i32 %r980
+	%r983 = load float, float* %r982
+	%r984 = fadd float %r979, %r983
+	%r985 = load i32, i32* @k
+	%r987 = getelementptr inbounds float, float* %f745, i32 %r985
+	%r988 = load float, float* %r987
+	%r989 = load i32, i32* @k
+	%r991 = getelementptr inbounds float, float* %f746, i32 %r989
+	%r992 = load float, float* %r991
+	%r993 = fadd float %r988, %r992
+	%r994 = load i32, i32* @k
+	%r996 = getelementptr inbounds float, float* %f747, i32 %r994
+	%r997 = load float, float* %r996
+	%r998 = fadd float %r993, %r997
+	%r999 = load i32, i32* @k
+	%r1001 = getelementptr inbounds float, float* %f748, i32 %r999
+	%r1002 = load float, float* %r1001
+	%r1003 = fadd float %r998, %r1002
+	%r1004 = load i32, i32* @k
+	%r1006 = getelementptr inbounds float, float* %f749, i32 %r1004
+	%r1007 = load float, float* %r1006
+	%r1008 = load i32, i32* @k
+	%r1010 = getelementptr inbounds float, float* %f750, i32 %r1008
+	%r1011 = load float, float* %r1010
+	%r1012 = fadd float %r1007, %r1011
+	%r1013 = load i32, i32* @k
+	%r1015 = getelementptr inbounds float, float* %f751, i32 %r1013
+	%r1016 = load float, float* %r1015
+	%r1017 = fadd float %r1012, %r1016
+	%r1018 = load i32, i32* @k
+	%r1020 = getelementptr inbounds float, float* %f752, i32 %r1018
+	%r1021 = load float, float* %r1020
+	%r1022 = fadd float %r1017, %r1021
+	%r1024 = getelementptr inbounds [10 x float], [10 x float]* %r1023, i32 0, i32 0
+	store float %r851, float* %r1024
+	%r1026 = getelementptr inbounds float, float* %r1024, i32 1
+	store float %r870, float* %r1026
+	%r1028 = getelementptr inbounds float, float* %r1024, i32 2
+	store float %r889, float* %r1028
+	%r1030 = getelementptr inbounds float, float* %r1024, i32 3
+	store float %r908, float* %r1030
+	%r1032 = getelementptr inbounds float, float* %r1024, i32 4
+	store float %r927, float* %r1032
+	%r1034 = getelementptr inbounds float, float* %r1024, i32 5
+	store float %r946, float* %r1034
+	%r1036 = getelementptr inbounds float, float* %r1024, i32 6
+	store float %r965, float* %r1036
+	%r1038 = getelementptr inbounds float, float* %r1024, i32 7
+	store float %r984, float* %r1038
+	%r1040 = getelementptr inbounds float, float* %r1024, i32 8
+	store float %r1003, float* %r1040
+	%r1042 = getelementptr inbounds float, float* %r1024, i32 9
+	store float %r1022, float* %r1042
+	%r1044 = load i32, i32* @k
+	%r1046 = getelementptr inbounds float, float* %f752, i32 %r1044
+	%r1047 = load float, float* %r1046
+	%r1048 = sitofp i32 0 to float
+	%r1049 = fcmp one float %r1047, %r1048
+	%r1050 = zext i1 %r1049 to i32
+	%r1051 = icmp ne i32 %r1050, 0
+	%r1052 = zext i1 %r1051 to i32
+	%r1053 = sitofp i32 %r1052 to float
+	%r1054 = fcmp one float %r1053, 0x0
+	%r1055 = zext i1 %r1054 to i32
+	%r1056 = sitofp i32 %r1055 to float
+	%r1057 = fcmp one float %r1056, 0x0
+	br i1 %r1057, label %b13, label %b14
+b13:
+	%r1059 = getelementptr inbounds [10 x float], [10 x float]* %r1023, i32 0, i32 0
+	call void @putfarray(i32 10, float* %r1059)
+	%r1061 = load i32, i32* @k
+	%r1062 = getelementptr inbounds [10 x float], [10 x float]* %r1023, i32 0, i32 %r1061
+	%r1063 = load float, float* %r1062
+	ret float %r1063
+b14:
+	%r1105 = getelementptr inbounds [10 x float], [10 x float]* %r1023, i32 0, i32 0
+	%r1106 = call float @params_fa40(float* %f714, float* %f715, float* %f716, float* %f717, float* %f718, float* %f719, float* %f720, float* %f721, float* %f722, float* %f723, float* %f724, float* %f725, float* %f726, float* %f727, float* %f728, float* %f729, float* %f730, float* %f731, float* %f732, float* %f733, float* %f734, float* %f735, float* %f736, float* %f737, float* %f738, float* %f739, float* %f740, float* %f741, float* %f742, float* %f743, float* %f744, float* %f745, float* %f746, float* %f747, float* %f748, float* %f749, float* %f750, float* %f751, float* %f752, float* %r1105)
+	ret float %r1106
+}
+define dso_local i32 @params_mix(float %f1110, i32* %f1111, i32 %f1112, float* %f1113, float %f1114, i32 %f1115, float %f1116, float %f1117, float* %f1118, i32* %f1119, i32 %f1120, i32 %f1121, float* %f1122, i32* %f1123, i32* %f1124, i32 %f1125, float* %f1126, float* %f1127, float %f1128, float %f1129, float %f1130, float* %f1131, i32 %f1132, float %f1133, float %f1134, float %f1135, i32* %f1136, float* %f1137, i32* %f1138, i32* %f1139, float* %f1140, float %f1141, float %f1142, i32* %f1143, i32 %f1144, float* %f1145, float* %f1146, float %f1147, float %f1148, i32* %f1149, i32* %f1150, i32 %f1151, i32 %f1152, float %f1153, float %f1154, i32* %f1155, i32 %f1156, float* %f1157, i32 %f1158, i32* %f1159, i32* %f1160, float %f1161, float %f1162, float* %f1163, i32 %f1164, i32* %f1165, float* %f1166, float %f1167, i32 %f1168, float %f1169, float* %f1170, float* %f1171, float %f1172, i32 %f1173) 
+{
+b16:
+	%r1520 = alloca [10 x i32]
+	%r1410 = alloca [10 x float]
+	%r1303 = load i32, i32* @k
+	%r1305 = getelementptr inbounds float, float* %f1113, i32 %r1303
+	%r1306 = load float, float* %r1305
+	%r1307 = fadd float %f1110, %r1306
+	%r1309 = fadd float %r1307, %f1114
+	%r1311 = fadd float %r1309, %f1116
+	%r1313 = load i32, i32* @k
+	%r1315 = getelementptr inbounds float, float* %f1118, i32 %r1313
+	%r1316 = load float, float* %r1315
+	%r1317 = fadd float %f1117, %r1316
+	%r1318 = load i32, i32* @k
+	%r1320 = getelementptr inbounds float, float* %f1122, i32 %r1318
+	%r1321 = load float, float* %r1320
+	%r1322 = fadd float %r1317, %r1321
+	%r1323 = load i32, i32* @k
+	%r1325 = getelementptr inbounds float, float* %f1126, i32 %r1323
+	%r1326 = load float, float* %r1325
+	%r1327 = fadd float %r1322, %r1326
+	%r1328 = load i32, i32* @k
+	%r1330 = getelementptr inbounds float, float* %f1127, i32 %r1328
+	%r1331 = load float, float* %r1330
+	%r1333 = fadd float %r1331, %f1128
+	%r1335 = fadd float %r1333, %f1129
+	%r1337 = fadd float %r1335, %f1130
+	%r1338 = load i32, i32* @k
+	%r1340 = getelementptr inbounds float, float* %f1131, i32 %r1338
+	%r1341 = load float, float* %r1340
+	%r1343 = fadd float %r1341, %f1133
+	%r1345 = fadd float %r1343, %f1134
+	%r1347 = fadd float %r1345, %f1135
+	%r1348 = load i32, i32* @k
+	%r1350 = getelementptr inbounds float, float* %f1137, i32 %r1348
+	%r1351 = load float, float* %r1350
+	%r1352 = load i32, i32* @k
+	%r1354 = getelementptr inbounds float, float* %f1140, i32 %r1352
+	%r1355 = load float, float* %r1354
+	%r1356 = fadd float %r1351, %r1355
+	%r1358 = fadd float %r1356, %f1141
+	%r1360 = fadd float %r1358, %f1142
+	%r1361 = load i32, i32* @k
+	%r1363 = getelementptr inbounds float, float* %f1145, i32 %r1361
+	%r1364 = load float, float* %r1363
+	%r1365 = load i32, i32* @k
+	%r1367 = getelementptr inbounds float, float* %f1146, i32 %r1365
+	%r1368 = load float, float* %r1367
+	%r1369 = fadd float %r1364, %r1368
+	%r1371 = fadd float %r1369, %f1147
+	%r1373 = fadd float %r1371, %f1148
+	%r1376 = fadd float %f1153, %f1154
+	%r1377 = load i32, i32* @k
+	%r1379 = getelementptr inbounds float, float* %f1157, i32 %r1377
+	%r1380 = load float, float* %r1379
+	%r1381 = fadd float %r1376, %r1380
+	%r1383 = fadd float %r1381, %f1161
+	%r1385 = load i32, i32* @k
+	%r1387 = getelementptr inbounds float, float* %f1163, i32 %r1385
+	%r1388 = load float, float* %r1387
+	%r1389 = fadd float %f1162, %r1388
+	%r1390 = load i32, i32* @k
+	%r1392 = getelementptr inbounds float, float* %f1166, i32 %r1390
+	%r1393 = load float, float* %r1392
+	%r1394 = fadd float %r1389, %r1393
+	%r1396 = fadd float %r1394, %f1167
+	%r1398 = load i32, i32* @k
+	%r1400 = getelementptr inbounds float, float* %f1170, i32 %r1398
+	%r1401 = load float, float* %r1400
+	%r1402 = fadd float %f1169, %r1401
+	%r1403 = load i32, i32* @k
+	%r1405 = getelementptr inbounds float, float* %f1171, i32 %r1403
+	%r1406 = load float, float* %r1405
+	%r1407 = fadd float %r1402, %r1406
+	%r1409 = fadd float %r1407, %f1172
+	%r1411 = getelementptr inbounds [10 x float], [10 x float]* %r1410, i32 0, i32 0
+	%r1412 = bitcast float* %r1411 to i32*
+	call void @memset(i32* %r1412, i32 0, i32 40)
+	store float %r1311, float* %r1411
+	%r1415 = getelementptr inbounds float, float* %r1411, i32 1
+	store float %r1327, float* %r1415
+	%r1417 = getelementptr inbounds float, float* %r1411, i32 2
+	store float %r1337, float* %r1417
+	%r1419 = getelementptr inbounds float, float* %r1411, i32 3
+	store float %r1347, float* %r1419
+	%r1421 = getelementptr inbounds float, float* %r1411, i32 4
+	store float %r1360, float* %r1421
+	%r1423 = getelementptr inbounds float, float* %r1411, i32 5
+	store float %r1373, float* %r1423
+	%r1425 = getelementptr inbounds float, float* %r1411, i32 6
+	store float %r1383, float* %r1425
+	%r1427 = getelementptr inbounds float, float* %r1411, i32 7
+	store float %r1396, float* %r1427
+	%r1429 = getelementptr inbounds float, float* %r1411, i32 8
+	store float %r1409, float* %r1429
+	%r1431 = load i32, i32* @k
+	%r1433 = getelementptr inbounds i32, i32* %f1111, i32 %r1431
+	%r1434 = load i32, i32* %r1433
+	%r1436 = add i32 %r1434, %f1112
+	%r1438 = add i32 %r1436, %f1115
+	%r1439 = load i32, i32* @k
+	%r1441 = getelementptr inbounds i32, i32* %f1119, i32 %r1439
+	%r1442 = load i32, i32* %r1441
+	%r1444 = add i32 %r1442, %f1120
+	%r1446 = add i32 %r1444, %f1121
+	%r1447 = load i32, i32* @k
+	%r1449 = getelementptr inbounds i32, i32* %f1123, i32 %r1447
+	%r1450 = load i32, i32* %r1449
+	%r1451 = load i32, i32* @k
+	%r1453 = getelementptr inbounds i32, i32* %f1124, i32 %r1451
+	%r1454 = load i32, i32* %r1453
+	%r1455 = add i32 %r1450, %r1454
+	%r1457 = add i32 %r1455, %f1125
+	%r1459 = load i32, i32* @k
+	%r1461 = getelementptr inbounds i32, i32* %f1136, i32 %r1459
+	%r1462 = load i32, i32* %r1461
+	%r1463 = add i32 %f1132, %r1462
+	%r1464 = load i32, i32* @k
+	%r1466 = getelementptr inbounds i32, i32* %f1138, i32 %r1464
+	%r1467 = load i32, i32* %r1466
+	%r1468 = add i32 %r1463, %r1467
+	%r1469 = load i32, i32* @k
+	%r1471 = getelementptr inbounds i32, i32* %f1139, i32 %r1469
+	%r1472 = load i32, i32* %r1471
+	%r1473 = load i32, i32* @k
+	%r1475 = getelementptr inbounds i32, i32* %f1143, i32 %r1473
+	%r1476 = load i32, i32* %r1475
+	%r1477 = add i32 %r1472, %r1476
+	%r1479 = add i32 %r1477, %f1144
+	%r1480 = load i32, i32* @k
+	%r1482 = getelementptr inbounds i32, i32* %f1149, i32 %r1480
+	%r1483 = load i32, i32* %r1482
+	%r1484 = load i32, i32* @k
+	%r1486 = getelementptr inbounds i32, i32* %f1150, i32 %r1484
+	%r1487 = load i32, i32* %r1486
+	%r1488 = add i32 %r1483, %r1487
+	%r1490 = add i32 %r1488, %f1151
+	%r1492 = load i32, i32* @k
+	%r1494 = getelementptr inbounds i32, i32* %f1155, i32 %r1492
+	%r1495 = load i32, i32* %r1494
+	%r1496 = add i32 %f1152, %r1495
+	%r1498 = add i32 %r1496, %f1156
+	%r1500 = load i32, i32* @k
+	%r1502 = getelementptr inbounds i32, i32* %f1159, i32 %r1500
+	%r1503 = load i32, i32* %r1502
+	%r1504 = add i32 %f1158, %r1503
+	%r1505 = load i32, i32* @k
+	%r1507 = getelementptr inbounds i32, i32* %f1160, i32 %r1505
+	%r1508 = load i32, i32* %r1507
+	%r1509 = add i32 %r1504, %r1508
+	%r1511 = load i32, i32* @k
+	%r1513 = getelementptr inbounds i32, i32* %f1165, i32 %r1511
+	%r1514 = load i32, i32* %r1513
+	%r1515 = add i32 %f1164, %r1514
+	%r1517 = add i32 %r1515, %f1168
+	%r1519 = add i32 %r1517, %f1173
+	%r1521 = getelementptr inbounds [10 x i32], [10 x i32]* %r1520, i32 0, i32 0
+	call void @memset(i32* %r1521, i32 0, i32 40)
+	store i32 %r1438, i32* %r1521
+	%r1524 = getelementptr inbounds i32, i32* %r1521, i32 1
+	store i32 %r1446, i32* %r1524
+	%r1526 = getelementptr inbounds i32, i32* %r1521, i32 2
+	store i32 %r1457, i32* %r1526
+	%r1528 = getelementptr inbounds i32, i32* %r1521, i32 3
+	store i32 %r1468, i32* %r1528
+	%r1530 = getelementptr inbounds i32, i32* %r1521, i32 4
+	store i32 %r1479, i32* %r1530
+	%r1532 = getelementptr inbounds i32, i32* %r1521, i32 5
+	store i32 %r1490, i32* %r1532
+	%r1534 = getelementptr inbounds i32, i32* %r1521, i32 6
+	store i32 %r1498, i32* %r1534
+	%r1536 = getelementptr inbounds i32, i32* %r1521, i32 7
+	store i32 %r1509, i32* %r1536
+	%r1538 = getelementptr inbounds i32, i32* %r1521, i32 8
+	store i32 %r1519, i32* %r1538
+	%r1541 = icmp ne i32 %f1173, 0
+	br i1 %r1541, label %b17, label %b18
+b17:
+	%r1543 = getelementptr inbounds [10 x float], [10 x float]* %r1410, i32 0, i32 0
+	call void @putfarray(i32 10, float* %r1543)
+	%r1545 = getelementptr inbounds [10 x i32], [10 x i32]* %r1520, i32 0, i32 0
+	call void @putarray(i32 10, i32* %r1545)
+	move i32 %r2262<- 0
+	br label %b20
+b18:
+	%r1580 = getelementptr inbounds [10 x i32], [10 x i32]* %r1520, i32 0, i32 0
+	%r1582 = getelementptr inbounds [10 x float], [10 x float]* %r1410, i32 0, i32 0
+	%r1642 = sitofp i32 %f1173 to float
+	%r1644 = fptosi float %f1172 to i32
+	%r1645 = call i32 @params_mix(float %f1110, i32* %r1580, i32 %f1112, float* %r1582, float %f1114, i32 %f1115, float %f1116, float %f1117, float* %f1118, i32* %f1119, i32 %f1120, i32 %f1121, float* %f1122, i32* %f1123, i32* %f1124, i32 %f1125, float* %f1126, float* %f1127, float %f1128, float %f1129, float %f1130, float* %f1131, i32 %f1132, float %f1133, float %f1134, float %f1135, i32* %f1136, float* %f1137, i32* %f1138, i32* %f1139, float* %f1140, float %f1141, float %f1142, i32* %f1143, i32 %f1144, float* %f1145, float* %f1146, float %f1147, float %f1148, i32* %f1149, i32* %f1150, i32 %f1151, i32 %f1152, float %f1153, float %f1154, i32* %f1155, i32 %f1156, float* %f1157, i32 %f1158, i32* %f1159, i32* %f1160, float %f1161, float %f1162, float* %f1163, i32 %f1164, i32* %f1165, float* %f1166, float %f1167, i32 %f1168, float %f1169, float* %f1170, float* %f1171, float %r1642, i32 %r1644)
+	ret i32 %r1645
+b20:
+	%r1551 = icmp slt i32 %r2262, 10
+	br i1 %r1551, label %b21, label %b22
+b21:
+	%r1554 = getelementptr inbounds [10 x i32], [10 x i32]* %r1520, i32 0, i32 %r2262
+	%r1556 = getelementptr inbounds [10 x i32], [10 x i32]* %r1520, i32 0, i32 %r2262
+	%r1557 = load i32, i32* %r1556
+	%r1559 = getelementptr inbounds [10 x float], [10 x float]* %r1410, i32 0, i32 %r2262
+	%r1560 = load float, float* %r1559
+	%r1561 = sitofp i32 %r1557 to float
+	%r1562 = fsub float %r1561, %r1560
+	%r1563 = fptosi float %r1562 to i32
+	store i32 %r1563, i32* %r1554
+	%r1566 = add i32 %r2262, 1
+	move i32 %r2262<- %r1566
+	br label %b20
+b22:
+	%r1569 = load i32, i32* @k
+	%r1570 = getelementptr inbounds [10 x i32], [10 x i32]* %r1520, i32 0, i32 %r1569
+	%r1571 = load i32, i32* %r1570
+	%r1572 = getelementptr inbounds [10 x float], [10 x float]* %r1410, i32 0, i32 8
+	%r1573 = load float, float* %r1572
+	%r1574 = sitofp i32 %r1571 to float
+	%r1575 = fmul float %r1574, %r1573
+	%r1576 = fptosi float %r1575 to i32
+	ret i32 %r1576
+}
+define dso_local float @params_f40_i24(i32 %f270, i32 %f271, i32 %f272, float %f273, i32 %f274, i32 %f275, i32 %f276, float %f277, float %f278, float %f279, i32 %f280, float %f281, float %f282, i32 %f283, float %f284, i32 %f285, float %f286, float %f287, float %f288, float %f289, float %f290, float %f291, i32 %f292, float %f293, i32 %f294, i32 %f295, float %f296, float %f297, float %f298, float %f299, float %f300, i32 %f301, float %f302, i32 %f303, float %f304, float %f305, float %f306, float %f307, i32 %f308, i32 %f309, float %f310, float %f311, float %f312, i32 %f313, float %f314, i32 %f315, i32 %f316, float %f317, float %f318, float %f319, float %f320, i32 %f321, i32 %f322, i32 %f323, float %f324, float %f325, float %f326, float %f327, float %f328, float %f329, i32 %f330, float %f331, i32 %f332, float %f333) 
+{
+b5:
+	%r596 = alloca [8 x i32]
+	%r535 = alloca [10 x float]
+	%r463 = icmp ne i32 %f270, 0
+	br i1 %r463, label %b6, label %b7
+b6:
+	%r467 = fadd float %f312, %f288
+	%r469 = fadd float %r467, %f331
+	%r471 = fadd float %r469, %f281
+	%r474 = fadd float %f273, %f306
+	%r476 = fadd float %r474, %f291
+	%r478 = fadd float %r476, %f279
+	%r481 = fadd float %f277, %f299
+	%r483 = fadd float %r481, %f311
+	%r485 = fadd float %r483, %f289
+	%r488 = fadd float %f287, %f319
+	%r490 = fadd float %r488, %f310
+	%r492 = fadd float %r490, %f278
+	%r495 = fadd float %f305, %f329
+	%r497 = fadd float %r495, %f324
+	%r499 = fadd float %r497, %f325
+	%r502 = fadd float %f296, %f304
+	%r504 = fadd float %r502, %f326
+	%r506 = fadd float %r504, %f298
+	%r509 = fadd float %f318, %f300
+	%r511 = fadd float %r509, %f327
+	%r513 = fadd float %r511, %f317
+	%r516 = fadd float %f282, %f320
+	%r518 = fadd float %r516, %f286
+	%r520 = fadd float %r518, %f314
+	%r523 = fadd float %f293, %f297
+	%r525 = fadd float %r523, %f307
+	%r527 = fadd float %r525, %f333
+	%r530 = fadd float %f328, %f284
+	%r532 = fadd float %r530, %f290
+	%r534 = fadd float %r532, %f302
+	%r536 = getelementptr inbounds [10 x float], [10 x float]* %r535, i32 0, i32 0
+	store float %r471, float* %r536
+	%r538 = getelementptr inbounds float, float* %r536, i32 1
+	store float %r478, float* %r538
+	%r540 = getelementptr inbounds float, float* %r536, i32 2
+	store float %r485, float* %r540
+	%r542 = getelementptr inbounds float, float* %r536, i32 3
+	store float %r492, float* %r542
+	%r544 = getelementptr inbounds float, float* %r536, i32 4
+	store float %r499, float* %r544
+	%r546 = getelementptr inbounds float, float* %r536, i32 5
+	store float %r506, float* %r546
+	%r548 = getelementptr inbounds float, float* %r536, i32 6
+	store float %r513, float* %r548
+	%r550 = getelementptr inbounds float, float* %r536, i32 7
+	store float %r520, float* %r550
+	%r552 = getelementptr inbounds float, float* %r536, i32 8
+	store float %r527, float* %r552
+	%r554 = getelementptr inbounds float, float* %r536, i32 9
+	store float %r534, float* %r554
+	%r558 = add i32 %f283, %f274
+	%r560 = add i32 %r558, %f271
+	%r563 = add i32 %f321, %f275
+	%r565 = add i32 %r563, %f276
+	%r568 = add i32 %f272, %f292
+	%r570 = add i32 %r568, %f301
+	%r573 = add i32 %f309, %f294
+	%r575 = add i32 %r573, %f315
+	%r578 = add i32 %f313, %f295
+	%r580 = add i32 %r578, %f332
+	%r583 = add i32 %f330, %f316
+	%r585 = add i32 %r583, %f303
+	%r588 = add i32 %f308, %f285
+	%r590 = add i32 %r588, %f323
+	%r593 = add i32 %f322, %f280
+	%r595 = add i32 %r593, %f270
+	%r597 = getelementptr inbounds [8 x i32], [8 x i32]* %r596, i32 0, i32 0
+	store i32 %r560, i32* %r597
+	%r599 = getelementptr inbounds i32, i32* %r597, i32 1
+	store i32 %r565, i32* %r599
+	%r601 = getelementptr inbounds i32, i32* %r597, i32 2
+	store i32 %r570, i32* %r601
+	%r603 = getelementptr inbounds i32, i32* %r597, i32 3
+	store i32 %r575, i32* %r603
+	%r605 = getelementptr inbounds i32, i32* %r597, i32 4
+	store i32 %r580, i32* %r605
+	%r607 = getelementptr inbounds i32, i32* %r597, i32 5
+	store i32 %r585, i32* %r607
+	%r609 = getelementptr inbounds i32, i32* %r597, i32 6
+	store i32 %r590, i32* %r609
+	%r611 = getelementptr inbounds i32, i32* %r597, i32 7
+	store i32 %r595, i32* %r611
+	%r613 = getelementptr inbounds [10 x float], [10 x float]* %r535, i32 0, i32 0
+	call void @putfarray(i32 10, float* %r613)
+	%r615 = getelementptr inbounds [8 x i32], [8 x i32]* %r596, i32 0, i32 0
+	call void @putarray(i32 8, i32* %r615)
+	move i32 %r2263<- 0
+	br label %b9
+b7:
+	%r709 = call float @params_f40_i24(i32 %f274, i32 %f271, i32 %f272, float %f273, i32 %f274, i32 %f275, i32 %f276, float %f277, float %f278, float %f279, i32 %f280, float %f281, float %f282, i32 %f283, float %f284, i32 %f285, float %f286, float %f287, float %f288, float %f289, float %f290, float %f291, i32 %f292, float %f293, i32 %f294, i32 %f295, float %f296, float %f297, float %f298, float %f299, float %f300, i32 %f301, float %f302, i32 %f303, float %f304, float %f305, float %f306, float %f307, i32 %f308, i32 %f309, float %f310, float %f311, float %f312, i32 %f313, float %f314, i32 %f315, i32 %f316, float %f317, float %f318, float %f319, float %f320, i32 %f321, i32 %f322, i32 %f323, float %f324, float %f325, float %f326, float %f327, float %f328, float %f329, i32 %f330, float %f331, i32 %f332, float %f333)
+	ret float %r709
+b9:
+	%r621 = icmp slt i32 %r2263, 8
+	br i1 %r621, label %b10, label %b11
+b10:
+	%r624 = getelementptr inbounds [8 x i32], [8 x i32]* %r596, i32 0, i32 %r2263
+	%r626 = getelementptr inbounds [8 x i32], [8 x i32]* %r596, i32 0, i32 %r2263
+	%r627 = load i32, i32* %r626
+	%r629 = getelementptr inbounds [10 x float], [10 x float]* %r535, i32 0, i32 %r2263
+	%r630 = load float, float* %r629
+	%r631 = sitofp i32 %r627 to float
+	%r632 = fsub float %r631, %r630
+	%r633 = fptosi float %r632 to i32
+	store i32 %r633, i32* %r624
+	%r636 = add i32 %r2263, 1
+	move i32 %r2263<- %r636
+	br label %b9
+b11:
+	%r639 = load i32, i32* @k
+	%r640 = getelementptr inbounds [8 x i32], [8 x i32]* %r596, i32 0, i32 %r639
+	%r641 = load i32, i32* %r640
+	%r642 = sitofp i32 %r641 to float
+	ret float %r642
+}
+define dso_local float @params_f40(float %f0, float %f1, float %f2, float %f3, float %f4, float %f5, float %f6, float %f7, float %f8, float %f9, float %f10, float %f11, float %f12, float %f13, float %f14, float %f15, float %f16, float %f17, float %f18, float %f19, float %f20, float %f21, float %f22, float %f23, float %f24, float %f25, float %f26, float %f27, float %f28, float %f29, float %f30, float %f31, float %f32, float %f33, float %f34, float %f35, float %f36, float %f37, float %f38, float %f39) 
 {
 b1:
-	%r4 = sitofp i32 0 to float
-	%r5 = fcmp ogt float %f0, %r4
-	br i1 %r5, label %b2, label %b3
+	%r194 = alloca [10 x float]
+	%r121 = sitofp i32 0 to float
+	%r122 = fcmp one float %f39, %r121
+	br i1 %r122, label %b2, label %b3
 b2:
-	ret float %f0
+	%r126 = fadd float %f0, %f1
+	%r128 = fadd float %r126, %f2
+	%r130 = fadd float %r128, %f3
+	%r133 = fadd float %f4, %f5
+	%r135 = fadd float %r133, %f6
+	%r137 = fadd float %r135, %f7
+	%r140 = fadd float %f8, %f9
+	%r142 = fadd float %r140, %f10
+	%r144 = fadd float %r142, %f11
+	%r147 = fadd float %f12, %f13
+	%r149 = fadd float %r147, %f14
+	%r151 = fadd float %r149, %f15
+	%r154 = fadd float %f16, %f17
+	%r156 = fadd float %r154, %f18
+	%r158 = fadd float %r156, %f19
+	%r161 = fadd float %f20, %f21
+	%r163 = fadd float %r161, %f22
+	%r165 = fadd float %r163, %f23
+	%r168 = fadd float %f24, %f25
+	%r170 = fadd float %r168, %f26
+	%r172 = fadd float %r170, %f27
+	%r175 = fadd float %f28, %f29
+	%r177 = fadd float %r175, %f30
+	%r179 = fadd float %r177, %f31
+	%r182 = fadd float %f32, %f33
+	%r184 = fadd float %r182, %f34
+	%r186 = fadd float %r184, %f35
+	%r189 = fadd float %f36, %f37
+	%r191 = fadd float %r189, %f38
+	%r193 = fadd float %r191, %f39
+	%r195 = getelementptr inbounds [10 x float], [10 x float]* %r194, i32 0, i32 0
+	store float %r130, float* %r195
+	%r197 = getelementptr inbounds float, float* %r195, i32 1
+	store float %r137, float* %r197
+	%r199 = getelementptr inbounds float, float* %r195, i32 2
+	store float %r144, float* %r199
+	%r201 = getelementptr inbounds float, float* %r195, i32 3
+	store float %r151, float* %r201
+	%r203 = getelementptr inbounds float, float* %r195, i32 4
+	store float %r158, float* %r203
+	%r205 = getelementptr inbounds float, float* %r195, i32 5
+	store float %r165, float* %r205
+	%r207 = getelementptr inbounds float, float* %r195, i32 6
+	store float %r172, float* %r207
+	%r209 = getelementptr inbounds float, float* %r195, i32 7
+	store float %r179, float* %r209
+	%r211 = getelementptr inbounds float, float* %r195, i32 8
+	store float %r186, float* %r211
+	%r213 = getelementptr inbounds float, float* %r195, i32 9
+	store float %r193, float* %r213
+	%r215 = getelementptr inbounds [10 x float], [10 x float]* %r194, i32 0, i32 0
+	call void @putfarray(i32 10, float* %r215)
+	%r217 = load i32, i32* @k
+	%r218 = getelementptr inbounds [10 x float], [10 x float]* %r194, i32 0, i32 %r217
+	%r219 = load float, float* %r218
+	ret float %r219
 b3:
-	%r11 = fneg float %f0
-	ret float %r11
-}
-define dso_local float @my_sin(float %f43) 
-{
-b8:
-	%r47 = fcmp ogt float %f43, 0x401921fb60000000
-	br i1 %r47, label %b9, label %b11
-b9:
-	%r54 = fdiv float %f43, 0x401921fb60000000
-	%r56 = fptosi float %r54 to i32
-	%r60 = sitofp i32 %r56 to float
-	%r61 = fmul float %r60, 0x401921fb60000000
-	%r62 = fsub float %f43, %r61
-	move float %r487<- %r62
-	br label %b10
-b10:
-	%r66 = fcmp ogt float %r487, 0x400921fb60000000
-	br i1 %r66, label %b12, label %b64
-b11:
-	%r50 = fneg float 0x401921fb60000000
-	%r51 = fcmp olt float %f43, %r50
-	br i1 %r51, label %b9, label %b63
-b12:
-	%r69 = fsub float %r487, 0x401921fb60000000
-	move float %r485<- %r69
-	br label %b13
-b13:
-	%r73 = fneg float 0x400921fb60000000
-	%r74 = fcmp olt float %r485, %r73
-	br i1 %r74, label %b14, label %b65
-b14:
-	%r77 = fadd float %r485, 0x401921fb60000000
-	move float %r486<- %r77
-	br label %b15
-b15:
-	%r81 = call float @my_sin_impl(float %r486)
-	ret float %r81
-b63:
-	move float %r487<- %f43
-	br label %b10
-b64:
-	move float %r485<- %r487
-	br label %b13
-b65:
-	move float %r486<- %r485
-	br label %b15
-}
-define dso_local void @dct([8 x float]* %f138, [8 x float]* %f139, i32 %f140, i32 %f141) 
-{
-b24:
-	move i32 %r497<- 0
-	br label %b25
-b25:
-	%r155 = icmp slt i32 %r497, %f140
-	br i1 %r155, label %b26, label %b27
-b26:
-	move i32 %r495<- 0
-	move i32 %r492<- %r493
-	move i32 %r490<- %r491
-	br label %b28
-b27:
-	ret void
-b28:
-	%r162 = icmp slt i32 %r495, %f141
-	br i1 %r162, label %b29, label %b30
-b29:
-	%r167 = getelementptr inbounds [8 x float], [8 x float]* %f138, i32 %r497, i32 %r495
-	%r168 = sitofp i32 0 to float
-	store float %r168, float* %r167
-	move i32 %r494<- 0
-	move i32 %r489<- %r490
-	br label %b31
-b30:
-	%r239 = add i32 %r497, 1
-	move i32 %r497<- %r239
-	move i32 %r496<- %r495
-	move i32 %r493<- %r492
-	move i32 %r491<- %r490
-	br label %b25
-b31:
-	%r175 = icmp slt i32 %r494, %f140
-	br i1 %r175, label %b32, label %b33
-b32:
-	move i32 %r488<- 0
-	br label %b34
-b33:
-	%r235 = add i32 %r495, 1
-	move i32 %r495<- %r235
-	move i32 %r492<- %r494
-	move i32 %r490<- %r489
-	br label %b28
-b34:
-	%r182 = icmp slt i32 %r488, %f141
-	br i1 %r182, label %b35, label %b36
-b35:
-	%r187 = getelementptr inbounds [8 x float], [8 x float]* %f138, i32 %r497, i32 %r495
-	%r191 = getelementptr inbounds [8 x float], [8 x float]* %f138, i32 %r497, i32 %r495
-	%r192 = load float, float* %r191
-	%r196 = getelementptr inbounds [8 x float], [8 x float]* %f139, i32 %r494, i32 %r488
-	%r197 = load float, float* %r196
-	%r199 = sitofp i32 %f140 to float
-	%r200 = fdiv float 0x400921fb60000000, %r199
-	%r202 = fdiv float 0x3ff0000000000000, 0x4000000000000000
-	%r203 = sitofp i32 %r494 to float
-	%r204 = fadd float %r203, %r202
-	%r205 = fmul float %r200, %r204
-	%r207 = sitofp i32 %r497 to float
-	%r208 = fmul float %r205, %r207
-	%r209 = call float @my_cos(float %r208)
-	%r210 = fmul float %r197, %r209
-	%r212 = sitofp i32 %f141 to float
-	%r213 = fdiv float 0x400921fb60000000, %r212
-	%r215 = fdiv float 0x3ff0000000000000, 0x4000000000000000
-	%r216 = sitofp i32 %r488 to float
-	%r217 = fadd float %r216, %r215
-	%r218 = fmul float %r213, %r217
-	%r220 = sitofp i32 %r495 to float
-	%r221 = fmul float %r218, %r220
-	%r222 = call float @my_cos(float %r221)
-	%r223 = fmul float %r210, %r222
-	%r224 = fadd float %r192, %r223
-	store float %r224, float* %r187
-	%r227 = add i32 %r488, 1
-	move i32 %r488<- %r227
-	br label %b34
-b36:
-	%r231 = add i32 %r494, 1
-	move i32 %r494<- %r231
-	move i32 %r489<- %r488
-	br label %b31
-}
-define dso_local void @idct([8 x float]* %f243, [8 x float]* %f244, i32 %f245, i32 %f246) 
-{
-b37:
-	move i32 %r509<- 0
-	br label %b38
-b38:
-	%r260 = icmp slt i32 %r509, %f245
-	br i1 %r260, label %b39, label %b40
-b39:
-	move i32 %r508<- 0
-	move i32 %r503<- %r505
-	move i32 %r500<- %r502
-	br label %b41
-b40:
-	ret void
-b41:
-	%r267 = icmp slt i32 %r508, %f246
-	br i1 %r267, label %b42, label %b43
-b42:
-	%r272 = getelementptr inbounds [8 x float], [8 x float]* %f243, i32 %r509, i32 %r508
-	%r273 = sitofp i32 1 to float
-	%r274 = fdiv float %r273, 0x4010000000000000
-	%r276 = getelementptr inbounds [8 x float], [8 x float]* %f244, i32 0, i32 0
-	%r277 = load float, float* %r276
-	%r278 = fmul float %r274, %r277
-	store float %r278, float* %r272
-	move i32 %r504<- 1
-	br label %b44
-b43:
-	%r423 = add i32 %r509, 1
-	move i32 %r509<- %r423
-	move i32 %r507<- %r508
-	move i32 %r505<- %r503
-	move i32 %r502<- %r500
-	br label %b38
-b44:
-	%r286 = icmp slt i32 %r504, %f245
-	br i1 %r286, label %b45, label %b46
-b45:
-	%r291 = getelementptr inbounds [8 x float], [8 x float]* %f243, i32 %r509, i32 %r508
-	%r295 = getelementptr inbounds [8 x float], [8 x float]* %f243, i32 %r509, i32 %r508
-	%r296 = load float, float* %r295
-	%r297 = sitofp i32 1 to float
-	%r298 = fdiv float %r297, 0x4000000000000000
-	%r301 = getelementptr inbounds [8 x float], [8 x float]* %f244, i32 %r504, i32 0
-	%r302 = load float, float* %r301
-	%r303 = fmul float %r298, %r302
-	%r304 = fadd float %r296, %r303
-	store float %r304, float* %r291
-	%r307 = add i32 %r504, 1
-	move i32 %r504<- %r307
-	br label %b44
-b46:
-	move i32 %r499<- 1
-	br label %b47
-b47:
-	%r314 = icmp slt i32 %r499, %f246
-	br i1 %r314, label %b48, label %b49
-b48:
-	%r319 = getelementptr inbounds [8 x float], [8 x float]* %f243, i32 %r509, i32 %r508
-	%r323 = getelementptr inbounds [8 x float], [8 x float]* %f243, i32 %r509, i32 %r508
-	%r324 = load float, float* %r323
-	%r325 = sitofp i32 1 to float
-	%r326 = fdiv float %r325, 0x4000000000000000
-	%r329 = getelementptr inbounds [8 x float], [8 x float]* %f244, i32 0, i32 %r499
-	%r330 = load float, float* %r329
-	%r331 = fmul float %r326, %r330
-	%r332 = fadd float %r324, %r331
-	store float %r332, float* %r319
-	%r335 = add i32 %r499, 1
-	move i32 %r499<- %r335
-	br label %b47
-b49:
-	move i32 %r506<- 1
-	move i32 %r501<- %r499
-	br label %b50
-b50:
-	%r342 = icmp slt i32 %r506, %f245
-	br i1 %r342, label %b51, label %b52
-b51:
-	move i32 %r498<- 1
-	br label %b53
-b52:
-	%r403 = getelementptr inbounds [8 x float], [8 x float]* %f243, i32 %r509, i32 %r508
-	%r407 = getelementptr inbounds [8 x float], [8 x float]* %f243, i32 %r509, i32 %r508
-	%r408 = load float, float* %r407
-	%r409 = fmul float %r408, 0x4000000000000000
-	%r411 = sitofp i32 %f245 to float
-	%r412 = fdiv float %r409, %r411
-	%r413 = fmul float %r412, 0x4000000000000000
-	%r415 = sitofp i32 %f246 to float
-	%r416 = fdiv float %r413, %r415
-	store float %r416, float* %r403
-	%r419 = add i32 %r508, 1
-	move i32 %r508<- %r419
-	move i32 %r503<- %r506
-	move i32 %r500<- %r501
-	br label %b41
-b53:
-	%r348 = icmp slt i32 %r498, %f246
-	br i1 %r348, label %b54, label %b55
-b54:
-	%r353 = getelementptr inbounds [8 x float], [8 x float]* %f243, i32 %r509, i32 %r508
-	%r357 = getelementptr inbounds [8 x float], [8 x float]* %f243, i32 %r509, i32 %r508
-	%r358 = load float, float* %r357
-	%r362 = getelementptr inbounds [8 x float], [8 x float]* %f244, i32 %r506, i32 %r498
-	%r363 = load float, float* %r362
-	%r365 = sitofp i32 %f245 to float
-	%r366 = fdiv float 0x400921fb60000000, %r365
-	%r368 = fdiv float 0x3ff0000000000000, 0x4000000000000000
-	%r369 = sitofp i32 %r509 to float
-	%r370 = fadd float %r369, %r368
-	%r371 = fmul float %r366, %r370
-	%r373 = sitofp i32 %r506 to float
-	%r374 = fmul float %r371, %r373
-	%r375 = call float @my_cos(float %r374)
-	%r376 = fmul float %r363, %r375
-	%r378 = sitofp i32 %f246 to float
-	%r379 = fdiv float 0x400921fb60000000, %r378
-	%r381 = fdiv float 0x3ff0000000000000, 0x4000000000000000
-	%r382 = sitofp i32 %r508 to float
-	%r383 = fadd float %r382, %r381
-	%r384 = fmul float %r379, %r383
-	%r386 = sitofp i32 %r498 to float
-	%r387 = fmul float %r384, %r386
-	%r388 = call float @my_cos(float %r387)
-	%r389 = fmul float %r376, %r388
-	%r390 = fadd float %r358, %r389
-	store float %r390, float* %r353
-	%r393 = add i32 %r498, 1
-	move i32 %r498<- %r393
-	br label %b53
-b55:
-	%r397 = add i32 %r506, 1
-	move i32 %r506<- %r397
-	move i32 %r501<- %r498
-	br label %b50
+	%r263 = fadd float %f0, %f1
+	%r265 = fadd float %r263, %f2
+	%r266 = call float @params_f40(float %f1, float %f2, float %f3, float %f4, float %f5, float %f6, float %f7, float %f8, float %f9, float %f10, float %f11, float %f12, float %f13, float %f14, float %f15, float %f16, float %f17, float %f18, float %f19, float %f20, float %f21, float %f22, float %f23, float %f24, float %f25, float %f26, float %f27, float %f28, float %f29, float %f30, float %f31, float %f32, float %f33, float %f34, float %f35, float %f36, float %f37, float %f38, float %f39, float %r265)
+	ret float %r266
 }
