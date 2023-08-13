@@ -33,6 +33,14 @@ public class Instr extends Value {
         basicBlock.getFunction().getBasicBlocks().get(0).addInstrHead(this);
     }
 
+    public Instr(Type type,Instr instr){
+        this.type = type;
+        this.basicBlock = instr.getBasicBlock();
+        this.name = "%r" + count++;
+        this.uses = new ArrayList<>();
+        instr.getBasicBlock().getInstrs().insertBefore(instr, this);
+    }
+
     public Instr(){
         this.uses = new ArrayList<>();
     }

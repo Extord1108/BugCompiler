@@ -18,6 +18,13 @@ public class Binary extends Instr {
         this.addUse(right);
     }
 
+    public Binary(Type type, OpTree.Operator op, Value left, Value right,Instr instr) {
+        super(type, instr);
+        this.op = op;
+        this.addUse(left);
+        this.addUse(right);
+    }
+
     @Override
     public String toString() {
         if(type instanceof FloatType)
