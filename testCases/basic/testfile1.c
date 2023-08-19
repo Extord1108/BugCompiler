@@ -1,112 +1,106 @@
-int sheet1[500][500] = {};
-int sheet2[500][500] = {};
-int active = 1;
-int width;
-int height;
-int steps;
+const int base = 16;
 
-void read_map() {
-  width = getint();
-  height = getint();
-  // width <= 498, height <= 498
-  steps = getint();
-  getch();
-
-  int i = 1;
-  int j = 1;
-
-  while (j <= height) {
-    i = 1;
-    while (i <= width) {
-      int get = getch();
-      if (get == 35) {
-        sheet1[j][i] = 1;
-      } else {
-        sheet1[j][i] = 0;
-      }
-      i = i + 1;
+int getMaxNum(int n, int arr[]){
+    int ret = 0;
+    int i = 0;
+    while (i < n){
+        if (arr[i] > ret) ret = arr[i];
+        i = i + 1;
     }
-    // line feed
-    getch();
-    j = j + 1;
-  }
+    return ret;
 }
 
-void put_map() {
-  int i = 1;
-  int j = 1;
-
-  while (j <= height) {
-    i = 1;
-    while (i <= width) {
-      if (sheet1[j][i] == 1) {
-        putch(35);
-      } else {
-        putch(46);
-      }
-      i = i + 1;
+int getNumPos(int num, int pos){
+    int tmp = 1;
+    int i = 0;
+    while (i < pos){
+        num = num / base;
+        i = i + 1;
     }
-    // line feed
+    return num % base;
+}
+
+void radixSort(int bitround, int a[], int l, int r){
+    int head[base] = {};
+    int tail[base] = {};
+    int cnt[base] = {};
+
+    if (bitround == -1 || l + 1 >= r) return;
+
+    {
+        int i = l;
+
+        while (i < r){
+            cnt[getNumPos(a[i], bitround)]
+                = cnt[getNumPos(a[i], bitround)] + 1;
+            i = i + 1;
+        }
+        head[0] = l;
+        tail[0] = l + cnt[0];
+
+        i = 1;
+        while (i < base){
+            head[i] = tail[i - 1];
+            tail[i] = head[i] + cnt[i];
+            i = i + 1;
+        }
+        i = 0;
+        while (i < base){
+            while (head[i] < tail[i]){
+                int v = a[head[i]];
+                while (getNumPos(v, bitround) != i){
+                    int t = v;
+                    v = a[head[getNumPos(t, bitround)]];
+                    a[head[getNumPos(t, bitround)]] = t;
+                    head[getNumPos(t, bitround)] = head[getNumPos(t, bitround)] + 1;
+                }
+                a[head[i]] = v;
+                head[i] = head[i] + 1;
+            }
+            i = i + 1;
+        }
+    }
+
+    {
+        int i = l;
+
+        head[0] = l;
+        tail[0] = l + cnt[0];
+
+        i = 0;
+        while (i < base){
+            if (i > 0){
+                head[i] = tail[i - 1];
+                tail[i] = head[i] + cnt[i];
+            }
+            radixSort(bitround - 1, a, head[i], tail[i]);
+            i = i + 1;
+        }
+    }
+
+    return;
+}
+
+int a[30000010];
+int ans;
+
+int main(){
+    int n = getarray(a);
+
+    starttime();
+
+    radixSort(8, a, 0, n);
+
+    int i = 0;
+    while (i < n){
+        ans = ans + i * (a[i] % (2 + i));
+        i = i + 1;
+    }
+
+    if (ans < 0)
+        ans = -ans;
+    stoptime();
+    putint(ans);
     putch(10);
-    j = j + 1;
-  }
-}
-
-void swap12() {
-  int i = 1;
-  int j = 1;
-
-  while (j <= height) {
-    i = 1;
-    while (i <= width) {
-      sheet1[j][i] = sheet2[j][i];
-      i = i + 1;
-    }
-    j = j + 1;
-  }
-}
-
-void step(int source[][500], int target[][500]) {
-  int i = 1;
-  int j = 1;
-
-  while (j <= height) {
-    i = 1;
-    while (i <= width) {
-      int alive_count = source[j - 1][i - 1] + source[j - 1][i] +
-                        source[j - 1][i + 1] + source[j][i - 1] +
-                        source[j][i + 1] + source[j + 1][i - 1] +
-                        source[j + 1][i] + source[j + 1][i + 1];
-      if (source[j][i] == 1 && alive_count == 2) {
-        target[j][i] = 1;
-      } else if (alive_count == 3) {
-        target[j][i] = 1;
-      } else {
-        target[j][i] = 0;
-      }
-      i = i + 1;
-    }
-    j = j + 1;
-  }
-}
-
-int main() {
-  read_map();
-  starttime();
-  while (steps > 0) {
-    if (active == 1) {
-      step(sheet1, sheet2);
-      active = 2;
-    } else {
-      step(sheet2, sheet1);
-      active = 1;
-    }
-    steps = steps - 1;
-  }
-  stoptime();
-  if (active == 2) {
-    swap12();
-  }
-  put_map();
-  return 0;
+    return 0;
 }
