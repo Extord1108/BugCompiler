@@ -11,6 +11,7 @@ import lir.mcInstr.*;
 import manager.Manager;
 import util.MyList;
 
+import java.math.BigInteger;
 import java.util.*;
 
 public class CodeGen {
@@ -698,13 +699,72 @@ public class CodeGen {
                         }
                     } else {
                         // TODO 魔法数的除法
-                        Operand immOpd = getOperand(new Variable.ConstInt(imm));
-                        if(immOpd instanceof Operand.Imm) {
-                            Operand temp = new Operand.VirtualReg(immOpd.isFloat(), curMcFunc);
-                            new McMove(temp, immOpd, curMcBlock);
-                            immOpd = temp;
+                        int magic, more;
+                        int log2d = 32 - 1 - Integer.numberOfLeadingZeros(abs);
+                        final int negativeDivisor = 128;
+                        final int addMarker = 64;
+                        final int s32ShiftMask = 31;
+                        final long uint32Mask = 0xFFFFFFFFL;
+                        final int uint8Mask = 0xFF;
+                        if((abs & (abs - 1)) == 0) {
+                            magic = 0;
+                            more = (imm < 0 ? (log2d | negativeDivisor) : log2d) & uint8Mask;
                         }
-                        new McBinary(McBinary.BinaryType.Div, dstVr, lopd, immOpd, curMcBlock);
+                        else {
+                            int rem, proposed;
+                            BigInteger n = BigInteger.valueOf((1 << (log2d - 1)) & uint32Mask).shiftLeft(32).or(BigInteger.valueOf(0));
+                            BigInteger[] div = n.divideAndRemainder(BigInteger.valueOf(abs));
+                            proposed = div[0].intValueExact();
+                            rem = div[1].intValueExact();
+                            proposed += proposed;
+                            int twiceRem = rem + rem;
+                            if ((twiceRem & uint32Mask) >= (abs & uint32Mask) || (twiceRem & uint32Mask) < (rem & uint32Mask)) {
+                                proposed += 1;
+                            }
+                            more = (log2d | addMarker) & uint8Mask;
+                            proposed += 1;
+                            magic = proposed;
+                            if (imm < 0) {
+                                more |= negativeDivisor;
+                            }
+
+                        }
+                        int sh = more & s32ShiftMask;
+                        int mask = (1 << sh), sign = ((more & (0x80)) != 0) ? -1 : 0, isPower2 = (magic == 0) ? 1 : 0;
+                        Operand q = new Operand.VirtualReg(false, curMcFunc);
+
+                        Operand magicOpd = getOperand(new Variable.ConstInt(magic));
+                        if(magicOpd instanceof Operand.Imm) {
+                            Operand temp = new Operand.VirtualReg(false, curMcFunc);
+                            new McMove(temp, magicOpd, curMcBlock);
+                            magicOpd = temp;
+                        }
+                        new McBinary(McBinary.BinaryType.SMMUL, q, lopd, magicOpd, curMcBlock);
+                        new McBinary(McBinary.BinaryType.Add, q, q, lopd, curMcBlock);
+
+                        Operand q1 = new Operand.VirtualReg(false, curMcFunc);
+
+                        Operand tmp2 = getOperand(new Variable.ConstInt(mask - isPower2));
+                        if(tmp2 instanceof Operand.Imm) {
+                            Operand temp = new Operand.VirtualReg(false, curMcFunc);
+                            new McMove(temp, tmp2, curMcBlock);
+                            tmp2 = temp;
+                        }
+                        new McBinary(McBinary.BinaryType.And, q1, tmp2, q, new MCShift(MCShift.ShiftType.asr,
+                                getOperand(new Variable.ConstInt(31))), curMcBlock);
+                        new McBinary(McBinary.BinaryType.Add, q, q, q1, curMcBlock);
+                        new MCShift(dstVr, q, getOperand(new Variable.ConstInt(sh)),MCShift.ShiftType.asr, curMcBlock);
+                        if (sign < 0) {
+                            new McBinary(McBinary.BinaryType.Rsb, dstVr, dstVr, getOperand(new Variable.ConstInt(0)), curMcBlock);
+                        }
+
+//                        Operand immOpd = getOperand(new Variable.ConstInt(imm));
+//                        if(immOpd instanceof Operand.Imm) {
+//                            Operand temp = new Operand.VirtualReg(immOpd.isFloat(), curMcFunc);
+//                            new McMove(temp, immOpd, curMcBlock);
+//                            immOpd = temp;
+//                        }
+//                        new McBinary(McBinary.BinaryType.Div, dstVr, lopd, immOpd, curMcBlock);
                     }
                 }
                 else {

@@ -92,7 +92,8 @@ public class McBinary extends McInstr{
         Or("orr"),
         CastInt("castint"), // 隐式转换
         CastFloat("casefloat"),
-        Rsb("rsb")
+        Rsb("rsb"),
+        SMMUL("smmul"),
         ;
 
         private final String name;
