@@ -60,6 +60,8 @@ public class Compiler {
                 peepHole.run();
             }
 
+            Manager.getManager().bssInit();
+
             // 输出 机器代码arm
             if (!arg.targetFile.isEmpty()) {
                 FileOutputStream armOut = OutputHandler.getOutputFile(arg.targetFile);

@@ -5,8 +5,10 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import frontend.semantic.InitVal;
 import ir.Function;
 import ir.GlobalValue;
+import ir.Variable;
 import ir.type.FloatType;
 import ir.type.Int32Type;
 import ir.type.PointerType;
@@ -21,6 +23,8 @@ public class Manager {
     private static final ArrayList<McFunction> mcFunclist = new ArrayList<>();
     private static final ArrayList<GlobalValue> globals = new ArrayList<>();
     private static final ArrayList<Operand.Global> globalOpds = new ArrayList<>();
+    private static final ArrayList<Operand.Global> bssGlobals = new ArrayList<>();
+    private static final ArrayList<Operand.Global> dataGlobals = new ArrayList<>();
     private static final Manager manager = new Manager();
 
     public static class ExternFunction {
@@ -135,6 +139,17 @@ public class Manager {
         }
     }
 
+    public void bssInit() {
+        for(Operand.Global global: globalOpds) {
+            InitVal initVal = global.getGlobalValue().getInitVal();
+            if(initVal.getValue() instanceof Variable.ZeroInit) {
+                bssGlobals.add(global);
+                continue;
+            }
+            dataGlobals.add(global);
+        }
+    }
+
     public void outputArm(OutputStream out){
         OutputHandler.clearArmString();
         StringBuilder stb = new StringBuilder();
@@ -148,9 +163,14 @@ public class Manager {
         stb.append("\n\n");
         stb.append(".section .bss\n");
         stb.append(".align 2\n");
+        for(Operand.Global global: bssGlobals) {
+            stb.append("\n.global\t").append(global).append("\n");
+            stb.append(global).append(":\n");
+            stb.append(global.getGlobalValue().getInitVal().armOut());
+        }
         stb.append("\n.section .data\n");
         stb.append(".align 2\n");
-        for(Operand.Global global: globalOpds) {
+        for(Operand.Global global: dataGlobals) {
             stb.append("\n.global\t").append(global).append("\n");
             stb.append(global).append(":\n");
             stb.append(global.getGlobalValue().getInitVal().armOut());

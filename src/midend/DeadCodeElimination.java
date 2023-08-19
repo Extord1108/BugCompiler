@@ -1,6 +1,7 @@
 package midend;
 import ir.*;
 import ir.instruction.*;
+import ir.type.ArrayType;
 import midend.Pass;
 import util.MyList;
 
@@ -15,6 +16,8 @@ public class DeadCodeElimination extends Pass {
     void run() {
         new UselessReturnElimination(functions, globals).run();//删除没有用的return
         new PhiFunctionPruning(functions, globals).run();//删除不活跃的phi指令
+        new UselessGlobalval(functions, globals).run(); // 删除只被store,但是没有被load的全局变量
+        new UselessLocalArray(functions, globals).run(); // 删除无用的数组
         new UselessFunctionElimination(functions, globals).run();//删除没有用的函数
         new ADCE(functions, globals).run();//激进的死代码删除
     }
@@ -254,5 +257,134 @@ public class DeadCodeElimination extends Pass {
         }
     }
 
+    private class UselessGlobalval extends Pass {
+        public UselessGlobalval(HashMap<String, Function> functions, ArrayList<GlobalValue> globals) {
+            super(functions, globals);
+        }
 
+        void run() {
+            HashSet<GlobalValue> remove = new HashSet<>();
+            for(GlobalValue globalValue: globals){
+                if(globalValue.getType().getBasicType() instanceof ArrayType) {
+                    boolean ret = tryRemoveUselessArray(globalValue);
+                    if(ret) {
+                        remove.add(globalValue);
+                    }
+                    continue;
+                }
+                boolean canRemove = true;
+                for(Used used: globalValue.getUsedInfo()) {
+                    if(!(used.getUser() instanceof Store)){
+                        canRemove = false;
+                    }
+                }
+                if(canRemove) {
+                    for(Used used: globalValue.getUsedInfo()) {
+                        Instr user = used.getUser();
+                        user.remove();
+                    }
+                    remove.add(globalValue);
+                }
+            }
+            for(Value value: remove) {
+                globals.remove(value);
+            }
+        }
+
+        private boolean tryRemoveUselessArray(Value value) {
+            HashSet<Instr> instrs = new HashSet<>();
+            boolean ret = check(value, instrs);
+            if(ret) {
+                for(Instr instr: instrs) {
+                    instr.remove();
+                }
+            }
+            return ret;
+        }
+
+        private boolean check(Value value, HashSet<Instr> know) {
+            if(value instanceof Instr) {
+                know.add((Instr) value);
+            }
+            for(Used used: value.getUsedInfo()) {
+                Instr user = used.getUser();
+                if(user instanceof GetElementPtr) {
+                    boolean ret = check(user, know);
+                    if(!ret) {
+                        return false;
+                    }
+                } else {
+                    if(user instanceof Store) {
+                        know.add(user);
+                    } else if(user instanceof Call) {
+                        know.add(user);
+                        Value val = user.getUse(0);
+                        if(val instanceof Function && !val.getName().equals("memset")){
+                            return false;
+                        }
+                    } else {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+    }
+
+    private class UselessLocalArray extends Pass {
+        public UselessLocalArray(HashMap<String, Function> functions, ArrayList<GlobalValue> globals) {
+            super(functions, globals);
+        }
+
+        void run() {
+            for (Function function: functions.values()) {
+                for(BasicBlock basicBlock: function.getBasicBlocks()) {
+                    for(Instr instr: basicBlock.getInstrs()) {
+                        if(instr instanceof Alloc){
+                            tryRemoveUselessArray(instr);
+                        }
+                    }
+                }
+            }
+        }
+
+        private boolean tryRemoveUselessArray(Value value) {
+            HashSet<Instr> instrs = new HashSet<>();
+            boolean ret = check(value, instrs);
+            if(ret) {
+                for(Instr instr: instrs) {
+                    instr.remove();
+                }
+            }
+            return ret;
+        }
+
+        private boolean check(Value value, HashSet<Instr> know) {
+            if(value instanceof Instr) {
+                know.add((Instr) value);
+            }
+            for(Used used: value.getUsedInfo()) {
+                Instr user = used.getUser();
+                if(user instanceof GetElementPtr) {
+                    boolean ret = check(user, know);
+                    if(!ret) {
+                        return false;
+                    }
+                } else {
+                    if(user instanceof Store) {
+                        know.add(user);
+                    } else if(user instanceof Call) {
+                        know.add(user);
+                        Value val = user.getUse(0);
+                        if(val instanceof Function && !val.getName().equals("memset")){
+                            return false;
+                        }
+                    } else {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+    }
 }
