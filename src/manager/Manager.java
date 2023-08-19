@@ -125,7 +125,7 @@ public class Manager {
         }
         //函数声明
         for (Function function : externalFunctions.values()) {
-        OutputHandler.addLlvmString(function.declare());
+            OutputHandler.addLlvmString(function.declare());
         }
         // 函数定义
         for (Function function : functions.values()) {
