@@ -10,6 +10,7 @@ import java.util.Stack;
 public class FunctionInlining extends Pass{
 
     private final int MAX_INSTR = 32;
+    private final int MAX_CALL = 4;
     public FunctionInlining(HashMap<String, Function> functions, ArrayList<GlobalValue> globals) {
         super(functions, globals);
     }
@@ -69,10 +70,8 @@ public class FunctionInlining extends Pass{
                 Loop cloneLoop = null;
                 if(bb.getLoop().getParent().equals(Loop.rootLoop))
                 {
-                    if(bb.getLoop().getCloneLoop()==null)
-                        cloneLoop = bb.getLoop().clone(callerPredBB.getLoop().getParent());
-                    else
-                        cloneLoop = bb.getLoop().getCloneLoop();
+                    cloneLoop = callerPredBB.getLoop();
+                    bb.getLoop().setCloneLoop(cloneLoop);
                 }
                 else
                 {
@@ -147,10 +146,10 @@ public class FunctionInlining extends Pass{
         if(function.isExternal() || function.getName().equals("main")) return false;
         if(function.getUsedInfo().size() == 0) return true;
         int instrNum = 0;//指令不超过32条
+        int callNum = function.getUsedSize();//调用次数
         int retNum = 0;//只有一个return
         for(BasicBlock bb : function.getBasicBlocks()){
             instrNum += bb.getInstrs().size();
-            if(instrNum > MAX_INSTR) return false;
             for(Instr instr:bb.getInstrs()){
                 if(instr instanceof Call && ((Call)instr).getFunction().equals(function)) return false;
                 if(instr instanceof Return){
@@ -159,6 +158,8 @@ public class FunctionInlining extends Pass{
                 }
             }
         }
+        if(instrNum > Math.max(MAX_INSTR,function.getParams().size()*8) && callNum >MAX_CALL)
+            return false;
         return true;
     }
 

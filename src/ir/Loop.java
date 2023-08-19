@@ -60,6 +60,8 @@ public class Loop extends Value {
     public int getDepth(){
         int depth = 0;
         Loop loop = this;
+        if(loop==rootLoop)
+            return depth-1;
         while (loop.getParent()!=rootLoop){
             loop = loop.getParent();
             depth++;
@@ -74,5 +76,9 @@ public class Loop extends Value {
 
     public Loop getCloneLoop(){
         return cloneLoop;
+    }
+
+    public void setCloneLoop(Loop loop){
+        this.cloneLoop = loop;
     }
 }
