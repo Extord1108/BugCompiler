@@ -57,6 +57,16 @@ public class Pcopy extends Instr{
     }
 
     @Override
+    public Instr clone(BasicBlock bb){
+        Pcopy pcopy = new Pcopy();
+        for(int i = 0; i < from.size(); i++){
+            pcopy.addFromAndTo(from.get(i).getClone(), to.get(i).getClone());
+        }
+        pcopy.setBasicBlock(bb);
+        return pcopy;
+    }
+
+    @Override
     public String toString() {
         StringBuilder ret = new StringBuilder();
         ret.append("pcopy ");

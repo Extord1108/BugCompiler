@@ -13,6 +13,12 @@ public class Fptosi extends Instr {
     }
 
     @Override
+    public Instr clone(BasicBlock bb){
+        this.cloneInstr = new Fptosi(this.getUse(0).getClone(), bb);
+        return this.cloneInstr;
+    }
+
+    @Override
     public String toString() {
         return this.getName() + " = fptosi " + getUse(0).getType() + " " + getUse(0).getName() + " to " + this.getType();
     }

@@ -28,6 +28,12 @@ public class Fcmp extends Instr {
     }
 
     @Override
+    public Instr clone(BasicBlock bb){
+        this.cloneInstr = new Fcmp(this.getLhs().getClone(), this.getRhs().getClone(), this.op, bb);
+        return this.cloneInstr;
+    }
+
+    @Override
     public String toString() {
         return this.getName() + " = fcmp " + op.getfName() + " " + getLhs().getType() + " " + getLhs().getName() + ", "
                 + getRhs().getName();

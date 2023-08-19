@@ -22,6 +22,12 @@ public class Store extends Instr {
     }
 
     @Override
+    public Instr clone(BasicBlock bb){
+        this.cloneInstr = new Store(getValue().getClone(), getAddress().getClone(), bb);
+        return this.cloneInstr;
+    }
+
+    @Override
     public String toString() {
         return "store " + getValue().getType().toString() + " " + getValue().getName() + ", " + getAddress().getType().toString()
                 + " " + getAddress().getName();

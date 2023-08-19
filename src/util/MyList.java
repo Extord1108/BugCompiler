@@ -1,5 +1,7 @@
 package util;
 
+import ir.instruction.Phi;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Spliterator;

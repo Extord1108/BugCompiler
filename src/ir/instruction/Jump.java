@@ -21,6 +21,12 @@ public class Jump extends Instr {
     }
 
     @Override
+    public Instr clone(BasicBlock bb){
+        this.cloneInstr = new Jump(this.getTargetBlock().getClone(), bb);
+        return this.cloneInstr;
+    }
+
+    @Override
     public String toString() {
         return "br label %" + getTargetBlock().getName();
     }

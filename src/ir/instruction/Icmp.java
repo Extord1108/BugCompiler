@@ -28,6 +28,12 @@ public class Icmp extends Instr {
     }
 
     @Override
+    public Instr clone(BasicBlock bb){
+        this.cloneInstr = new Icmp(this.getLhs().getClone(), this.getRhs().getClone(), this.op, bb);
+        return this.cloneInstr;
+    }
+
+    @Override
     public String toString() {
         return this.getName() + " = icmp " + op + " " + getLhs().getType() + " " + getLhs().getName() + ", "
                 + getRhs().getName();

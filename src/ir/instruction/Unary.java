@@ -21,6 +21,12 @@ public class Unary extends Instr {
     }
 
     @Override
+    public Instr clone(BasicBlock bb){
+        this.cloneInstr = new Unary(this.getType(), this.op, this.getVal().getClone(), bb);
+        return this.cloneInstr;
+    }
+
+    @Override
     public String toString() {
 
         if(op == OpTree.Operator.Neg)

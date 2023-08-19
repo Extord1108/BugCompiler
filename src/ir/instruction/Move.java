@@ -25,6 +25,12 @@ public class Move extends Instr{
     }
 
     @Override
+    public Instr clone(BasicBlock bb){
+        this.cloneInstr = new Move(this.type, this.from.getClone(), this.to.getClone(), bb);
+        return this.cloneInstr;
+    }
+
+    @Override
     public String toString() {
         return "move " + this.type + " " + this.to.getName() + "<- " + this.from.getName();
 //        if(this.type instanceof Int32Type){

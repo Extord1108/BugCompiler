@@ -59,15 +59,13 @@ public class Compiler {
 //                PeepHole peepHole = new PeepHole(Manager.getMcFunclist());
 //                peepHole.run();
 //            }
-//
-//            Manager.getManager().bssInit();
-//
-//            // 输出 机器代码arm
-//            if (!arg.targetFile.isEmpty()) {
-//                FileOutputStream armOut = OutputHandler.getOutputFile(arg.targetFile);
-//                Manager.getManager().outputArm(armOut);
-//                OutputHandler.closeOutputFile(armOut);
-//            }
+
+            // 输出 机器代码arm
+            if (!arg.targetFile.isEmpty()) {
+                FileOutputStream armOut = OutputHandler.getOutputFile(arg.targetFile);
+                Manager.getManager().outputArm(armOut);
+                OutputHandler.closeOutputFile(armOut);
+            }
 
         } catch (IOException e) {
             e.printStackTrace();

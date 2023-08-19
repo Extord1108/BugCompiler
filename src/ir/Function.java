@@ -33,6 +33,7 @@ public class Function extends Value {
 
     public static class Param extends Value {
         public String paramName;
+        Param cloneParam = null;
         public Param(String name, Type type) {
             this.name = "%f" + Instr.getCount();
             this.paramName = name;
@@ -46,6 +47,19 @@ public class Function extends Value {
 
         public String getParamName() {
             return paramName;
+        }
+
+        public Param clone() {
+            cloneParam = new Param(paramName, type);
+            return cloneParam;
+        }
+
+        public Param getClone() {
+            return cloneParam;
+        }
+
+        public void cleanClone(){
+            this.cloneParam = null;
         }
 
         @Override

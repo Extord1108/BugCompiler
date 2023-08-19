@@ -14,6 +14,12 @@ public class Sitofp extends Instr {
     }
 
     @Override
+    public Instr clone(BasicBlock bb){
+        this.cloneInstr = new Sitofp(this.getUse(0).getClone(), bb);
+        return this.cloneInstr;
+    }
+
+    @Override
     public String toString() {
         return this.getName() + " = sitofp " + getUse(0).getType() + " " + getUse(0).getName() + " to " + this.getType();
     }

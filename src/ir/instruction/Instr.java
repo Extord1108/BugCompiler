@@ -14,6 +14,7 @@ public class Instr extends Value {
 
     private BasicBlock earliestBasicBlock;
     private BasicBlock latestBasicBlock;
+    Instr cloneInstr=null;
 
     public Instr(Type type, BasicBlock basicBlock) {
         this.type = type;
@@ -73,14 +74,7 @@ public class Instr extends Value {
             }
         }
     }
-    /**
-     * 对于所有用到自己的地方，用value替换自己
-     */
-    public void repalceUseofMeto(Value value){
-        for(Used used:usedInfo){
-            used.getUser().replaceUse(this,value);
-        }
-    }
+
 
     public void removeUse(){
         for(Value use:uses){
@@ -91,7 +85,6 @@ public class Instr extends Value {
     }
 
     public void remove(){
-        //System.out.println("remove "+this.getName());
         this.basicBlock.getInstrs().remove(this);
         removeUse();
     }
@@ -127,5 +120,17 @@ public class Instr extends Value {
     @Override
     public String toString() {
         return super.toString();
+    }
+
+    public Instr clone(BasicBlock bb){
+        return null;
+    }
+
+    public Instr getClone() {
+        return cloneInstr;
+    }
+
+    public void cleanClone(){
+        this.cloneInstr = null;
     }
 }

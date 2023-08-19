@@ -16,6 +16,12 @@ public class Zext extends Instr{
         return this.getUse(0);
     }
 
+    @Override
+    public Instr clone(BasicBlock bb){
+        this.cloneInstr = new Zext(this.getValue().getClone(), bb);
+        return this.cloneInstr;
+    }
+
     public String toString() {
         return this.getName() + " = zext " + getValue().getType() + " "+ getValue().getName() + " to " + this.type;
     }

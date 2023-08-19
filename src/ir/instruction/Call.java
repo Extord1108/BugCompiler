@@ -27,6 +27,16 @@ public class Call extends Instr{
     }
 
     @Override
+    public Instr clone(BasicBlock bb){
+        ArrayList<Value> params = new ArrayList<>();
+        for(Value param: this.getParams()){
+            params.add(param.getClone());
+        }
+        this.cloneInstr = new Call(this.getFunction(), params, bb);
+        return this.cloneInstr;
+    }
+
+    @Override
     public String toString() {
         String prefix = "";
         String returnType = "void";

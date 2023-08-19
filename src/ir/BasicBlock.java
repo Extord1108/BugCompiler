@@ -16,7 +16,7 @@ public class BasicBlock extends Value {
     private int domTreeDepth = 0;
     private ArrayList<BasicBlock> iDoms = new ArrayList<>();//该节点直接支配的节点
 
-
+    private BasicBlock clone = null;
 
     private int label;
     private static Integer block_count = 0;
@@ -117,6 +117,15 @@ public class BasicBlock extends Value {
         return loop.getDepth();
     }
 
+    public Loop getLoop(){
+        return loop;
+    }
+
+    public void setLoop(Loop loop){
+        this.loop = loop;
+        loop.addBasicBlock(this);
+    }
+
     public void cleanDomInfo() {
         domTreeDepth = 0;
         iDoms.clear();
@@ -124,11 +133,23 @@ public class BasicBlock extends Value {
         precBBlocks.clear();
     }
 
+    public BasicBlock clone(Function function, Loop loop){
+        clone = new BasicBlock(function, loop);
+        return clone;
+    }
+
+    public BasicBlock getClone(){
+        return clone;
+    }
+
+    public void cleanClone(){
+        this.clone = null;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(name).append(":\n");
-        //System.out.println(instrs);
         for (Instr instr : instrs) {
             sb.append("\t" + instr.toString() + "\n");
         }

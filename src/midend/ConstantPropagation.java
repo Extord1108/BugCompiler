@@ -541,13 +541,14 @@ public class ConstantPropagation extends Pass{
                         } else {
                             phi.repalceUseofMeto(new Variable.ConstInt(valueStateHashMap.get(phi).constantInt));
                         }
-                        //System.out.println("phi remove:"+phi.getName());
                         phi.remove();
                     }
                     else{
                         if(phi.getUses().size()==1){
                             phi.repalceUseofMeto(phi.getUses().get(0));
                             //System.out.println("phi remove:"+phi.getName());
+                            phi.remove();
+                        }else if(phi.getUses().size()==0){
                             phi.remove();
                         }
                     }

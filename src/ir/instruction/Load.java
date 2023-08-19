@@ -18,6 +18,12 @@ public class Load extends Instr{
     }
 
     @Override
+    public Instr clone(BasicBlock bb){
+        this.cloneInstr = new Load(getPointer().getClone(), bb);
+        return this.cloneInstr;
+    }
+
+    @Override
     public String toString() {
         return name + " = load " + type + ", " + getPointer().getType() + " " + getPointer().getName();
     }

@@ -26,6 +26,12 @@ public class Binary extends Instr {
     }
 
     @Override
+    public Instr clone(BasicBlock bb){
+        this.cloneInstr = new Binary(this.getType(), this.op, this.getLeft().getClone(), this.getRight().getClone(), bb);
+        return this.cloneInstr;
+    }
+
+    @Override
     public String toString() {
         if(type instanceof FloatType)
         return this.getName() + " = " + op.getfName() + " " + this.getType() + " " + this.getLeft().getName() + ", " + this.getRight().getName();

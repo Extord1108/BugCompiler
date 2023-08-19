@@ -53,4 +53,17 @@ public class Value extends MyNode {
         }
     }
 
+    /**
+     * 对于所有用到自己的地方，用value替换自己
+     */
+    public void repalceUseofMeto(Value value){
+        for(Used used:usedInfo){
+            used.getUser().replaceUse(this,value);
+        }
+    }
+
+    public Value getClone(){
+        return this;
+    }
+
 }

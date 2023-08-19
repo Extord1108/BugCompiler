@@ -17,7 +17,19 @@ public class Return extends Instr {
     }
 
     public Value getReturnValue() {
-        return this.getUse(0);
+        if(this.getUses().isEmpty())
+            return null;
+        else
+            return this.getUse(0);
+    }
+
+    @Override
+    public Instr clone(BasicBlock bb){
+        if(this.getUses().isEmpty())
+            this.cloneInstr = new Return(bb);
+        else
+            this.cloneInstr = new Return(this.getUse(0).getClone(), bb);
+        return this.cloneInstr;
     }
 
     @Override

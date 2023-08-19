@@ -11,6 +11,12 @@ public class BitCast extends Instr{
     }
 
     @Override
+    public Instr clone(BasicBlock bb){
+        this.cloneInstr = new BitCast(this.getUse(0).getClone(), this.getType(), bb);
+        return this.cloneInstr;
+    }
+
+    @Override
     public String toString() {
         return getName() + " = bitcast " + getUse(0).getType() + " " + getUse(0).getName() + " to " + getType();
     }

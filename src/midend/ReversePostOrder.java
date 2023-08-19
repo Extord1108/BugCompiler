@@ -31,6 +31,7 @@ public class ReversePostOrder {
     }
 
     private void dfs(BasicBlock bb, HashMap<BasicBlock,Integer> visited){
+        //System.out.println(bb.getName()+" "+bb.getInstrs().size());
         visited.put(bb, -1);
         for(BasicBlock successor : bb.getSuccessors()){
             if(visited.get(successor) == null){

@@ -37,6 +37,12 @@ public class Branch extends Instr {
     }
 
     @Override
+    public Instr clone(BasicBlock bb){
+        this.cloneInstr = new Branch(this.getCond().getClone(), this.getThenBlock().getClone(), this.getElseBlock().getClone(), bb);
+        return this.cloneInstr;
+    }
+
+    @Override
     public String toString() {
         return "br i1 " + getCond().getName() + ", label %" + getThenBlock().getName() + ", label %" + getElseBlock().getName();
     }

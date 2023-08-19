@@ -32,6 +32,16 @@ public class GetElementPtr extends Instr{
     }
 
     @Override
+    public Instr clone(BasicBlock bb){
+        ArrayList<Value> idxList = new ArrayList<>();
+        for(Value idx: this.getIdxList()){
+            idxList.add(idx.getClone());
+        }
+        this.cloneInstr = new GetElementPtr(((PointerType)getType()).getContentType(), getPointer().getClone(), idxList, bb);
+        return this.cloneInstr;
+    }
+
+    @Override
     public String toString() {
         String ret = name + " = getelementptr inbounds " + getPointer().getType().getBasicType() + ", " + getPointer().getType() + " "
                 + getPointer().getName() + ", ";

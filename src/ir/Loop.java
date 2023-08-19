@@ -17,6 +17,7 @@ public class Loop extends Value {
     private Function function;
     private BasicBlock basicBlock;
 
+    private Loop cloneLoop;
 
     private ArrayList<Loop> children = new ArrayList<>();
 
@@ -64,5 +65,14 @@ public class Loop extends Value {
             depth++;
         }
         return depth;
+    }
+
+    public Loop clone(Loop parent){
+        cloneLoop = new Loop(parent);
+        return cloneLoop;
+    }
+
+    public Loop getCloneLoop(){
+        return cloneLoop;
     }
 }

@@ -10,7 +10,8 @@ public class Phi extends Instr {
 
     public Phi(Type type, BasicBlock basicBlock,ArrayList<Value> optionValues) {
         super(type, basicBlock);
-        basicBlock.getInstrs().remove(this);
+        if(!basicBlock.isTerminated())
+            basicBlock.getInstrs().remove(this);
         basicBlock.addInstrHead(this);
         //TODO Auto-generated constructor stub
         for(Value value:optionValues) {
@@ -22,13 +23,19 @@ public class Phi extends Instr {
         this.setUse(index, value);
     }
 
+
+    @Override
+    public Instr clone(BasicBlock bb){
+        ArrayList<Value> optionValues = new ArrayList<>();
+        for(int i=0;i<this.getUses().size();i++) {
+            optionValues.add(this.getUse(i));
+        }
+        this.cloneInstr = new Phi(this.getType(), bb,optionValues);
+        return this.cloneInstr;
+    }
+
     @Override
     public String toString() {
-//        System.out.println(this.getName());
-//        System.out.println(this.getBasicBlock().getPredecessors().size());
-//        System.out.println(this.getUses().size());
-//        System.out.println(this.getBasicBlock().getPredecessors().get(0).getName());
-//        System.out.println("=============");
         StringBuffer stringBuffer = new StringBuffer();
         stringBuffer.append(this.getName()+" = phi "+this.getType().toString()+" ");
         for(int i=0;i<this.getUses().size();i++) {
