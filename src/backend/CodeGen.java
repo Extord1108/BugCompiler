@@ -243,12 +243,30 @@ public class CodeGen {
                         Operand mulAns = new Operand.VirtualReg(false, curMcFunc);
                         Operand mulOff = getOperand(new Variable.ConstInt(offset));
                         if(mulOff instanceof Operand.Imm) {
-                            Operand temp = new Operand.VirtualReg(mulOff.isFloat(), curMcFunc);
-                            new McMove(temp, mulOff, curMcBlock);
-                            mulOff = temp;
+                            int imm = ((Operand.Imm) mulOff).getIntNumber();
+                            int abs = Math.abs(imm);
+                            if((abs & (abs -1)) == 0) {
+                                int sh = 31 - Integer.numberOfLeadingZeros(abs);
+                                if(sh == 0) {
+                                    new McMove(mulAns, tmp, curMcBlock);
+                                } else {
+                                    MCShift mcShift = new MCShift(mulAns, tmp, getOperand(new Variable.ConstInt(sh)),MCShift.ShiftType.lsl,curMcBlock);
+                                }
+                                if(imm < 0) {
+                                    new McBinary(McBinary.BinaryType.Rsb, mulAns, tmp, new Operand.Imm(0),curMcBlock);
+                                }
+                            } else {
+                                Operand temp = new Operand.VirtualReg(mulOff.isFloat(), curMcFunc);
+                                new McMove(temp, mulOff, curMcBlock);
+                                mulOff = temp;
+                                new McBinary(McBinary.BinaryType.Mul, mulAns, tmp,
+                                        mulOff, curMcBlock);
+                            }
                         }
-                        new McBinary(McBinary.BinaryType.Mul, mulAns, tmp,
-                                mulOff, curMcBlock);
+                        else  {
+                            new McBinary(McBinary.BinaryType.Mul, mulAns, tmp,
+                                    mulOff, curMcBlock);
+                        }
                         if(tmpAddr == null) {
                             tmpAddr = new Operand.VirtualReg(false, curMcFunc);
                             new McBinary(McBinary.BinaryType.Add, tmpAddr, addrOpd, mulAns, curMcBlock);

@@ -1,89 +1,106 @@
-const int N = 1024;
+const int base = 16;
 
-void mm(int n, int A[][N], int B[][N], int C[][N]){
-    int i, j, k;
-
-    i = 0; j = 0;
+int getMaxNum(int n, int arr[]){
+    int ret = 0;
+    int i = 0;
     while (i < n){
-        j = 0;
-        while (j < n){
-            C[i][j] = 0;
-            j = j + 1;
-        }
+        if (arr[i] > ret) ret = arr[i];
         i = i + 1;
     }
+    return ret;
+}
 
-    i = 0; j = 0; k = 0;
+int getNumPos(int num, int pos){
+    int tmp = 1;
+    int i = 0;
+    while (i < pos){
+        num = num / base;
+        i = i + 1;
+    }
+    return num % base;
+}
 
-    while (k < n){
+void radixSort(int bitround, int a[], int l, int r){
+    int head[base] = {};
+    int tail[base] = {};
+    int cnt[base] = {};
+
+    if (bitround == -1 || l + 1 >= r) return;
+
+    {
+        int i = l;
+
+        while (i < r){
+            cnt[getNumPos(a[i], bitround)]
+                = cnt[getNumPos(a[i], bitround)] + 1;
+            i = i + 1;
+        }
+        head[0] = l;
+        tail[0] = l + cnt[0];
+
+        i = 1;
+        while (i < base){
+            head[i] = tail[i - 1];
+            tail[i] = head[i] + cnt[i];
+            i = i + 1;
+        }
         i = 0;
-        while (i < n){
-            if (A[i][k] == 0){
-                i = i + 1;
-                continue;
-            }
-            j = 0;
-            while (j < n){
-                C[i][j] = C[i][j] + A[i][k] * B[k][j];
-                j = j + 1;
+        while (i < base){
+            while (head[i] < tail[i]){
+                int v = a[head[i]];
+                while (getNumPos(v, bitround) != i){
+                    int t = v;
+                    v = a[head[getNumPos(t, bitround)]];
+                    a[head[getNumPos(t, bitround)]] = t;
+                    head[getNumPos(t, bitround)] = head[getNumPos(t, bitround)] + 1;
+                }
+                a[head[i]] = v;
+                head[i] = head[i] + 1;
             }
             i = i + 1;
         }
-        k = k + 1;
     }
+
+    {
+        int i = l;
+
+        head[0] = l;
+        tail[0] = l + cnt[0];
+
+        i = 0;
+        while (i < base){
+            if (i > 0){
+                head[i] = tail[i - 1];
+                tail[i] = head[i] + cnt[i];
+            }
+            radixSort(bitround - 1, a, head[i], tail[i]);
+            i = i + 1;
+        }
+    }
+
+    return;
 }
 
-int A[N][N];
-int B[N][N];
-int C[N][N];
+int a[30000010];
+int ans;
 
 int main(){
-    int n = getint();
-    int i, j;
-
-    i = 0;
-    j = 0;
-    while (i < n){
-        j = 0;
-        while (j < n){
-            A[i][j] = getint();
-            j = j + 1;
-        }
-        i = i + 1;
-    }
-    i = 0;
-    j = 0;
-    while (i < n){
-        j = 0;
-        while (j < n){
-            B[i][j] = getint();
-            j = j + 1;
-        }
-        i = i + 1;
-    }
+    int n = getarray(a);
 
     starttime();
 
-    i = 0;
-    while (i < 5){
-        mm(n, A, B, C);
-        mm(n, A, C, B);
+    radixSort(8, a, 0, n);
+
+    int i = 0;
+    while (i < n){
+        ans = ans + i * (a[i] % (2 + i));
         i = i + 1;
     }
 
-    int ans = 0;
-    i = 0;
-    while (i < n){
-        j = 0;
-        while (j < n){
-            ans = ans + B[i][j];
-            j = j + 1;
-        }
-        i = i + 1;
-    }
+    if (ans < 0)
+        ans = -ans;
     stoptime();
     putint(ans);
     putch(10);
-
     return 0;
 }
