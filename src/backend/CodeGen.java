@@ -618,8 +618,9 @@ public class CodeGen {
                         }
                         Operand dst1 = new Operand.VirtualReg(left instanceof Variable.ConstFloat, curMcFunc);
                         new McBinary(McBinary.BinaryType.Div, dst1, lopd, ropd, curMcBlock);
-                        new McBinary(McBinary.BinaryType.Mul, dst1, dst1, ropd, curMcBlock);
-                        new McBinary(McBinary.BinaryType.Sub, dstVr, lopd, dst1, curMcBlock);
+                        new McBinary(McBinary.BinaryType.MLS, dstVr, dst1, ropd, lopd, curMcBlock);
+//                        new McBinary(McBinary.BinaryType.Mul, dst1, dst1, ropd, curMcBlock);
+//                        new McBinary(McBinary.BinaryType.Sub, dstVr, lopd, dst1, curMcBlock);
                     }
                 }
                 else {
@@ -636,8 +637,9 @@ public class CodeGen {
                         }
                         Operand dst1 = new Operand.VirtualReg(left instanceof Variable.ConstFloat, curMcFunc);
                         new McBinary(McBinary.BinaryType.Div, dst1, lopd, ropd, curMcBlock);
-                        new McBinary(McBinary.BinaryType.Mul, dst1, dst1, ropd, curMcBlock);
-                        new McBinary(McBinary.BinaryType.Sub, dstVr, lopd, dst1, curMcBlock);
+                        new McBinary(McBinary.BinaryType.MLS, dstVr, dst1, ropd, lopd, curMcBlock);
+//                        new McBinary(McBinary.BinaryType.Mul, dst1, dst1, ropd, curMcBlock);
+//                        new McBinary(McBinary.BinaryType.Sub, dstVr, lopd, dst1, curMcBlock);
                     }
                 }
             }

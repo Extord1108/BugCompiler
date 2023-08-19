@@ -32,6 +32,25 @@ public class McBinary extends McInstr{
         useOperands.add(src2);
     }
 
+    public McBinary(BinaryType binaryType, Operand dst, Operand src1, Operand src2, MCShift shift, McBlock mcBlock, boolean insert) {
+        super(mcBlock, insert);
+        this.type = binaryType;
+        this.mcShift = shift;
+        defOperands.add(dst);
+        useOperands.add(src1);
+        useOperands.add(src2);
+    }
+
+    public McBinary(BinaryType binaryType, Operand dst, Operand src1, Operand src2, Operand src3, McBlock mcBlock) {
+        super(mcBlock);
+        this.type = binaryType;
+        defOperands.add(dst);
+        useOperands.add(src1);
+        useOperands.add(src2);
+        useOperands.add(src3);
+    }
+
+
     public void setNeedFix(FixType fixType) {
         this.needFix = true;
         this.fixType = fixType;
@@ -60,6 +79,10 @@ public class McBinary extends McInstr{
 
     @Override
     public String toString() {
+        if(useOperands.size() == 3) {
+            return type + "\t" + defOperands.get(0) + ",\t" + useOperands.get(0) + ",\t" + useOperands.get(1)
+                    + ",\t" + useOperands.get(2);
+        }
         if(useVFP()) {
             if(type.equals(BinaryType.Div)) {
                 return "vdiv.F32\t" + defOperands.get(0) + ",\t" +
@@ -94,6 +117,8 @@ public class McBinary extends McInstr{
         CastFloat("casefloat"),
         Rsb("rsb"),
         SMMUL("smmul"),
+        MLS("mls"),
+        MLA("mla"),
         ;
 
         private final String name;

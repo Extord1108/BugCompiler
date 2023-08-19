@@ -32,6 +32,24 @@ public class PeepHole {
                     optJump(instr);
                 }else if(instr instanceof McLdr){
                     optLdr(instr, prevInstr);
+                } else if(instr instanceof MCShift) {
+                    optShift(instr, nextInstr);
+                }
+            }
+        }
+    }
+    private void  optShift(McInstr instr, McInstr nextInstr){
+        assert instr instanceof MCShift;
+        MCShift mcShift = (MCShift) instr;
+        if(nextInstr instanceof McBinary) {
+            McBinary mcBinary = (McBinary) nextInstr;
+            if(mcBinary.type.equals(McBinary.BinaryType.Add) || mcBinary.type.equals(McBinary.BinaryType.Sub)) {
+                if(mcBinary.getSrc2().equals(mcShift.defOperands.get(0))) {
+                    McInstr mcInstr = new McBinary(mcBinary.type, mcBinary.getDst(), mcBinary.getSrc1(), mcShift.useOperands.get(0),
+                        new MCShift(mcShift.getShiftType(), mcShift.useOperands.get(1)), mcShift.mcBlock, false);
+                    mcShift.mcBlock.getMcInstrs().insertBefore(mcShift, mcInstr);
+                    mcShift.remove();
+                    mcBinary.remove();
                 }
             }
         }

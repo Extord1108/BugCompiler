@@ -30,6 +30,10 @@ public class MCShift extends McInstr{
         this.imm = imm;
     }
 
+    public ShiftType getShiftType() {
+        return type;
+    }
+
     @Override
     public String toString() {
         StringBuilder stb = new StringBuilder();
