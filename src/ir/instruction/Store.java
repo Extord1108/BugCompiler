@@ -13,6 +13,13 @@ public class Store extends Instr {
         this.addUse(address);
     }
 
+    public Store(Value value, Value address, BasicBlock basicBlock, boolean insert) {
+        this.type = VoidType.getInstance();
+        this.basicBlock = basicBlock;
+        this.addUse(value);
+        this.addUse(address);
+    }
+
     public Value getValue() {
         return getUse(0);
     }
