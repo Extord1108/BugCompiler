@@ -17,11 +17,20 @@ public class FunctionAnalysis extends Pass{
     }
     @Override
     public void run(){
-        for(Function function : this.functions.values())
-        {
-            if(function.isExternal()) continue;
-            function.setCanGVN(runForFunc(function));
+        boolean changed = true;
+        while(changed){
+            changed = false;
+            for(Function function : this.functions.values())
+            {
+                if(function.isExternal()) continue;
+                boolean ret = runForFunc(function);
+                if(ret != function.canGVN()){
+                    changed = true;
+                }
+                function.setCanGVN(ret);
+            }
         }
+
     }
 
     public boolean runForFunc(Function function){
@@ -33,6 +42,8 @@ public class FunctionAnalysis extends Pass{
         for(BasicBlock bb : function.getBasicBlocks()){
             for(Instr instr : bb.getInstrs()){
                 if(instr instanceof Call){
+                    Call call = (Call) instr;
+                    if(call.getFunction()!=function && !call.getFunction().canGVN())
                     return false;
                 }
                 for(Value value : instr.getUses()){
@@ -42,6 +53,6 @@ public class FunctionAnalysis extends Pass{
                 }
             }
         }
-        return false;
+        return true;
     }
 }
