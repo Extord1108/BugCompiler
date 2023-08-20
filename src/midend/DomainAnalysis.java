@@ -24,11 +24,57 @@ public class DomainAnalysis extends Pass {
             function.cleanDomInfo();
             new ControlFlowGraph(function).run();
             new RemoveDeadBB(function).run();
+            new RemoveSingleBB(function).run();
             new DominatorTree(function).run();
             new DominanceFrontier(function).run();
             new LoopAnalysis(function).run();
         }
     }
+
+    //删除仅有一个前驱且该前驱仅有一个后继，将基本块与且前驱合并
+    private class RemoveSingleBB{
+        private Function function;
+        private RemoveSingleBB(Function function) {
+            this.function = function;
+        }
+        public void run() {
+            //后序遍历
+            ArrayList<BasicBlock> postOrderBB = new ReversePostOrder(function).get();
+            Collections.reverse(postOrderBB);
+            for (int i = 0; i < postOrderBB.size(); i++) {
+                BasicBlock bb = postOrderBB.get(i);
+                if (bb.getPredecessors().size() == 1) {
+                    BasicBlock preBB = bb.getPredecessors().get(0);
+                    if (preBB.getSuccessors().size() == 1) {
+                        Instr instr = preBB.getLast();
+                        if(instr instanceof Jump && ((Jump) instr).getTargetBlock().equals(bb)){
+//                            System.out.println(preBB);
+                            ArrayList<Instr> temp = new ArrayList<>();
+                            for(Instr instr1: bb.getInstrs()){
+                                temp.add(instr1);
+                            }
+                            for(Instr instr1: temp) {
+                                bb.getInstrs().remove(instr1);
+                                preBB.addInstr(instr1);
+                            }
+                            instr.remove();
+                            preBB.getSuccessors().remove(bb);
+                            if(bb.getSuccessors().size() > 0) {
+                                for(BasicBlock succ: bb.getSuccessors()){
+                                    preBB.getSuccessors().add(succ);
+                                    succ.getPredecessors().remove(bb);
+                                    succ.getPredecessors().add(preBB);
+                                }
+                            }
+                            function.getBasicBlocks().remove(bb);
+                        }
+
+                    }
+                }
+            }
+        }
+    }
+
 
     //删除不活跃的基本块
     private class RemoveDeadBB{

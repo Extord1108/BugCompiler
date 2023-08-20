@@ -17,6 +17,7 @@ public class GCM extends Pass {
     }
     @Override
     public void run(){
+
         //scheduleEarly
         for(Function function : this.functions.values())
         {
@@ -95,6 +96,7 @@ public class GCM extends Pass {
         if(visitedInstrs.contains(instr) || isInstrPinned(instr)) return;
         visitedInstrs.add(instr);
         BasicBlock lca = null;
+
         for(Used used: instr.getUsedInfo()){
             Instr user = used.getUser();
             scheduleLateForOperands(user);
@@ -110,6 +112,7 @@ public class GCM extends Pass {
             }
             lca = findLCA(lca, bb);
         }
+
         BasicBlock best = lca;
         BasicBlock cur = lca;
         while(cur.getDomTreeDepth() != instr.getEarliestBasicBlock().getDomTreeDepth()){
@@ -118,6 +121,7 @@ public class GCM extends Pass {
             }
             cur = curFunc.getDomTree().get(cur);
         }
+//        System.out.println("???");
         if(cur.getLoopDepth()< best.getLoopDepth())
             best = cur;
         instr.setLatestBasicBlock(best);

@@ -23,8 +23,10 @@ public class MidEndRunner {
         new DomainAnalysis(functions, globals).run();
         new Mem2Reg(functions, globals).run();
         if(opt){
-            new FunctionInlining(functions, globals).run();
+
+//            new FunctionInlining(functions, globals).run();
             new DomainAnalysis(functions, globals).run();
+
             new DeadCodeElimination(functions, globals).run();
             new InstrComb(functions, globals).run();
             new DeadCodeElimination(functions, globals).run();
