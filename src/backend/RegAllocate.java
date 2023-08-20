@@ -141,7 +141,7 @@ public class RegAllocate {
         curMcFunc = mcFunction;
         while(true) {
             // 生存周期分析
-//            if(mcFunction.getName().equals("main")) {
+//            if(mcFunction.getName().equals("dfs")) {
 //                System.out.println(t);
 //                OutputStream out = OutputHandler.getOutputFile("bug" + t++);
 //                OutputHandler.output2Stream(mcFunction.toString(),out);
@@ -333,12 +333,30 @@ public class RegAllocate {
                 for(McInstr store: stores) {
                     newInstrs.add(store);
                 }
+//                if(mcBlock.getName().equals("dfs_b7")){
+//                    System.out.println(newInstrs.size());
+//                    System.out.println(mcBlock.getName());
+//                    System.out.println(loadMove.size());
+//                    System.out.println(loads.size());
+//                    System.out.println(storeMove.size());
+//                    System.out.println(stores.size());
+//                    for(McInstr mc: newInstrs) {
+//                        System.out.println(mc);
+//                    }
+//                }
             }
             MyList<McInstr> mcInstrs = new MyList<>();
             for(McInstr mcInstr: newInstrs) {
                 mcInstrs.insertTail(mcInstr);
             }
             mcBlock.setMcInstrs(mcInstrs);
+//            if(mcBlock.getName().equals("dfs_b7")){
+//                System.out.println(newInstrs.size());
+//                System.out.println(mcBlock.getName());
+//                for(McInstr mcInstr: mcInstrs) {
+//                    System.out.println(mcInstr);
+//                }
+//            }
         }
     }
 

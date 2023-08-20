@@ -44,7 +44,7 @@ public class MidEndRunner {
             new DeadCodeElimination(functions, globals).run();
             new SimpleCFG(functions, globals).run();
         }
-        //new PhiResolution(functions, globals).run();
+        new PhiResolution(functions, globals).run();
         return;
     }
 }

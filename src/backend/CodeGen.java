@@ -337,6 +337,7 @@ public class CodeGen {
                             Operand.PhyReg.getPhyReg("sp"), new Operand.Imm(0), curMcBlock);
                     mcBinary.setNeedFix(McBinary.FixType.VAR_STACK);
                     new McReturn(retOpd, curMcBlock);
+//                    System.out.println(new McReturn(retOpd, curMcBlock));
                 } else {
                     McBinary mcBinary = new McBinary(McBinary.BinaryType.Add, Operand.PhyReg.getPhyReg("sp"),
                             Operand.PhyReg.getPhyReg("sp"), new Operand.Imm(0), curMcBlock);

@@ -2,6 +2,7 @@ package lir;
 
 import ir.Function;
 import lir.mcInstr.McInstr;
+import lir.mcInstr.McReturn;
 import util.MyList;
 
 import java.util.ArrayList;
