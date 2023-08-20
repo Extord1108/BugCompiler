@@ -238,7 +238,8 @@ public class CodeGen {
                         int sum = ((Variable.ConstInt) idx).getIntVal() * offset;
 //                        System.out.println(sum);
                         allOff += sum;
-                    } else {
+                    }
+                    else {
                         Operand tmp = getOperand(idx);
                         Operand mulAns = new Operand.VirtualReg(false, curMcFunc);
                         Operand mulOff = getOperand(new Variable.ConstInt(offset));
