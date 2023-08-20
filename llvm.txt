@@ -18,185 +18,225 @@ declare void @putch(i32 )
 declare float @getfloat()
 declare void @_sysy_starttime(i32 )
 declare void @_sysy_stoptime(i32 )
-define dso_local i32 @max_flow(i32 %f216, i32 %f217) 
+define dso_local void @my_memset(i32* %f0, i32 %f1, i32 %f2) 
+{
+b1:
+	move i32 %r430<- 0
+	br label %b2
+b2:
+	%r14 = icmp slt i32 %r430, %f2
+	br i1 %r14, label %b3, label %b4
+b3:
+	%r18 = getelementptr inbounds i32, i32* %f0, i32 0
+	%r19 = mul i32 %r430, 1
+	%r20 = add i32 0, %r19
+	%r21 = getelementptr inbounds i32, i32* %r18, i32 %r20
+	store i32 %f1, i32* %r21
+	%r25 = add i32 %r430, 1
+	move i32 %r430<- %r25
+	br label %b2
+b4:
+	ret void
+}
+define dso_local i32 @max_flow(i32 %f361, i32 %f362) 
 {
 b21:
-	move i32 %r285<- 0
+	move i32 %r433<- 0
 	br label %b22
 b22:
 	br label %b23
 b23:
-	%r227 = getelementptr inbounds [10 x i32], [10 x i32]* @used, i32 0, i32 0
-	br label %b32
-b32:
-	move i32 %r307<- 0
-	br label %b33
-b33:
-	%r308 = icmp slt i32 %r307, 10
-	br i1 %r308, label %b34, label %b35
-b34:
-	%r311 = getelementptr inbounds i32, i32* %r227, i32 %r307
-	store i32 0, i32* %r311
-	%r313 = add i32 %r307, 1
-	move i32 %r307<- %r313
-	br label %b33
-b35:
-	br label %b31
-b31:
-	%r231 = call i32 @dfs(i32 %f216, i32 %f217, i32 1879048192)
-	%r235 = icmp eq i32 %r231, 0
-	br i1 %r235, label %b25, label %b26
+	%r372 = getelementptr inbounds [10 x i32], [10 x i32]* @used, i32 0, i32 0
+	call void @my_memset(i32* %r372, i32 0, i32 10)
+	%r376 = call i32 @dfs(i32 %f361, i32 %f362, i32 1879048192)
+	%r380 = icmp eq i32 %r376, 0
+	br i1 %r380, label %b25, label %b26
 b25:
-	ret i32 %r285
+	ret i32 %r433
 b26:
-	%r242 = add i32 %r285, %r231
-	move i32 %r285<- %r242
+	%r387 = add i32 %r433, %r376
+	call void @putint(i32 %r387)
+	call void @putch(i32 10)
+	move i32 %r433<- %r387
 	br label %b22
 }
 define dso_local i32 @main() 
 {
 b27:
-	%r248 = call i32 @getint()
-	%r250 = call i32 @getint()
-	%r252 = getelementptr inbounds [10 x i32], [10 x i32]* @size, i32 0, i32 0
-	br label %b37
-b37:
-	move i32 %r321<- 0
-	br label %b38
-b38:
-	%r322 = icmp slt i32 %r321, 10
-	br i1 %r322, label %b39, label %b40
-b39:
-	%r325 = getelementptr inbounds i32, i32* %r252, i32 %r321
-	store i32 0, i32* %r325
-	%r327 = add i32 %r321, 1
-	move i32 %r321<- %r327
-	br label %b38
-b40:
-	br label %b36
-b36:
-	move i32 %r288<- %r250
+	%r396 = call i32 @getint()
+	%r398 = call i32 @getint()
+	%r400 = getelementptr inbounds [10 x i32], [10 x i32]* @size, i32 0, i32 0
+	call void @my_memset(i32* %r400, i32 0, i32 10)
+	move i32 %r436<- %r398
 	br label %b28
 b28:
-	%r256 = icmp sgt i32 %r288, 0
-	br i1 %r256, label %b29, label %b30
+	%r404 = icmp sgt i32 %r436, 0
+	br i1 %r404, label %b29, label %b30
 b29:
-	%r260 = call i32 @getint()
-	%r262 = call i32 @getint()
-	%r264 = call i32 @getint()
-	br label %b42
-b42:
-	%r333 = getelementptr inbounds [10 x i32], [10 x i32]* @size, i32 0, i32 %r260
-	%r334 = load i32, i32* %r333
-	%r335 = getelementptr inbounds [10 x [10 x i32]], [10 x [10 x i32]]* @to, i32 0, i32 %r260, i32 %r334
-	store i32 %r262, i32* %r335
-	%r338 = load i32, i32* %r333
-	%r339 = getelementptr inbounds [10 x [10 x i32]], [10 x [10 x i32]]* @cap, i32 0, i32 %r260, i32 %r338
-	store i32 %r264, i32* %r339
-	%r342 = load i32, i32* %r333
-	%r343 = getelementptr inbounds [10 x [10 x i32]], [10 x [10 x i32]]* @rev, i32 0, i32 %r260, i32 %r342
-	%r344 = getelementptr inbounds [10 x i32], [10 x i32]* @size, i32 0, i32 %r262
-	%r345 = load i32, i32* %r344
-	store i32 %r345, i32* %r343
-	%r348 = load i32, i32* %r344
-	%r349 = getelementptr inbounds [10 x [10 x i32]], [10 x [10 x i32]]* @to, i32 0, i32 %r262, i32 %r348
-	store i32 %r260, i32* %r349
-	%r352 = load i32, i32* %r344
-	%r353 = getelementptr inbounds [10 x [10 x i32]], [10 x [10 x i32]]* @cap, i32 0, i32 %r262, i32 %r352
-	store i32 0, i32* %r353
-	%r356 = load i32, i32* %r344
-	%r357 = getelementptr inbounds [10 x [10 x i32]], [10 x [10 x i32]]* @rev, i32 0, i32 %r262, i32 %r356
-	%r359 = load i32, i32* %r333
-	store i32 %r359, i32* %r357
-	%r363 = load i32, i32* %r333
-	%r364 = add i32 %r363, 1
-	store i32 %r364, i32* %r333
-	%r368 = load i32, i32* %r344
-	%r369 = add i32 %r368, 1
-	store i32 %r369, i32* %r344
-	br label %b41
-b41:
-	%r272 = sub i32 %r288, 1
-	move i32 %r288<- %r272
+	%r408 = call i32 @getint()
+	%r410 = call i32 @getint()
+	%r412 = call i32 @getint()
+	call void @add_node(i32 %r408, i32 %r410, i32 %r412)
+	%r420 = sub i32 %r436, 1
+	move i32 %r436<- %r420
 	br label %b28
 b30:
-	%r276 = call i32 @max_flow(i32 1, i32 %r248)
-	call void @putint(i32 %r276)
+	%r424 = call i32 @max_flow(i32 1, i32 %r396)
+	call void @putint(i32 %r424)
 	call void @putch(i32 10)
 	ret i32 0
 }
-define dso_local i32 @dfs(i32 %f95, i32 %f96, i32 %f97) 
+define dso_local i32 @dfs(i32 %f164, i32 %f165, i32 %f166) 
 {
 b6:
-	%r106 = icmp eq i32 %f95, %f96
-	br i1 %r106, label %b7, label %b8
+	%r175 = icmp eq i32 %f164, %f165
+	br i1 %r175, label %b7, label %b8
 b7:
-	ret i32 %f97
+	ret i32 %f166
 b8:
-	%r112 = getelementptr inbounds [10 x i32], [10 x i32]* @used, i32 0, i32 %f95
-	store i32 1, i32* %r112
-	move i32 %r301<- 0
+	%r181 = getelementptr inbounds [10 x i32], [10 x i32]* @used, i32 0, i32 0
+	%r182 = mul i32 %f164, 1
+	%r183 = add i32 0, %r182
+	%r184 = getelementptr inbounds i32, i32* %r181, i32 %r183
+	store i32 1, i32* %r184
+	call void @putarray(i32 10, i32* %r181)
+	move i32 %r449<- 0
 	br label %b9
 b9:
-	%r119 = getelementptr inbounds [10 x i32], [10 x i32]* @size, i32 0, i32 %f95
-	%r120 = load i32, i32* %r119
-	%r121 = icmp slt i32 %r301, %r120
-	br i1 %r121, label %b10, label %b11
+	%r193 = getelementptr inbounds [10 x i32], [10 x i32]* @size, i32 0, i32 0
+	%r196 = getelementptr inbounds i32, i32* %r193, i32 %r183
+	%r197 = load i32, i32* %r196
+	%r198 = icmp slt i32 %r449, %r197
+	br i1 %r198, label %b10, label %b11
 b10:
-	%r125 = getelementptr inbounds [10 x [10 x i32]], [10 x [10 x i32]]* @to, i32 0, i32 %f95, i32 %r301
-	%r126 = load i32, i32* %r125
-	%r127 = getelementptr inbounds [10 x i32], [10 x i32]* @used, i32 0, i32 %r126
-	%r128 = load i32, i32* %r127
-	%r129 = icmp ne i32 %r128, 0
-	br i1 %r129, label %b12, label %b13
+	%r202 = getelementptr inbounds [10 x [10 x i32]], [10 x [10 x i32]]* @to, i32 0, i32 0, i32 0
+	%r203 = mul i32 %f164, 10
+	%r204 = add i32 0, %r203
+	%r205 = mul i32 %r449, 1
+	%r206 = add i32 %r204, %r205
+	%r207 = getelementptr inbounds i32, i32* %r202, i32 %r206
+	%r208 = load i32, i32* %r207
+	%r210 = mul i32 %r208, 1
+	%r211 = add i32 0, %r210
+	%r212 = getelementptr inbounds i32, i32* %r181, i32 %r211
+	%r213 = load i32, i32* %r212
+	%r214 = icmp ne i32 %r213, 0
+	br i1 %r214, label %b12, label %b13
 b11:
 	ret i32 0
 b12:
-	%r132 = add i32 %r301, 1
-	move i32 %r301<- %r132
+	%r217 = add i32 %r449, 1
+	move i32 %r449<- %r217
 	br label %b9
 b13:
-	%r138 = getelementptr inbounds [10 x [10 x i32]], [10 x [10 x i32]]* @cap, i32 0, i32 %f95, i32 %r301
-	%r139 = load i32, i32* %r138
-	%r140 = icmp sle i32 %r139, 0
-	br i1 %r140, label %b14, label %b15
+	%r223 = getelementptr inbounds [10 x [10 x i32]], [10 x [10 x i32]]* @cap, i32 0, i32 0, i32 0
+	%r228 = getelementptr inbounds i32, i32* %r223, i32 %r206
+	%r229 = load i32, i32* %r228
+	%r230 = icmp sle i32 %r229, 0
+	br i1 %r230, label %b14, label %b15
 b14:
-	%r143 = add i32 %r301, 1
-	move i32 %r301<- %r143
+	%r233 = add i32 %r449, 1
+	move i32 %r449<- %r233
 	br label %b9
 b15:
-	%r152 = load i32, i32* %r138
-	%r153 = icmp slt i32 %f97, %r152
-	br i1 %r153, label %b16, label %b17
+	%r247 = load i32, i32* %r228
+	%r248 = icmp slt i32 %f166, %r247
+	br i1 %r248, label %b16, label %b17
 b16:
-	move i32 %r291<- %f97
+	move i32 %r439<- %f166
 	br label %b18
 b17:
-	%r161 = load i32, i32* %r138
-	move i32 %r291<- %r161
+	%r261 = load i32, i32* %r228
+	move i32 %r439<- %r261
 	br label %b18
 b18:
-	%r167 = load i32, i32* %r125
-	%r170 = call i32 @dfs(i32 %r167, i32 %f96, i32 %r291)
-	%r174 = icmp sgt i32 %r170, 0
-	br i1 %r174, label %b19, label %b20
+	%r272 = load i32, i32* %r207
+	%r275 = call i32 @dfs(i32 %r272, i32 %f165, i32 %r439)
+	%r279 = icmp sgt i32 %r275, 0
+	br i1 %r279, label %b19, label %b20
 b19:
-	%r182 = load i32, i32* %r138
-	%r184 = sub i32 %r182, %r170
-	store i32 %r184, i32* %r138
-	%r189 = load i32, i32* %r125
-	%r192 = getelementptr inbounds [10 x [10 x i32]], [10 x [10 x i32]]* @rev, i32 0, i32 %f95, i32 %r301
-	%r193 = load i32, i32* %r192
-	%r194 = getelementptr inbounds [10 x [10 x i32]], [10 x [10 x i32]]* @cap, i32 0, i32 %r189, i32 %r193
-	%r198 = load i32, i32* %r125
-	%r202 = load i32, i32* %r192
-	%r203 = getelementptr inbounds [10 x [10 x i32]], [10 x [10 x i32]]* @cap, i32 0, i32 %r198, i32 %r202
-	%r204 = load i32, i32* %r203
-	%r206 = add i32 %r204, %r170
-	store i32 %r206, i32* %r194
-	ret i32 %r170
+	%r297 = load i32, i32* %r228
+	%r299 = sub i32 %r297, %r275
+	store i32 %r299, i32* %r228
+	%r309 = load i32, i32* %r207
+	%r312 = getelementptr inbounds [10 x [10 x i32]], [10 x [10 x i32]]* @rev, i32 0, i32 0, i32 0
+	%r317 = getelementptr inbounds i32, i32* %r312, i32 %r206
+	%r318 = load i32, i32* %r317
+	%r320 = mul i32 %r309, 10
+	%r321 = add i32 0, %r320
+	%r322 = mul i32 %r318, 1
+	%r323 = add i32 %r321, %r322
+	%r324 = getelementptr inbounds i32, i32* %r223, i32 %r323
+	%r333 = load i32, i32* %r207
+	%r342 = load i32, i32* %r317
+	%r344 = mul i32 %r333, 10
+	%r345 = add i32 0, %r344
+	%r346 = mul i32 %r342, 1
+	%r347 = add i32 %r345, %r346
+	%r348 = getelementptr inbounds i32, i32* %r223, i32 %r347
+	%r349 = load i32, i32* %r348
+	%r351 = add i32 %r349, %r275
+	store i32 %r351, i32* %r324
+	ret i32 %r275
 b20:
-	%r212 = add i32 %r301, 1
-	move i32 %r301<- %r212
+	%r357 = add i32 %r449, 1
+	move i32 %r449<- %r357
 	br label %b9
+}
+define dso_local void @add_node(i32 %f29, i32 %f30, i32 %f31) 
+{
+b5:
+	%r40 = getelementptr inbounds [10 x i32], [10 x i32]* @size, i32 0, i32 0
+	%r41 = mul i32 %f29, 1
+	%r42 = add i32 0, %r41
+	%r43 = getelementptr inbounds i32, i32* %r40, i32 %r42
+	%r44 = load i32, i32* %r43
+	%r45 = getelementptr inbounds [10 x [10 x i32]], [10 x [10 x i32]]* @to, i32 0, i32 0, i32 0
+	%r46 = mul i32 %f29, 10
+	%r47 = add i32 0, %r46
+	%r48 = mul i32 %r44, 1
+	%r49 = add i32 %r47, %r48
+	%r50 = getelementptr inbounds i32, i32* %r45, i32 %r49
+	store i32 %f30, i32* %r50
+	%r59 = load i32, i32* %r43
+	%r60 = getelementptr inbounds [10 x [10 x i32]], [10 x [10 x i32]]* @cap, i32 0, i32 0, i32 0
+	%r63 = mul i32 %r59, 1
+	%r64 = add i32 %r47, %r63
+	%r65 = getelementptr inbounds i32, i32* %r60, i32 %r64
+	store i32 %f31, i32* %r65
+	%r74 = load i32, i32* %r43
+	%r75 = getelementptr inbounds [10 x [10 x i32]], [10 x [10 x i32]]* @rev, i32 0, i32 0, i32 0
+	%r78 = mul i32 %r74, 1
+	%r79 = add i32 %r47, %r78
+	%r80 = getelementptr inbounds i32, i32* %r75, i32 %r79
+	%r83 = mul i32 %f30, 1
+	%r84 = add i32 0, %r83
+	%r85 = getelementptr inbounds i32, i32* %r40, i32 %r84
+	%r86 = load i32, i32* %r85
+	store i32 %r86, i32* %r80
+	%r94 = load i32, i32* %r85
+	%r96 = mul i32 %f30, 10
+	%r97 = add i32 0, %r96
+	%r98 = mul i32 %r94, 1
+	%r99 = add i32 %r97, %r98
+	%r100 = getelementptr inbounds i32, i32* %r45, i32 %r99
+	store i32 %f29, i32* %r100
+	%r109 = load i32, i32* %r85
+	%r113 = mul i32 %r109, 1
+	%r114 = add i32 %r97, %r113
+	%r115 = getelementptr inbounds i32, i32* %r60, i32 %r114
+	store i32 0, i32* %r115
+	%r123 = load i32, i32* %r85
+	%r127 = mul i32 %r123, 1
+	%r128 = add i32 %r97, %r127
+	%r129 = getelementptr inbounds i32, i32* %r75, i32 %r128
+	%r135 = load i32, i32* %r43
+	store i32 %r135, i32* %r129
+	%r147 = load i32, i32* %r43
+	%r148 = add i32 %r147, 1
+	store i32 %r148, i32* %r43
+	%r160 = load i32, i32* %r85
+	%r161 = add i32 %r160, 1
+	store i32 %r161, i32* %r85
+	ret void
 }

@@ -37,6 +37,7 @@ int dfs(int s, int t, int f)
     if (s == t)
         return f;
     used[s] = 1;
+    putarray(10, used);
 
     int i = 0;
     while (i < size[s]) {
@@ -70,7 +71,10 @@ int max_flow(int s, int t)
         int f = dfs(s, t, INF);
         if (f == 0)
             return flow;
+
         flow = flow + f;
+        putint(flow);
+        putch(10);
     }
 }
 

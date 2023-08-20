@@ -11,7 +11,7 @@ public class McReturn extends McInstr{
 
     public McReturn(Operand ret, McBlock mcBlock) {
         super(mcBlock);
-        useOperands.add(ret);
+//        useOperands.add(ret);
         defOperands.add(Operand.PhyReg.getPhyReg("r0"));
     }
 

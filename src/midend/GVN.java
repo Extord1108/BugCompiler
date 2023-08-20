@@ -85,7 +85,9 @@ public class GVN extends Pass{
             return (!call.getFunction().isExternal()) && call.getFunction().canGVN();
         }
         else{
-            return instr instanceof Binary || instr instanceof GetElementPtr || instr instanceof Fptosi || instr instanceof Sitofp;
+            return instr instanceof Binary
+                    || instr instanceof GetElementPtr
+                    || instr instanceof Fptosi || instr instanceof Sitofp;
         }
     }
 

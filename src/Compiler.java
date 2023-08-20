@@ -51,8 +51,8 @@ public class Compiler {
           System.out.println("CodeGen end");
 
           System.out.println("Alloc begin");
-//          var regAllocate = new RegAllocate(Manager.getMcFunclist());
-//          regAllocate.alloc();
+          var regAllocate = new RegAllocate(Manager.getMcFunclist());
+          regAllocate.alloc();
           System.out.println("Alloc end");
 
             if(arg.opt){
