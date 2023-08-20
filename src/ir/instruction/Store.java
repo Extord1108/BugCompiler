@@ -7,6 +7,8 @@ import ir.type.VoidType;
 
 public class Store extends Instr {
 
+    private Value alloc;
+
     public Store(Value value, Value address, BasicBlock basicBlock) {
         super(VoidType.getInstance(), basicBlock);
         this.addUse(value);
@@ -19,6 +21,18 @@ public class Store extends Instr {
 
     public Value getAddress() {
         return getUse(1);
+    }
+
+    public void cleanAL(){
+        alloc = null;
+    }
+
+    public void setAlloc(Value alloc){
+        this.alloc = alloc;
+    }
+
+    public Value getAlloc(){
+        return this.alloc;
     }
 
     @Override

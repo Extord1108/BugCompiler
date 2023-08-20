@@ -1,12 +1,14 @@
 package ir;
 
 import ir.instruction.Instr;
+import ir.instruction.Load;
 import ir.type.Type;
 import manager.Manager;
 import util.MyList;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class Function extends Value {
     private ArrayList<Param> params;
@@ -32,6 +34,7 @@ public class Function extends Value {
     }
 
     public static class Param extends Value {
+        private HashSet<Instr> loads = new HashSet<>();
         public String paramName;
         Param cloneParam = null;
         public Param(String name, Type type) {
@@ -60,6 +63,18 @@ public class Function extends Value {
 
         public void cleanClone(){
             this.cloneParam = null;
+        }
+
+        public void cleanLoad(){
+            this.loads.clear();
+        }
+
+        public HashSet<Instr> getLoads(){
+            return this.loads;
+        }
+
+        public void addLoad(Instr load){
+            this.loads.add(load);
         }
 
         @Override

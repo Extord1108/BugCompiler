@@ -5,8 +5,12 @@ import ir.type.ArrayType;
 import ir.type.PointerType;
 import ir.type.Type;
 
+import java.util.HashSet;
+
 // 内存分配
 public class Alloc extends Instr {
+
+    private HashSet<Instr> loads = new HashSet<>();
 
     public Alloc(Type type, BasicBlock basicBlock) {
         super(new PointerType(type), basicBlock, true);
@@ -20,6 +24,22 @@ public class Alloc extends Instr {
     public Instr clone(BasicBlock bb){
         this.cloneInstr = new Alloc(this.type.getBasicType(), bb);
         return this.cloneInstr;
+    }
+
+    public void setLoads( HashSet<Instr> loads){
+        this.loads = loads;
+    }
+
+    public HashSet<Instr> getLoads(){
+        return loads;
+    }
+
+    public void cleanLoad(){
+        this.loads.clear();
+    }
+
+    public void addLoad(Instr load){
+        this.loads.add(load);
     }
 
     @Override

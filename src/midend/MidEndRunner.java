@@ -32,6 +32,7 @@ public class MidEndRunner {
             new ConstantPropagation(functions, globals).run();
             new DomainAnalysis(functions, globals).run();
             new FunctionAnalysis(functions, globals).run();
+            new LocalArrayGVN(functions,globals).run();
             new GVN(functions, globals).run();
             new GCM(functions, globals).run();
             new DomainAnalysis(functions, globals).run();
