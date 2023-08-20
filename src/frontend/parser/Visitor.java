@@ -190,7 +190,8 @@ public class Visitor extends AbstractParseTreeVisitor<Value> implements SysYVisi
                 Value value = turnTo(initVal.getValue(), initType);
                 new Store(value, pointer, curBasicBlock);
             }
-        } else {
+        }
+        else {
             pointer = new GlobalValue(ident, currentType, initVal);
         }
         // 将对应的符号加入到符号表中

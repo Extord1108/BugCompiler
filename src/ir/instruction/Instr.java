@@ -43,6 +43,7 @@ public class Instr extends Value {
     }
 
     public Instr(){
+        this.name = "%r" + count++;
         this.uses = new ArrayList<>();
     }
 

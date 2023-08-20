@@ -45,29 +45,29 @@ public class Compiler {
                 Manager.getManager().outputLLVM(llvmOut);
                 OutputHandler.closeOutputFile(llvmOut);
             }
-//          System.out.println("CodeGen begin");
-//          var codeGen = CodeGen.Instance;
-//          codeGen.gen();
-//          System.out.println("CodeGen end");
-//
-//          System.out.println("Alloc begin");
+          System.out.println("CodeGen begin");
+          var codeGen = CodeGen.Instance;
+          codeGen.gen();
+          System.out.println("CodeGen end");
+
+          System.out.println("Alloc begin");
 //          var regAllocate = new RegAllocate(Manager.getMcFunclist());
 //          regAllocate.alloc();
-//          System.out.println("Alloc end");
-//
-//            if(arg.opt){
-//                PeepHole peepHole = new PeepHole(Manager.getMcFunclist());
-//                peepHole.run();
-//            }
-//
-//            Manager.getManager().bssInit();
-//
-//            // 输出 机器代码arm
-//            if (!arg.targetFile.isEmpty()) {
-//                FileOutputStream armOut = OutputHandler.getOutputFile(arg.targetFile);
-//                Manager.getManager().outputArm(armOut);
-//                OutputHandler.closeOutputFile(armOut);
-//            }
+          System.out.println("Alloc end");
+
+            if(arg.opt){
+                PeepHole peepHole = new PeepHole(Manager.getMcFunclist());
+                peepHole.run();
+            }
+
+            Manager.getManager().bssInit();
+
+            // 输出 机器代码arm
+            if (!arg.targetFile.isEmpty()) {
+                FileOutputStream armOut = OutputHandler.getOutputFile(arg.targetFile);
+                Manager.getManager().outputArm(armOut);
+                OutputHandler.closeOutputFile(armOut);
+            }
 
         } catch (IOException e) {
             e.printStackTrace();

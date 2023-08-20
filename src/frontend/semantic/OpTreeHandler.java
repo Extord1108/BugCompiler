@@ -10,6 +10,10 @@ import ir.Value;
 import ir.instruction.*;
 import ir.type.*;
 import ir.Variable;
+import lir.Operand;
+import lir.mcInstr.MCShift;
+import lir.mcInstr.McBinary;
+import lir.mcInstr.McMove;
 
 public class OpTreeHandler {
 
@@ -89,8 +93,60 @@ public class OpTreeHandler {
             }
         }
         // 防止a[10]取a的情况出现，没有idxList
-        if(idxList.size() != 0)
-            pointer = new GetElementPtr(basicType, pointer, idxList, basicBlock);
+        if(idxList.size() != 0) {
+            boolean flog = true;
+            if(pointer.getType().getBasicType() instanceof ArrayType) {
+
+                ArrayType arrayType = (ArrayType) pointer.getType().getBasicType();
+//                System.out.println(idxList.size() + " " + arrayType.getDims());
+                if (idxList.size() <= arrayType.getDims()) {
+//                    System.out.println("bug");
+                    pointer = new GetElementPtr(basicType, pointer, idxList, basicBlock);
+                    flog = false;
+                }
+            }
+//            pointer = new GetElementPtr(basicType, pointer, idxList, basicBlock);
+            if(flog) {
+                ArrayList<Value> tempList = new ArrayList<>();
+                for(int i = 0; i < idxList.size(); i++) {
+                    tempList.add(Visitor.Instance.getCONST_0());
+                }
+                Type curBasicType = pointer.getType().getBasicType();
+                Value tempPointer = new GetElementPtr(basicType, pointer, tempList, basicBlock);
+                Value tmpAddr = new Variable.ConstInt(0);
+                int allOff = 0;
+                for(int i = 0; i < idxList.size(); i++) {
+                    Value idx = idxList.get(i);
+                    int offset = 1;
+                    if (curBasicType instanceof ArrayType) {
+                        offset = offset * ((ArrayType) curBasicType).getFattenSize();
+                        curBasicType = curBasicType.getBasicType();
+                    }
+                    if (idx instanceof Variable.ConstInt) {
+                        int sum = ((Variable.ConstInt) idx).getIntVal() * offset;
+                        allOff += sum;
+                    } else {
+                        Value tmp = idx;
+                        Value mulAns = new Binary(Int32Type.getInstance(), OpTree.Operator.Mul,
+                                tmp, new Variable.ConstInt(offset), basicBlock);
+                        tmpAddr = new Binary(Int32Type.getInstance(), OpTree.Operator.Add, tmpAddr, mulAns, basicBlock);
+                    }
+                    if (i == idxList.size() - 1) {
+                        if (allOff != 0) {
+                            tmpAddr = new Binary(Int32Type.getInstance(), OpTree.Operator.Add, tmpAddr,
+                                    new Variable.ConstInt(allOff), basicBlock);
+                        }
+                        if (!(tmpAddr instanceof Variable.ConstInt)) {
+                            idxList = new ArrayList<>();
+                            idxList.add(tmpAddr);
+                            pointer = new GetElementPtr(tempPointer.getType(), tempPointer, idxList, basicBlock);
+                        } else {
+                            pointer = tempPointer;
+                        }
+                    }
+                }
+            }
+        }
         if(opTree.getNeedPointer()){
             return pointer;
         }
