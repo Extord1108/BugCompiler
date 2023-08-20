@@ -1,3 +1,7 @@
+@d = dso_local global i32 0
+@temp = dso_local global [2097152 x i32] zeroinitializer
+@a = dso_local global [2097152 x i32] zeroinitializer
+@b = dso_local global [2097152 x i32] zeroinitializer
 declare i32 @getch()
 declare i32 @getfarray(float* )
 declare void @putint(i32 )
@@ -15,650 +19,219 @@ declare void @_sysy_starttime(i32 )
 declare void @_sysy_stoptime(i32 )
 define dso_local i32 @main() 
 {
-b209:
-	%r664 = alloca [100 x i32]
-	call void @_sysy_starttime(i32 324)
-	%r648 = call i32 @getint()
-	br label %b211
-b211:
-	move i32 %r667<- 0
-	br label %b212
-b212:
-	%r668 = icmp slt i32 %r667, 100
-	br i1 %r668, label %b213, label %b214
-b213:
-	%r1185 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 %r667
-	store i32 0, i32* %r1185
-	%r1187 = add i32 %r667, 1
-	move i32 %r667<- %r1187
-	br label %b212
-b214:
-	move i32 %r672<- 0
-	move i32 %r671<- 0
-	br label %b215
-b215:
-	%r674 = icmp slt i32 %r672, %r648
-	br i1 %r674, label %b216, label %b217
-b216:
-	br label %b218
-b217:
-	br label %b210
-b218:
-	%r679 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 1
-	store i32 1, i32* %r679
-	br label %b220
-b219:
-	%r1172 = add i32 %r672, 1
-	move i32 %r1175<- 0
-	move i32 %r1174<- %r671
-	br label %b416
-b220:
-	%r683 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 2
-	store i32 2, i32* %r683
-	br label %b222
-b221:
-	br label %b219
-b222:
-	%r687 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 3
-	store i32 3, i32* %r687
-	br label %b224
-b223:
-	br label %b221
-b224:
-	%r691 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 4
-	store i32 4, i32* %r691
-	br label %b226
-b225:
-	br label %b223
-b226:
-	%r695 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 5
-	store i32 5, i32* %r695
-	br label %b228
-b227:
-	br label %b225
-b228:
-	%r699 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 6
-	store i32 6, i32* %r699
-	br label %b230
-b229:
-	br label %b227
-b230:
-	%r703 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 7
-	store i32 7, i32* %r703
-	br label %b232
-b231:
-	br label %b229
-b232:
-	%r707 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 8
-	store i32 8, i32* %r707
-	br label %b234
-b233:
-	br label %b231
-b234:
-	%r711 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 9
-	store i32 9, i32* %r711
-	br label %b236
-b235:
-	br label %b233
-b236:
-	%r715 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 10
-	store i32 10, i32* %r715
-	br label %b238
-b237:
-	br label %b235
-b238:
-	%r719 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 11
-	store i32 11, i32* %r719
-	br label %b240
-b239:
-	br label %b237
-b240:
-	%r723 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 12
-	store i32 12, i32* %r723
-	br label %b242
-b241:
-	br label %b239
-b242:
-	%r727 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 13
-	store i32 13, i32* %r727
-	br label %b244
-b243:
-	br label %b241
-b244:
-	%r731 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 14
-	store i32 14, i32* %r731
-	br label %b246
-b245:
-	br label %b243
-b246:
-	%r735 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 15
-	store i32 15, i32* %r735
-	br label %b248
-b247:
-	br label %b245
-b248:
-	%r739 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 16
-	store i32 16, i32* %r739
-	br label %b250
-b249:
-	br label %b247
-b250:
-	%r743 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 17
-	store i32 17, i32* %r743
-	br label %b252
-b251:
-	br label %b249
-b252:
-	%r747 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 18
-	store i32 18, i32* %r747
-	br label %b254
-b253:
-	br label %b251
-b254:
-	%r751 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 19
-	store i32 19, i32* %r751
-	br label %b256
-b255:
-	br label %b253
-b256:
-	%r755 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 20
-	store i32 20, i32* %r755
-	br label %b258
-b257:
-	br label %b255
-b258:
-	%r759 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 21
-	store i32 21, i32* %r759
-	br label %b260
-b259:
-	br label %b257
-b260:
-	%r763 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 22
-	store i32 22, i32* %r763
-	br label %b262
-b261:
-	br label %b259
-b262:
-	%r767 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 23
-	store i32 23, i32* %r767
-	br label %b264
-b263:
-	br label %b261
-b264:
-	%r771 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 24
-	store i32 24, i32* %r771
-	br label %b266
-b265:
-	br label %b263
-b266:
-	%r775 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 25
-	store i32 25, i32* %r775
-	br label %b268
-b267:
-	br label %b265
-b268:
-	%r779 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 26
-	store i32 26, i32* %r779
-	br label %b270
-b269:
-	br label %b267
-b270:
-	%r783 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 27
-	store i32 27, i32* %r783
-	br label %b272
-b271:
-	br label %b269
-b272:
-	%r787 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 28
-	store i32 28, i32* %r787
-	br label %b274
-b273:
-	br label %b271
-b274:
-	%r791 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 29
-	store i32 29, i32* %r791
-	br label %b276
-b275:
-	br label %b273
-b276:
-	%r795 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 30
-	store i32 30, i32* %r795
-	br label %b278
-b277:
-	br label %b275
-b278:
-	%r799 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 31
-	store i32 31, i32* %r799
-	br label %b280
-b279:
-	br label %b277
-b280:
-	%r803 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 32
-	store i32 32, i32* %r803
-	br label %b282
-b281:
-	br label %b279
-b282:
-	%r807 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 33
-	store i32 33, i32* %r807
-	br label %b284
-b283:
-	br label %b281
-b284:
-	%r811 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 34
-	store i32 34, i32* %r811
-	br label %b286
-b285:
-	br label %b283
-b286:
-	%r815 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 35
-	store i32 35, i32* %r815
-	br label %b288
-b287:
-	br label %b285
-b288:
-	%r819 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 36
-	store i32 36, i32* %r819
-	br label %b290
-b289:
-	br label %b287
-b290:
-	%r823 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 37
-	store i32 37, i32* %r823
-	br label %b292
-b291:
-	br label %b289
-b292:
-	%r827 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 38
-	store i32 38, i32* %r827
-	br label %b294
-b293:
-	br label %b291
-b294:
-	%r831 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 39
-	store i32 39, i32* %r831
-	br label %b296
-b295:
-	br label %b293
-b296:
-	%r835 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 40
-	store i32 40, i32* %r835
-	br label %b298
-b297:
-	br label %b295
-b298:
-	%r839 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 41
-	store i32 41, i32* %r839
-	br label %b300
-b299:
-	br label %b297
-b300:
-	%r843 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 42
-	store i32 42, i32* %r843
-	br label %b302
-b301:
-	br label %b299
-b302:
-	%r847 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 43
-	store i32 43, i32* %r847
-	br label %b304
-b303:
-	br label %b301
-b304:
-	%r851 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 44
-	store i32 44, i32* %r851
-	br label %b306
-b305:
-	br label %b303
-b306:
-	%r855 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 45
-	store i32 45, i32* %r855
-	br label %b308
-b307:
-	br label %b305
-b308:
-	%r859 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 46
-	store i32 46, i32* %r859
-	br label %b310
-b309:
-	br label %b307
-b310:
-	%r863 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 47
-	store i32 47, i32* %r863
-	br label %b312
-b311:
-	br label %b309
-b312:
-	%r867 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 48
-	store i32 48, i32* %r867
-	br label %b314
-b313:
-	br label %b311
-b314:
-	%r871 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 49
-	store i32 49, i32* %r871
-	br label %b316
-b315:
-	br label %b313
-b316:
-	%r875 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 50
-	store i32 50, i32* %r875
-	br label %b318
-b317:
-	br label %b315
-b318:
-	%r879 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 51
-	store i32 51, i32* %r879
-	br label %b320
-b319:
-	br label %b317
-b320:
-	%r883 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 52
-	store i32 52, i32* %r883
-	br label %b322
-b321:
-	br label %b319
-b322:
-	%r887 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 53
-	store i32 53, i32* %r887
-	br label %b324
-b323:
-	br label %b321
-b324:
-	%r891 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 54
-	store i32 54, i32* %r891
-	br label %b326
-b325:
-	br label %b323
-b326:
-	%r895 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 55
-	store i32 55, i32* %r895
-	br label %b328
-b327:
-	br label %b325
-b328:
-	%r899 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 56
-	store i32 56, i32* %r899
-	br label %b330
-b329:
-	br label %b327
-b330:
-	%r903 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 57
-	store i32 57, i32* %r903
-	br label %b332
-b331:
-	br label %b329
-b332:
-	%r907 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 58
-	store i32 58, i32* %r907
-	br label %b334
-b333:
-	br label %b331
-b334:
-	%r911 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 59
-	store i32 59, i32* %r911
-	br label %b336
-b335:
-	br label %b333
-b336:
-	%r915 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 60
-	store i32 60, i32* %r915
-	br label %b338
-b337:
-	br label %b335
-b338:
-	%r919 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 61
-	store i32 61, i32* %r919
-	br label %b340
-b339:
-	br label %b337
-b340:
-	%r923 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 62
-	store i32 62, i32* %r923
-	br label %b342
-b341:
-	br label %b339
-b342:
-	%r927 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 63
-	store i32 63, i32* %r927
-	br label %b344
-b343:
-	br label %b341
-b344:
-	%r931 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 64
-	store i32 64, i32* %r931
-	br label %b346
-b345:
-	br label %b343
-b346:
-	%r935 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 65
-	store i32 65, i32* %r935
-	br label %b348
-b347:
-	br label %b345
-b348:
-	%r939 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 66
-	store i32 66, i32* %r939
-	br label %b350
-b349:
-	br label %b347
-b350:
-	%r943 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 67
-	store i32 67, i32* %r943
-	br label %b352
-b351:
-	br label %b349
-b352:
-	%r947 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 68
-	store i32 68, i32* %r947
-	br label %b354
-b353:
-	br label %b351
-b354:
-	%r951 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 69
-	store i32 69, i32* %r951
-	br label %b356
-b355:
-	br label %b353
-b356:
-	%r955 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 70
-	store i32 70, i32* %r955
-	br label %b358
-b357:
-	br label %b355
-b358:
-	%r959 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 71
-	store i32 71, i32* %r959
-	br label %b360
-b359:
-	br label %b357
-b360:
-	%r963 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 72
-	store i32 72, i32* %r963
-	br label %b362
-b361:
-	br label %b359
-b362:
-	%r967 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 73
-	store i32 73, i32* %r967
-	br label %b364
-b363:
-	br label %b361
-b364:
-	%r971 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 74
-	store i32 74, i32* %r971
-	br label %b366
-b365:
-	br label %b363
-b366:
-	%r975 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 75
-	store i32 75, i32* %r975
-	br label %b368
-b367:
-	br label %b365
-b368:
-	%r979 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 76
-	store i32 76, i32* %r979
-	br label %b370
-b369:
-	br label %b367
-b370:
-	%r983 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 77
-	store i32 77, i32* %r983
-	br label %b372
-b371:
-	br label %b369
-b372:
-	%r987 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 78
-	store i32 78, i32* %r987
-	br label %b374
-b373:
-	br label %b371
-b374:
-	%r991 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 79
-	store i32 79, i32* %r991
-	br label %b376
-b375:
-	br label %b373
-b376:
-	%r995 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 80
-	store i32 80, i32* %r995
-	br label %b378
-b377:
-	br label %b375
-b378:
-	%r999 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 81
-	store i32 81, i32* %r999
-	br label %b380
-b379:
-	br label %b377
-b380:
-	%r1003 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 82
-	store i32 82, i32* %r1003
-	br label %b382
-b381:
-	br label %b379
-b382:
-	%r1007 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 83
-	store i32 83, i32* %r1007
-	br label %b384
-b383:
-	br label %b381
-b384:
-	%r1011 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 84
-	store i32 84, i32* %r1011
-	br label %b386
-b385:
-	br label %b383
-b386:
-	%r1015 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 85
-	store i32 85, i32* %r1015
-	br label %b388
-b387:
-	br label %b385
-b388:
-	%r1019 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 86
-	store i32 86, i32* %r1019
-	br label %b390
-b389:
-	br label %b387
-b390:
-	%r1023 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 87
-	store i32 87, i32* %r1023
-	br label %b392
-b391:
-	br label %b389
-b392:
-	%r1027 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 88
-	store i32 88, i32* %r1027
-	br label %b394
-b393:
-	br label %b391
-b394:
-	%r1031 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 89
-	store i32 89, i32* %r1031
-	br label %b396
-b395:
-	br label %b393
-b396:
-	%r1035 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 90
-	store i32 90, i32* %r1035
-	br label %b398
-b397:
-	br label %b395
-b398:
-	%r1039 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 91
-	store i32 91, i32* %r1039
-	br label %b400
-b399:
-	br label %b397
-b400:
-	%r1043 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 92
-	store i32 92, i32* %r1043
-	br label %b402
-b401:
-	br label %b399
-b402:
-	%r1047 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 93
-	store i32 93, i32* %r1047
-	br label %b404
-b403:
-	br label %b401
-b404:
-	%r1051 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 94
-	store i32 94, i32* %r1051
-	br label %b406
-b405:
-	br label %b403
-b406:
-	%r1055 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 95
-	store i32 95, i32* %r1055
-	br label %b408
-b407:
-	br label %b405
-b408:
-	%r1059 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 96
-	store i32 96, i32* %r1059
-	br label %b410
-b409:
-	br label %b407
-b410:
-	%r1063 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 97
-	store i32 97, i32* %r1063
-	br label %b412
-b411:
-	br label %b409
-b412:
-	%r1067 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 98
-	store i32 98, i32* %r1067
-	br label %b414
-b413:
-	br label %b411
-b414:
-	%r1071 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 99
-	store i32 99, i32* %r1071
-	br label %b415
-b415:
-	br label %b413
-b416:
-	%r1176 = icmp slt i32 %r1175, 100
-	br i1 %r1176, label %b417, label %b418
-b417:
-	%r1180 = getelementptr inbounds [100 x i32], [100 x i32]* %r664, i32 0, i32 %r1175
-	%r1181 = load i32, i32* %r1180
-	%r1182 = add i32 %r1174, %r1181
-	%r1183 = add i32 %r1175, 1
-	move i32 %r1175<- %r1183
-	move i32 %r1174<- %r1182
-	br label %b416
-b418:
-	%r1178 = srem i32 %r1174, 65535
-	move i32 %r672<- %r1172
-	move i32 %r671<- %r1178
-	br label %b215
-b210:
-	call void @putint(i32 %r671)
-	call void @putch(i32 10)
-	call void @_sysy_stoptime(i32 328)
+b31:
+	%r258 = getelementptr inbounds [2097152 x i32], [2097152 x i32]* @a, i32 0, i32 0
+	%r259 = call i32 @getarray(i32* %r258)
+	%r262 = getelementptr inbounds [2097152 x i32], [2097152 x i32]* @b, i32 0, i32 0
+	%r263 = call i32 @getarray(i32* %r262)
+	call void @_sysy_starttime(i32 60)
+	store i32 1, i32* @d
+	br label %b32
+b32:
+	%r269 = load i32, i32* @d
+	%r272 = add i32 %r259, %r263
+	%r273 = sub i32 %r272, 1
+	%r274 = icmp slt i32 %r269, %r273
+	br i1 %r274, label %b33, label %b34
+b33:
+	%r276 = load i32, i32* @d
+	%r277 = mul i32 %r276, 2
+	store i32 %r277, i32* @d
+	br label %b32
+b34:
+	%r281 = load i32, i32* @d
+	%r283 = load i32, i32* @d
+	%r284 = sdiv i32 998244352, %r283
+	%r285 = call i32 @power(i32 3, i32 %r284)
+	%r286 = call i32 @fft(i32* %r258, i32 0, i32 %r281, i32 %r285)
+	%r288 = load i32, i32* @d
+	%r290 = load i32, i32* @d
+	%r291 = sdiv i32 998244352, %r290
+	%r292 = call i32 @power(i32 3, i32 %r291)
+	%r293 = call i32 @fft(i32* %r262, i32 0, i32 %r288, i32 %r292)
+	move i32 %r352<- 0
+	br label %b35
+b35:
+	%r298 = load i32, i32* @d
+	%r299 = icmp slt i32 %r352, %r298
+	br i1 %r299, label %b36, label %b37
+b36:
+	%r302 = getelementptr inbounds [2097152 x i32], [2097152 x i32]* @a, i32 0, i32 %r352
+	%r305 = load i32, i32* %r302
+	%r307 = getelementptr inbounds [2097152 x i32], [2097152 x i32]* @b, i32 0, i32 %r352
+	%r308 = load i32, i32* %r307
+	%r309 = call i32 @multiply(i32 %r305, i32 %r308)
+	store i32 %r309, i32* %r302
+	%r312 = add i32 %r352, 1
+	move i32 %r352<- %r312
+	br label %b35
+b37:
+	%r316 = load i32, i32* @d
+	%r319 = load i32, i32* @d
+	%r320 = sdiv i32 998244352, %r319
+	%r321 = sub i32 998244352, %r320
+	%r322 = call i32 @power(i32 3, i32 %r321)
+	%r323 = call i32 @fft(i32* %r258, i32 0, i32 %r316, i32 %r322)
+	move i32 %r353<- 0
+	br label %b38
+b38:
+	%r327 = load i32, i32* @d
+	%r328 = icmp slt i32 %r353, %r327
+	br i1 %r328, label %b39, label %b40
+b39:
+	%r331 = getelementptr inbounds [2097152 x i32], [2097152 x i32]* @a, i32 0, i32 %r353
+	%r334 = load i32, i32* %r331
+	%r335 = load i32, i32* @d
+	%r337 = call i32 @power(i32 %r335, i32 998244351)
+	%r338 = call i32 @multiply(i32 %r334, i32 %r337)
+	store i32 %r338, i32* %r331
+	%r341 = add i32 %r353, 1
+	move i32 %r353<- %r341
+	br label %b38
+b40:
+	call void @_sysy_stoptime(i32 79)
+	call void @putarray(i32 %r273, i32* %r258)
 	ret i32 0
+}
+define dso_local i32 @fft(i32* %f112, i32 %f113, i32 %f114, i32 %f115) 
+{
+b19:
+	%r125 = icmp eq i32 %f114, 1
+	br i1 %r125, label %b20, label %b21
+b20:
+	ret i32 0
+b21:
+	move i32 %r357<- 0
+	br label %b22
+b22:
+	%r134 = icmp slt i32 %r357, %f114
+	br i1 %r134, label %b23, label %b24
+b23:
+	%r137 = srem i32 %r357, 2
+	%r138 = icmp eq i32 %r137, 0
+	br i1 %r138, label %b25, label %b26
+b24:
+	%r171 = getelementptr inbounds [2097152 x i32], [2097152 x i32]* @temp, i32 0, i32 0
+	br label %b42
+b42:
+	move i32 %r364<- 0
+	br label %b43
+b43:
+	%r365 = icmp slt i32 %r364, %f114
+	br i1 %r365, label %b44, label %b45
+b44:
+	%r368 = add i32 %f113, %r364
+	%r369 = getelementptr inbounds i32, i32* %f112, i32 %r368
+	%r370 = getelementptr inbounds i32, i32* %r171, i32 %r364
+	%r371 = load i32, i32* %r370
+	store i32 %r371, i32* %r369
+	%r373 = add i32 %r364, 1
+	move i32 %r364<- %r373
+	br label %b43
+b45:
+	br label %b41
+b41:
+	%r177 = sdiv i32 %f114, 2
+	%r180 = call i32 @multiply(i32 %f115, i32 %f115)
+	%r181 = call i32 @fft(i32* %f112, i32 %f113, i32 %r177, i32 %r180)
+	%r186 = add i32 %f113, %r177
+	%r192 = call i32 @fft(i32* %f112, i32 %r186, i32 %r177, i32 %r180)
+	move i32 %r356<- 0
+	move i32 %r355<- 1
+	br label %b28
+b25:
+	%r141 = sdiv i32 %r357, 2
+	%r142 = getelementptr inbounds [2097152 x i32], [2097152 x i32]* @temp, i32 0, i32 %r141
+	%r145 = add i32 %r357, %f113
+	%r147 = getelementptr inbounds i32, i32* %f112, i32 %r145
+	%r148 = load i32, i32* %r147
+	store i32 %r148, i32* %r142
+	br label %b27
+b26:
+	%r152 = sdiv i32 %f114, 2
+	%r154 = sdiv i32 %r357, 2
+	%r155 = add i32 %r152, %r154
+	%r156 = getelementptr inbounds [2097152 x i32], [2097152 x i32]* @temp, i32 0, i32 %r155
+	%r159 = add i32 %r357, %f113
+	%r161 = getelementptr inbounds i32, i32* %f112, i32 %r159
+	%r162 = load i32, i32* %r161
+	store i32 %r162, i32* %r156
+	br label %b27
+b27:
+	%r166 = add i32 %r357, 1
+	move i32 %r357<- %r166
+	br label %b22
+b28:
+	%r200 = icmp slt i32 %r356, %r177
+	br i1 %r200, label %b29, label %b30
+b29:
+	%r204 = add i32 %f113, %r356
+	%r206 = getelementptr inbounds i32, i32* %f112, i32 %r204
+	%r207 = load i32, i32* %r206
+	%r215 = add i32 %r204, %r177
+	%r217 = getelementptr inbounds i32, i32* %f112, i32 %r215
+	%r218 = load i32, i32* %r217
+	%r229 = call i32 @multiply(i32 %r355, i32 %r218)
+	%r230 = add i32 %r207, %r229
+	%r231 = srem i32 %r230, 998244353
+	store i32 %r231, i32* %r206
+	%r245 = sub i32 %r207, %r229
+	%r246 = add i32 %r245, 998244353
+	%r247 = srem i32 %r246, 998244353
+	store i32 %r247, i32* %r217
+	%r251 = call i32 @multiply(i32 %r355, i32 %f115)
+	%r254 = add i32 %r356, 1
+	move i32 %r356<- %r254
+	move i32 %r355<- %r251
+	br label %b28
+b30:
+	ret i32 0
+}
+define dso_local i32 @power(i32 %f43, i32 %f44) 
+{
+b9:
+	%r50 = icmp eq i32 %f44, 0
+	br i1 %r50, label %b10, label %b11
+b10:
+	ret i32 1
+b11:
+	%r56 = sdiv i32 %f44, 2
+	%r57 = call i32 @power(i32 %f43, i32 %r56)
+	%r62 = call i32 @multiply(i32 %r57, i32 %r57)
+	%r65 = srem i32 %f44, 2
+	%r66 = icmp eq i32 %r65, 1
+	br i1 %r66, label %b12, label %b13
+b12:
+	%r70 = call i32 @multiply(i32 %r62, i32 %f43)
+	ret i32 %r70
+b13:
+	ret i32 %r62
+}
+define dso_local i32 @multiply(i32 %f0, i32 %f1) 
+{
+b1:
+	%r7 = icmp eq i32 %f1, 0
+	br i1 %r7, label %b2, label %b3
+b2:
+	ret i32 0
+b3:
+	%r12 = icmp eq i32 %f1, 1
+	br i1 %r12, label %b4, label %b5
+b4:
+	%r15 = srem i32 %f0, 998244353
+	ret i32 %r15
+b5:
+	%r20 = sdiv i32 %f1, 2
+	%r21 = call i32 @multiply(i32 %f0, i32 %r20)
+	%r26 = add i32 %r21, %r21
+	%r27 = srem i32 %r26, 998244353
+	%r30 = srem i32 %f1, 2
+	%r31 = icmp eq i32 %r30, 1
+	br i1 %r31, label %b6, label %b7
+b6:
+	%r35 = add i32 %r27, %f0
+	%r36 = srem i32 %r35, 998244353
+	ret i32 %r36
+b7:
+	ret i32 %r27
 }
