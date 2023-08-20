@@ -77,8 +77,8 @@ public class Instr extends Value {
 
 
     public void removeUse(){
-        for(Value use:uses){
-            use.removeUser(this);
+        for(int i=0;i<uses.size();i++){
+            uses.get(i).removeUser(this);
         }
         uses.clear();
         usedInfo.clear();

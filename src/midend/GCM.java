@@ -96,7 +96,6 @@ public class GCM extends Pass {
         if(visitedInstrs.contains(instr) || isInstrPinned(instr)) return;
         visitedInstrs.add(instr);
         BasicBlock lca = null;
-
         for(Used used: instr.getUsedInfo()){
             Instr user = used.getUser();
             scheduleLateForOperands(user);
@@ -121,7 +120,6 @@ public class GCM extends Pass {
             }
             cur = curFunc.getDomTree().get(cur);
         }
-//        System.out.println("???");
         if(cur.getLoopDepth()< best.getLoopDepth())
             best = cur;
         instr.setLatestBasicBlock(best);

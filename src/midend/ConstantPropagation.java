@@ -8,6 +8,7 @@ import ir.type.PointerType;
 import ir.type.Type;
 import org.antlr.v4.runtime.misc.Pair;
 
+import javax.crypto.spec.PSource;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -511,6 +512,9 @@ public class ConstantPropagation extends Pass{
         for(BasicBlock bb : function.getBasicBlocks()){
             if(!executable.contains(bb)){
                 bb.remove();
+                for(Instr instr:bb.getInstrs()){
+                    instr.remove();
+                }
             }
         }
         //逆后序遍历重写代码
@@ -519,6 +523,7 @@ public class ConstantPropagation extends Pass{
             for(Instr instr:bb.getInstrs()){
                 if(instr instanceof Phi) {
                     Phi phi = (Phi) instr;
+                    ArrayList<Value> useToRemove = new ArrayList<>();
                     for(int i=0;i<phi.getUses().size();i++){
                         BasicBlock useBlock = phi.getBasicBlock().getPredecessors().get(i);
                         boolean flag = true;
@@ -532,8 +537,12 @@ public class ConstantPropagation extends Pass{
                             }
                         }
                         if(flag){
-                            phi.getUses().remove(i);
+                            useToRemove.add(phi.getUse(i));
                         }
+                    }
+                    for(Value use:useToRemove){
+                        phi.getUses().remove(use);
+                        use.removeUser(phi);
                     }
                     if (valueStateHashMap.get(phi).state == 1) {
                         if (phi.getType() instanceof FloatType) {
