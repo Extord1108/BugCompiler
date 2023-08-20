@@ -141,6 +141,11 @@ public class GCM extends Pass {
     }
 
     private boolean isInstrPinned(Instr instr){
+        if(instr instanceof Call){
+            Call call = (Call) instr;
+            if(call.getFunction().canGVN())
+                return false;
+        }
         return instr instanceof Phi || instr instanceof Branch ||
                 instr instanceof Return || instr instanceof Jump ||
                 instr instanceof Call || instr instanceof Store ||
