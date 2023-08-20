@@ -2,19 +2,17 @@ package midend;
 
 import ir.*;
 import ir.instruction.*;
+import ir.type.ArrayType;
 import ir.type.PointerType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 
-public class LocalArrayGVN extends Pass {
-
-
+public class GlobalArrayGVN extends Pass{
     private HashMap<String, Instr> GVNMap = new HashMap<>();
     private HashMap<String, Integer> GVNCount = new HashMap<>();
 
-    public LocalArrayGVN(HashMap<String, Function> functions, ArrayList<GlobalValue> globals) {
+    public GlobalArrayGVN(HashMap<String, Function> functions, ArrayList<GlobalValue> globals) {
         super(functions, globals);
     }
 
@@ -45,40 +43,25 @@ public class LocalArrayGVN extends Pass {
                 }
             }
         }
-        for(Function function:functions.values()){
-            for(BasicBlock basicBlock:function.getBasicBlocks()){
-                for(Instr instr:basicBlock.getInstrs()){
-                    if(instr instanceof Alloc){
-                        for(Used used:instr.getUsedInfo()){
-                            DFS(instr,used.getUser());
-                        }
-                    }
-                }
-            }
-            for(Function.Param param:function.getParams()){
-                if(param.getType() instanceof  PointerType){
-                    for(Used used:param.getUsedInfo()){
-                        DFS(param,used.getUser());
-                    }
+        for(GlobalValue gval:globals){
+            if(gval.getType().getBasicType() instanceof ArrayType){
+                for(Used used:gval.getUsedInfo()){
+                    DFS(gval,used.getUser());
                 }
             }
         }
     }
 
-    private void DFS(Value alloc, Instr instr){
+    private void DFS(Value gval, Instr instr){
         if (instr instanceof GetElementPtr) {
             for (Used used:instr.getUsedInfo()) {
-                DFS(alloc, used.getUser());
+                DFS(gval, used.getUser());
             }
         } else if (instr instanceof Load) {
-            ((Load) instr).setAlloc(alloc);
-            if (alloc instanceof Alloc) {
-                ((Alloc) alloc).addLoad(instr);
-            } else if (alloc instanceof Function.Param) {
-                ((Function.Param) alloc).addLoad(instr);
-            }
+            ((Load) instr).setAlloc(gval);
+            ((GlobalValue)gval).addLoad(instr);
         } else if (instr instanceof Store) {
-            ((Store) instr).setAlloc(alloc);
+            ((Store) instr).setAlloc(gval);
         }
     }
 
@@ -92,15 +75,9 @@ public class LocalArrayGVN extends Pass {
             if(instr instanceof Load && ((Load) instr).getAlloc()!=null){
                 addToMap(instr);
             }else if(instr instanceof Store && ((Store) instr).getAlloc()!=null){
-                Value alloc = ((Store) instr).getAlloc();
-                if(alloc instanceof Alloc){
-                    for(Instr load :((Alloc) alloc).getLoads()){
-                        removeFromMap(load);
-                    }
-                }else{
-                    for(Instr load :((Function.Param) alloc).getLoads()){
-                        removeFromMap(load);
-                    }
+                Value gval = ((Store) instr).getAlloc();
+                for(Instr load :((GlobalValue) gval).getLoads()){
+                    removeFromMap(load);
                 }
             }
         }
@@ -144,6 +121,4 @@ public class LocalArrayGVN extends Pass {
         }
         return "";
     }
-
-
 }
