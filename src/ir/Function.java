@@ -82,6 +82,7 @@ public class Function extends Value {
     }
 
     public BasicBlock getEntryBlock() {
+//        System.out.println(name);
         return basicBlocks.get(0);
     }
 

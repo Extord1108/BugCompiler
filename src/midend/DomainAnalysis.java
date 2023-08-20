@@ -1,9 +1,6 @@
 package midend;
 
-import ir.BasicBlock;
-import ir.Function;
-import ir.GlobalValue;
-import ir.Variable;
+import ir.*;
 import ir.instruction.Branch;
 import ir.instruction.Instr;
 import ir.instruction.Jump;
@@ -56,17 +53,29 @@ public class DomainAnalysis extends Pass {
                             for(Instr instr1: temp) {
                                 bb.getInstrs().remove(instr1);
                                 preBB.addInstr(instr1);
+                                instr1.setBasicBlock(preBB);
                             }
                             instr.remove();
                             preBB.getSuccessors().remove(bb);
                             if(bb.getSuccessors().size() > 0) {
-                                for(BasicBlock succ: bb.getSuccessors()){
+                                for(int j = 0; j < bb.getSuccessors().size(); j++) {
+                                    BasicBlock succ = bb.getSuccessors().get(j);
                                     preBB.getSuccessors().add(succ);
-                                    succ.getPredecessors().remove(bb);
-                                    succ.getPredecessors().add(preBB);
+                                    for(int k = 0; k < succ.getPredecessors().size(); k++) {
+                                        if(succ.getPredecessors().get(k).equals(bb)){
+                                            succ.getPredecessors().set(k, preBB);
+                                        }
+                                    }
+//                                    System.out.println(succ);
                                 }
                             }
                             function.getBasicBlocks().remove(bb);
+//                            for(Used used: bb.usedInfo) {
+//
+//                            }
+//                            System.out.println(preBB);
+//                            System.out.println(function.name);
+//                            System.out.println(function.getBasicBlocks().size);
                         }
 
                     }

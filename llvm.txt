@@ -15,43 +15,47 @@ declare void @_sysy_starttime(i32 )
 declare void @_sysy_stoptime(i32 )
 define dso_local i32 @main() 
 {
-b11:
-	%r29 = call i32 @whileIf()
-	ret i32 %r29
+b12:
+	%r51 = call i32 @deepWhileBr(i32 2, i32 2)
+	call void @putint(i32 %r51)
+	ret i32 0
 }
-define dso_local i32 @whileIf() 
+define dso_local i32 @deepWhileBr(i32 %f4, i32 %f5) 
+{
+b2:
+	%r13 = add i32 %f4, %f5
+	br label %b3
+b3:
+	%r58 = phi i32 [ %r13 , %b2 ], [ %r57 , %b7 ]
+	%r17 = icmp slt i32 %r58, 75
+	br i1 %r17, label %b4, label %b5
+b4:
+	%r22 = icmp slt i32 %r58, 100
+	br i1 %r22, label %b6, label %b7
+b5:
+	ret i32 %r58
+b6:
+	%r26 = add i32 %r58, 42
+	%r29 = icmp sgt i32 %r26, 99
+	br i1 %r29, label %b8, label %b9
+b7:
+	%r57 = phi i32 [ %r58 , %b4 ], [ %r59 , %b9 ]
+	br label %b3
+b8:
+	%r35 = call i32 @get_one(i32 0)
+	%r36 = icmp eq i32 %r35, 1
+	br i1 %r36, label %b10, label %b11
+b9:
+	%r59 = phi i32 [ %r26 , %b6 ], [ %r56 , %b11 ]
+	br label %b7
+b10:
+	br label %b11
+b11:
+	%r56 = phi i32 [ %r26 , %b8 ], [ 168 , %b10 ]
+	br label %b9
+}
+define dso_local i32 @get_one(i32 %f0) 
 {
 b1:
-	move i32 %r34<- 0
-	move i32 %r32<- 0
-	br label %b2
-b2:
-	%r6 = icmp slt i32 %r34, 100
-	br i1 %r6, label %b3, label %b4
-b3:
-	%r9 = icmp eq i32 %r34, 5
-	br i1 %r9, label %b5, label %b6
-b4:
-	ret i32 %r32
-b5:
-	move i32 %r31<- 25
-	br label %b7
-b6:
-	%r14 = icmp eq i32 %r34, 10
-	br i1 %r14, label %b8, label %b9
-b7:
-	%r24 = add i32 %r34, 1
-	move i32 %r34<- %r24
-	move i32 %r32<- %r31
-	br label %b2
-b8:
-	move i32 %r33<- 42
-	br label %b10
-b9:
-	%r19 = mul i32 %r34, 2
-	move i32 %r33<- %r19
-	br label %b10
-b10:
-	move i32 %r31<- %r33
-	br label %b7
+	ret i32 1
 }
