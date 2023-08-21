@@ -272,7 +272,10 @@ public class ConstantPropagation extends Pass{
                         }
                     }else if(valueStateHashMap.get(phi).state==0){
                         valueStateHashMap.get(phi).state = 1;
-                        valueStateHashMap.get(phi).constantInt = valueStateHashMap.get(phi.getUses().get(i)).constantInt;
+                        if(phi.getType() instanceof Int32Type)
+                            valueStateHashMap.get(phi).constantInt = valueStateHashMap.get(phi.getUses().get(i)).constantInt;
+                        else
+                            valueStateHashMap.get(phi).constantFloat = valueStateHashMap.get(phi.getUses().get(i)).constantFloat;
                         for(Used used:phi.getUsedInfo()){
                             SSAWorkList.add(new SSAEdge(phi,used.getUser()));
                         }
@@ -401,24 +404,25 @@ public class ConstantPropagation extends Pass{
             Fcmp fcmp = (Fcmp) instr;
             if(valueStateHashMap.get(fcmp.getUses().get(0)).state==1 && valueStateHashMap.get(fcmp.getUses().get(1)).state==1) {
                 state1 = 1;
+                int result = Double.compare(valueStateHashMap.get(fcmp.getUses().get(0)).constantFloat, valueStateHashMap.get(fcmp.getUses().get(1)).constantFloat);
                 switch (fcmp.getOp()) {
                     case Eq:
-                        valueStateHashMap.get(fcmp).constantInt = valueStateHashMap.get(fcmp.getUses().get(0)).constantFloat == valueStateHashMap.get(fcmp.getUses().get(1)).constantFloat?1:0;
+                        valueStateHashMap.get(fcmp).constantInt = result==0?1:0;
                         break;
                     case Ne:
-                        valueStateHashMap.get(fcmp).constantInt = valueStateHashMap.get(fcmp.getUses().get(0)).constantFloat != valueStateHashMap.get(fcmp.getUses().get(1)).constantFloat?1:0;
+                        valueStateHashMap.get(fcmp).constantInt = result!=0?1:0;
                         break;
                     case Gt:
-                        valueStateHashMap.get(fcmp).constantInt = valueStateHashMap.get(fcmp.getUses().get(0)).constantFloat > valueStateHashMap.get(fcmp.getUses().get(1)).constantFloat?1:0;
+                        valueStateHashMap.get(fcmp).constantInt = result>0?1:0;
                         break;
                     case Ge:
-                        valueStateHashMap.get(fcmp).constantInt = valueStateHashMap.get(fcmp.getUses().get(0)).constantFloat >= valueStateHashMap.get(fcmp.getUses().get(1)).constantFloat?1:0;
+                        valueStateHashMap.get(fcmp).constantInt = result>=0?1:0;
                         break;
                     case Lt:
-                        valueStateHashMap.get(fcmp).constantInt = valueStateHashMap.get(fcmp.getUses().get(0)).constantFloat < valueStateHashMap.get(fcmp.getUses().get(1)).constantFloat?1:0;
+                        valueStateHashMap.get(fcmp).constantInt = result<0?1:0;
                         break;
                     case Le:
-                        valueStateHashMap.get(fcmp).constantInt = valueStateHashMap.get(fcmp.getUses().get(0)).constantFloat <= valueStateHashMap.get(fcmp.getUses().get(1)).constantFloat?1:0;
+                        valueStateHashMap.get(fcmp).constantInt = result<=0?1:0;
                         break;
                 }
             }else{

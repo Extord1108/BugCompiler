@@ -75,7 +75,10 @@ public class DeadCodeElimination extends Pass {
             HashMap<Instr,Boolean> useful = new HashMap<>();
             Stack<Instr> stack = new Stack<>();
             for(BasicBlock bb : new ReversePostOrder(function).get()){
+                //System.out.println(bb.getName());
+                //System.out.println(bb.getInstrs().size());
                 for(Instr instr : bb.getInstrs()){
+                    //System.out.println(instr);
                     if(instr instanceof Phi){
                         Phi phi = (Phi) instr;
                         useful.put(phi,false);

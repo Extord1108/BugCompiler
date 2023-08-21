@@ -5,6 +5,7 @@ import ir.instruction.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Stack;
 
 public class FunctionInlining extends Pass{
@@ -120,23 +121,41 @@ public class FunctionInlining extends Pass{
             }
 
             //将对call的使用替换为对return value的使用
-            Return retOfFunction = null;
+            ArrayList<Return> retOfFunction = new ArrayList<>();
             for(int i = 0;i < function.getBasicBlocks().size();i++){
                 BasicBlock bb = function.getBasicBlocks().get(i);
                 if((bb.getInstrs().size()>0) && (bb.getInstrs().getLast() instanceof Return)){
-                    retOfFunction = (Return) bb.getInstrs().getLast().getClone();
-                    break;
+                    retOfFunction.add((Return) bb.getInstrs().getLast().getClone());
                 }
             }
-            if(retOfFunction.getReturnValue()!=null){
-                //如果有返回值，将返回值的clone作为call的返回值
-                call.repalceUseofMeto(retOfFunction.getReturnValue());
+            if(retOfFunction.size()==1){//只有一个return
+                Return ret = retOfFunction.get(0);
+                if(ret.getReturnValue()!=null){
+                    //如果有返回值，将返回值的clone作为call的返回值
+                    call.repalceUseofMeto(ret.getReturnValue());
+                }
+                call.remove();
+                ret.remove();
+                //将return的bb的jump指向callerSuccBB
+                new Jump(callerSuccBB, ret.getBasicBlock());
+            }else if(retOfFunction.size()==2){
+                Return ret1 = retOfFunction.get(0);
+                Return ret2 = retOfFunction.get(1);
+                if(ret1.getReturnValue()!=null && ret2.getReturnValue()!=null){
+                    ArrayList<Value> options = new ArrayList<>();
+                    options.add(ret1.getReturnValue());
+                    options.add(ret2.getReturnValue());
+                    Phi phi = new Phi(ret1.getReturnValue().getType(),callerSuccBB,options);
+                    call.repalceUseofMeto(phi);
+                }
+                call.remove();
+                ret1.remove();
+                ret2.remove();
+                new Jump(callerSuccBB, ret1.getBasicBlock());
+                new Jump(callerSuccBB, ret2.getBasicBlock());
+            }else{
+                assert false;
             }
-            call.remove();
-            retOfFunction.remove();
-            //将return的bb的jump指向callerSuccBB
-            new Jump(callerSuccBB, retOfFunction.getBasicBlock());
-
             //维护cfg图
             new ControlFlowGraph(callerFunction).run();
         }
@@ -154,7 +173,7 @@ public class FunctionInlining extends Pass{
                 if(instr instanceof Call && ((Call)instr).getFunction().equals(function)) return false;
                 if(instr instanceof Return){
                     retNum++;
-                    if(retNum > 1) return false;
+                    if(retNum > 2) return false;
                 }
             }
         }

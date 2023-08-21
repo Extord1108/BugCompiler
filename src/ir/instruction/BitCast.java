@@ -10,6 +10,10 @@ public class BitCast extends Instr{
         this.addUse(value);
     }
 
+    public  Value getValue(){
+        return this.getUse(0);
+    }
+
     @Override
     public Instr clone(BasicBlock bb){
         this.cloneInstr = new BitCast(this.getUse(0).getClone(), this.getType(), bb);
