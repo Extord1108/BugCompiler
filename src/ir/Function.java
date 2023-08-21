@@ -29,6 +29,10 @@ public class Function extends Value {
         this.type = type;
     }
 
+    public void setBasicBlocks(MyList<BasicBlock> basicBlocks) {
+        this.basicBlocks = basicBlocks;
+    }
+
     public boolean isExternal(){
         return Manager.getExternalFunctions().containsValue(this);
     }
