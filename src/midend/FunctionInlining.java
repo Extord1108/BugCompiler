@@ -170,7 +170,9 @@ public class FunctionInlining extends Pass{
         for(BasicBlock bb : function.getBasicBlocks()){
             instrNum += bb.getInstrs().size();
             for(Instr instr:bb.getInstrs()){
-                if(instr instanceof Call && ((Call)instr).getFunction().equals(function)) return false;
+                if(instr instanceof Call && ((Call)instr).getFunction().equals(function)){
+                    return false;
+                }
                 if(instr instanceof Return){
                     retNum++;
                     if(retNum > 2) return false;
